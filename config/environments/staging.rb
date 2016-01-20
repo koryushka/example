@@ -64,4 +64,8 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  Devise.setup do |config|
+    config.secret_key = '00889083261c354cc2e8106daaeff0cb10e02137cf087f76f6177adf44399fb6b2ed43c3b865ca8af0de4b37cfef5357b24980e11ee2cb1ed7e3541764319c70'
+  end
 end

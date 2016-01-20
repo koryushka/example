@@ -6,7 +6,7 @@
 # server 'example.com', user: 'deploy', roles: %w{app db web}, my_property: :my_value
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
-server '52.24.85.143', user: fetch(:user), roles: %w(app db web)
+server '52.24.149.235', user: fetch(:user), roles: %w(app db)
 set :rails_env, 'staging'
 set :branch, 'ror/staging'
 
