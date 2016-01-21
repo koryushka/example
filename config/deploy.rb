@@ -9,7 +9,7 @@ set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets vendor/bundle public/sys
 
 set :ssh_options, {forward_agent: true}
 set :user , 'deployer'
-set :deploy_to, "/home/#{fetch :user}/apps/#{fetch :rails_env}"
+set :deploy_to, "/home/#{fetch :user}/apps/#{fetch :application}"
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
