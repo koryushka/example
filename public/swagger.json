@@ -136,6 +136,245 @@
                 ]
             }
         },
+        
+        
+        
+    		"/users": {
+    			"get": {
+    				"summary": "All users",
+    				"description": "Returns all users",
+    				"tags": ["Users"]
+    			},
+    			"post": {
+    				"summary": "Create user",
+    				"description": "Creates new user",
+    				"tags": ["Users"]
+    			}
+    		},
+    		"/users/me": {
+    			"get": {
+    				"summary": "Current user",
+    				"description": "Returns current user",
+    				"tags": ["Users"]
+    			},
+    			"put": {
+    				"summary": "Update current user",
+    				"description": "Updates current user information",
+    				"tags": ["Users"]
+    			},
+    			"delete": {
+    				"summary": "Delete current user",
+    				"description": "Removes current user from system and clears all it's data",
+    				"tags": ["Users"]
+    			}
+    		},
+    		"/users/{user-id}": {
+    			"get": {
+    				"summary": "User",
+    				"description": "Returns user by ID",
+    				"tags": ["Users"]
+    			},
+    			"put": {
+    				"summary": "Update user",
+    				"description": "Updates information of user by ID",
+    				"tags": ["Users"]
+    			}
+    		},
+    		"/users/me/friends": {
+    			"get": {
+    				"summary": "Current user friends",
+    				"description": "Returns friends of current user. Every time someone share to current user, or current user shares to someone - this person automatically goes to friends",
+    				"tags": ["Users"]
+    			}
+    		},
+    		"/users/me/calendar_groups": {
+    			"get": {
+    				"summary": "Current user calendar groups",
+    				"description": "Returns all calendar groups created by current user or shared with him",
+    				"tags": ["Calendar Groups", "Calendars", "Users"]
+    			}
+    		},
+    		"/calendar_groups": {
+    			"post": {
+    				"summary": "Create calendar group",
+    				"description": "Creates new calendar group",
+    				"tags": ["Calendar Groups", "Calendars"]
+    			}
+    		},
+    		"/calendar_groups/{group-id}": {
+    			"put": {
+    				"summary": "Update calendar group",
+    				"description": "Updates calendar group information by ID",
+    				"tags": ["Calendar Groups", "Calendars"]
+    			},
+    			"delete": {
+    				"summary": "Delete calendar group",
+    				"description": "Deletes calendar group by ID",
+    				"tags": ["Calendar Groups", "Calendars"]
+    			}
+    		},
+    		"/users/me/calendars": {
+    			"get": {
+    				"summary": "Current user calendars",
+    				"description": "Returns all calendars created by current user or shared with him",
+    				"tags": ["Calendars", "Users"]
+    			}
+    		},
+    		"/calendars": {
+    			"post": {
+    				"summary": "Create calendar",
+    				"description": "Creates new calendar",
+    				"tags": ["Calendars"]
+    			}
+    		},
+    		"/calendars/{calendar-id}": {
+    			"put": {
+    				"summary": "Update calendar",
+    				"description": "Updates calendar information by ID",
+    				"tags": ["Calendars"]
+    			},
+    			"delete": {
+    				"summary": "Delete calendar",
+    				"description": "Deletes calendar by ID",
+    				"tags": ["Calendars"]
+    			}
+    		},
+    		"/users/me/calendar_items": {
+    			"get": {
+    				"summary": "Current user calendar items",
+    				"description": "Returns all calendar items created by current user or shared with him",
+    				"tags": ["Calendar Items", "Calendars", "Users"]
+    			}
+    		},
+    		"/calendar_items": {
+    			"post": {
+    				"summary": "Create calendar item",
+    				"description": "Creates new calendar item",
+    				"tags": ["Calendar Items", "Calendars"]
+    			}
+    		},
+    		"/calendar_items/{item-id}": {
+    			"put": {
+    				"summary": "Update calendar item",
+    				"description": "Updates calendar item information by ID",
+    				"tags": ["Calendar Items", "Calendars"]
+    			},
+    			"delete": {
+    				"summary": "Delete calendar item",
+    				"description": "Deletes calendar item by ID",
+    				"tags": ["Calendar Items", "Calendars"]
+    			}
+    		},
+    		"/users/me/documents": {
+    			"get": {
+    				"summary": "Current user documents",
+    				"description": "Returns all documents created by current user or shared with him",
+    				"tags": ["Documents", "Users"]
+    			}
+    		},
+    		"/documents": {
+    			"post": {
+    				"summary": "Create document",
+    				"description": "Creates new document",
+    				"tags": ["Documents"]
+    			}
+    		},
+    		"/documents/{document-id}": {
+    			"put": {
+    				"summary": "Update document",
+    				"description": "Updates document information by ID",
+    				"tags": ["Documents"]
+    			},
+    			"delete": {
+    				"summary": "Delete document",
+    				"description": "Deletes document by ID",
+    				"tags": ["Documents"]
+    			}
+    		},
+    		"/users/me/lists": {
+    			"get": {
+    				"summary": "Current user lists",
+    				"description": "Returns all lists created by current user or shared with him",
+    				"tags": ["Lists", "Users"]
+    			}
+    		},
+    		"/lists": {
+    			"post": {
+    				"summary": "Create list",
+    				"description": "Creates new list",
+    				"tags": ["Lists"]
+    			}
+    		},
+    		"/lists/{list-id}": {
+    			"put": {
+    				"summary": "Update list",
+    				"description": "Updates list information by ID",
+    				"tags": ["Lists"]
+    			},
+    			"delete": {
+    				"summary": "Delete list",
+    				"description": "Deletes list by ID",
+    				"tags": ["Lists"]
+    			}
+    		},
+    		"/lists/{list-id}/items": {
+    			"get": {
+    				"summary": "List items",
+    				"description": "Returns all items in specific list by list ID",
+    				"tags": ["List Items", "Lists"]
+    			}
+    		},
+    		
+    		"/lists/{list-id}/items": {
+    			"post": {
+    				"summary": "Create list item",
+    				"description": "Creates new list item in specific list by list ID",
+    				"tags": ["List Items", "Lists"]
+    			}
+    		},
+    		
+    		"/lists/{list-id}/items/{item-id}": {
+    			"put": {
+    				"summary": "Update list item",
+    				"description": "Updates list item information by list ID and item ID",
+    				"tags": ["List Items", "Lists"]
+    			},
+    			"delete": {
+    				"summary": "Delete list item",
+    				"description": "Deletes list item by list ID and item ID",
+    				"tags": ["List Items", "Lists"]
+    			}
+    		},
+    		"/users/me/participations": {
+    			"get": {
+    				"summary": "Current user participations",
+    				"description": "Returns all shareable items (calendar group, calendar, calendar item, document or list) shared BY current user",
+    				"tags": ["Participations", "Users"]
+    			}
+    		},
+    		"/participations": {
+    			"post": {
+    				"summary": "Create participation",
+    				"description": "Share some shareable item (calendar group, calendar, calendar item, document or list) with friend",
+    				"tags": ["Participations"]
+    			}
+    		},
+    		"/participations/{participation-id}": {
+    			"put": {
+    				"summary": "Update participation",
+    				"description": "Updates participation information by ID",
+    				"tags": ["Participations"]
+    			},
+    			"delete": {
+    				"summary": "Delete participation",
+    				"description": "Deletes participation by ID",
+    				"tags": ["Participations"]
+    			}
+    		},
+        
+        
+        
+        
         "/products": {
             "get": {
                 "summary": "Product Types",
