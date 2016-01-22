@@ -967,17 +967,17 @@
 						"lattitude": {
 							"type": "number",
 							"format": "double",
-							"description": "Location lattitude",
+							"description": "Location lattitude"
 						},
 						"longitude": {
 							"type": "number",
 							"format": "double",
-							"description": "Location longitude",
+							"description": "Location longitude"
 						},
 						"name": {
 							"type": "string",
 							"description": "Location name. It might be city name, neighborhood name or anything else"
-						},
+						}
 					}
 				},
 				"lists": {
@@ -1218,7 +1218,7 @@
 						"list": {
 							"type": "string",
 							"description": "Optional list ID to be shared"
-						},
+						}
 					}
 				}
 			}
@@ -1254,7 +1254,7 @@
 				},
 				"current": {
 					"type": "boolean",
-					"description": "Specifies if this is current authenticated user",
+					"description": "Specifies if this is current authenticated user"
 				}
 			}
 		},
