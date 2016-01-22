@@ -257,7 +257,7 @@
 						}
 					}
 				},
-				"tags": ["Calendar Groups", "Calendars"]
+				"tags": ["Calendar Groups"]
 			},
 			"post": {
 				"summary": "Create calendar group",
@@ -276,7 +276,7 @@
 						}
 					}
 				},
-				"tags": ["Calendar Groups", "Calendars"]
+				"tags": ["Calendar Groups"]
 			}
 		},
 		"/calendar_groups/{group-id}": {
@@ -297,7 +297,7 @@
 						}
 					}
 				},
-				"tags": ["Calendar Groups", "Calendars"]
+				"tags": ["Calendar Groups"]
 			},
 			"delete": {
 				"summary": "Delete calendar group",
@@ -313,7 +313,7 @@
 						}
 					}
 				},
-				"tags": ["Calendar Groups", "Calendars"]
+				"tags": ["Calendar Groups"]
 			}
 		},
 		"/calendars": {
