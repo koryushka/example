@@ -190,6 +190,17 @@
 			"delete": {
 				"summary": "Delete current user",
 				"description": "Removes current user from system and clears all it's data",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Users"]
 			}
 		},
@@ -263,6 +274,17 @@
 			"delete": {
 				"summary": "Delete calendar group",
 				"description": "Deletes calendar group by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendar Groups", "Calendars"]
 			}
 		},
@@ -315,6 +337,17 @@
 			"delete": {
 				"summary": "Delete calendar",
 				"description": "Deletes calendar by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendars"]
 			}
 		},
@@ -367,6 +400,17 @@
 			"delete": {
 				"summary": "Delete calendar item",
 				"description": "Deletes calendar item by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendar Items", "Calendars"]
 			}
 		},
@@ -419,6 +463,17 @@
 			"delete": {
 				"summary": "Delete document",
 				"description": "Deletes document by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Documents"]
 			}
 		},
@@ -471,6 +526,17 @@
 			"delete": {
 				"summary": "Delete list",
 				"description": "Deletes list by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Lists"]
 			}
 		},
@@ -523,6 +589,17 @@
 			"delete": {
 				"summary": "Delete list item",
 				"description": "Deletes list item by list ID and item ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["List Items", "Lists"]
 			}
 		},
@@ -575,6 +652,17 @@
 			"delete": {
 				"summary": "Delete notification preference",
 				"description": "Deletes notification preference by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Notifications", "Calendars", "Calendar Items"]
 			}
 		},
@@ -627,6 +715,17 @@
 			"delete": {
 				"summary": "Delete participation",
 				"description": "Deletes participation by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Participations"]
 			}
 		}
