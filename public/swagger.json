@@ -1,737 +1,1328 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "title": "Curago API",
-        "description": "Empty description",
-        "version": "v1"
-    },
-    "host": "api.curago.com",
-    "schemes": [
-        "https"
-    ],
-    "basePath": "/api/v1",
-    "produces": [
-        "application/json"
-    ],
-    "paths": {
-        "/auth": {
-            "post": {
-                "summary": "Registers user",
-                "description": "Email registration. Requires email, password, and password_confirmation params. A verification email will be sent to the email address provided.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "403": {
-                        "description": "redurect_url is missing or not allowed, or user creation error"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            },
-            "put": {
-                "summary": "Updates user",
-                "description": "This method will update an existing user's account settings.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "403": {
-                        "description": "Account update errors"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            },
-            "delete": {
-                "summary": "Removes user account",
-                "description": "This method will destroy users identified by their uid and auth_token headers.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            }
-        },
-        "/auth/sign_in": {
-            "post": {
-                "summary": "Authenticates user",
-                "description": "Email authentication. Requires email and password as params. This method will return a JSON representation of the User model on successful login along with the access-token and client in the header of the response.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Authentication error"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            }
-        },
-        "/auth/sign_out": {
-            "delete": {
-                "summary": "Destroys users sessions",
-                "description": "This method will invalidate the user's authentication token.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "404": {
-                        "description": "Session not found"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            }
-        },
-        "/auth/password": {
-            "post": {
-                "summary": "Resets user's password",
-                "description": "Use this method to send a password reset confirmation email to users that registered by email. Accepts email and redirect_url as params. The user matching the email param will be sent instructions on how to reset their password. redirect_url is the url to which the user will be redirected after visiting the link contained in the email.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Missing email or redirect_url"
-                    },
-                    "403": {
-                        "description": "Redirect to %{redirect_url} not allowed."
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            },
-            "put": {
-                "summary": "Updates user's password",
-                "description": "Use this method to change users' passwords. Requires password and password_confirmation as params. This method is only valid for users that registered by email.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Authorization required"
-                    },
-                    "422": {
-                        "description": "Missing password, or you tries putting password for oauth, or other errors"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            }
-        },
-        
-        
-        
-    		"/users": {
-    			"get": {
-    				"summary": "All users",
-    				"description": "Returns all users",
-    				"tags": ["Users"]
-    			},
-    			"post": {
-    				"summary": "Create user",
-    				"description": "Creates new user",
-    				"tags": ["Users"]
-    			}
-    		},
-    		"/users/me": {
-    			"get": {
-    				"summary": "Current user",
-    				"description": "Returns current user",
-    				"tags": ["Users"]
-    			},
-    			"put": {
-    				"summary": "Update current user",
-    				"description": "Updates current user information",
-    				"tags": ["Users"]
-    			},
-    			"delete": {
-    				"summary": "Delete current user",
-    				"description": "Removes current user from system and clears all it's data",
-    				"tags": ["Users"]
-    			}
-    		},
-    		"/users/{user-id}": {
-    			"get": {
-    				"summary": "User",
-    				"description": "Returns user by ID",
-    				"tags": ["Users"]
-    			},
-    			"put": {
-    				"summary": "Update user",
-    				"description": "Updates information of user by ID",
-    				"tags": ["Users"]
-    			}
-    		},
-    		"/users/me/friends": {
-    			"get": {
-    				"summary": "Current user friends",
-    				"description": "Returns friends of current user. Every time someone share to current user, or current user shares to someone - this person automatically goes to friends",
-    				"tags": ["Users"]
-    			}
-    		},
-    		"/users/me/calendar_groups": {
-    			"get": {
-    				"summary": "Current user calendar groups",
-    				"description": "Returns all calendar groups created by current user or shared with him",
-    				"tags": ["Calendar Groups", "Calendars", "Users"]
-    			}
-    		},
-    		"/calendar_groups": {
-    			"post": {
-    				"summary": "Create calendar group",
-    				"description": "Creates new calendar group",
-    				"tags": ["Calendar Groups", "Calendars"]
-    			}
-    		},
-    		"/calendar_groups/{group-id}": {
-    			"put": {
-    				"summary": "Update calendar group",
-    				"description": "Updates calendar group information by ID",
-    				"tags": ["Calendar Groups", "Calendars"]
-    			},
-    			"delete": {
-    				"summary": "Delete calendar group",
-    				"description": "Deletes calendar group by ID",
-    				"tags": ["Calendar Groups", "Calendars"]
-    			}
-    		},
-    		"/users/me/calendars": {
-    			"get": {
-    				"summary": "Current user calendars",
-    				"description": "Returns all calendars created by current user or shared with him",
-    				"tags": ["Calendars", "Users"]
-    			}
-    		},
-    		"/calendars": {
-    			"post": {
-    				"summary": "Create calendar",
-    				"description": "Creates new calendar",
-    				"tags": ["Calendars"]
-    			}
-    		},
-    		"/calendars/{calendar-id}": {
-    			"put": {
-    				"summary": "Update calendar",
-    				"description": "Updates calendar information by ID",
-    				"tags": ["Calendars"]
-    			},
-    			"delete": {
-    				"summary": "Delete calendar",
-    				"description": "Deletes calendar by ID",
-    				"tags": ["Calendars"]
-    			}
-    		},
-    		"/users/me/calendar_items": {
-    			"get": {
-    				"summary": "Current user calendar items",
-    				"description": "Returns all calendar items created by current user or shared with him",
-    				"tags": ["Calendar Items", "Calendars", "Users"]
-    			}
-    		},
-    		"/calendar_items": {
-    			"post": {
-    				"summary": "Create calendar item",
-    				"description": "Creates new calendar item",
-    				"tags": ["Calendar Items", "Calendars"]
-    			}
-    		},
-    		"/calendar_items/{item-id}": {
-    			"put": {
-    				"summary": "Update calendar item",
-    				"description": "Updates calendar item information by ID",
-    				"tags": ["Calendar Items", "Calendars"]
-    			},
-    			"delete": {
-    				"summary": "Delete calendar item",
-    				"description": "Deletes calendar item by ID",
-    				"tags": ["Calendar Items", "Calendars"]
-    			}
-    		},
-    		"/users/me/documents": {
-    			"get": {
-    				"summary": "Current user documents",
-    				"description": "Returns all documents created by current user or shared with him",
-    				"tags": ["Documents", "Users"]
-    			}
-    		},
-    		"/documents": {
-    			"post": {
-    				"summary": "Create document",
-    				"description": "Creates new document",
-    				"tags": ["Documents"]
-    			}
-    		},
-    		"/documents/{document-id}": {
-    			"put": {
-    				"summary": "Update document",
-    				"description": "Updates document information by ID",
-    				"tags": ["Documents"]
-    			},
-    			"delete": {
-    				"summary": "Delete document",
-    				"description": "Deletes document by ID",
-    				"tags": ["Documents"]
-    			}
-    		},
-    		"/users/me/lists": {
-    			"get": {
-    				"summary": "Current user lists",
-    				"description": "Returns all lists created by current user or shared with him",
-    				"tags": ["Lists", "Users"]
-    			}
-    		},
-    		"/lists": {
-    			"post": {
-    				"summary": "Create list",
-    				"description": "Creates new list",
-    				"tags": ["Lists"]
-    			}
-    		},
-    		"/lists/{list-id}": {
-    			"put": {
-    				"summary": "Update list",
-    				"description": "Updates list information by ID",
-    				"tags": ["Lists"]
-    			},
-    			"delete": {
-    				"summary": "Delete list",
-    				"description": "Deletes list by ID",
-    				"tags": ["Lists"]
-    			}
-    		},
-    		"/lists/{list-id}/items": {
-    			"get": {
-    				"summary": "List items",
-    				"description": "Returns all items in specific list by list ID",
-    				"tags": ["List Items", "Lists"]
-    			}
-    		},
-    		
-    		"/lists/{list-id}/items": {
-    			"post": {
-    				"summary": "Create list item",
-    				"description": "Creates new list item in specific list by list ID",
-    				"tags": ["List Items", "Lists"]
-    			}
-    		},
-    		
-    		"/lists/{list-id}/items/{item-id}": {
-    			"put": {
-    				"summary": "Update list item",
-    				"description": "Updates list item information by list ID and item ID",
-    				"tags": ["List Items", "Lists"]
-    			},
-    			"delete": {
-    				"summary": "Delete list item",
-    				"description": "Deletes list item by list ID and item ID",
-    				"tags": ["List Items", "Lists"]
-    			}
-    		},
-    		"/users/me/participations": {
-    			"get": {
-    				"summary": "Current user participations",
-    				"description": "Returns all shareable items (calendar group, calendar, calendar item, document or list) shared BY current user",
-    				"tags": ["Participations", "Users"]
-    			}
-    		},
-    		"/participations": {
-    			"post": {
-    				"summary": "Create participation",
-    				"description": "Share some shareable item (calendar group, calendar, calendar item, document or list) with friend",
-    				"tags": ["Participations"]
-    			}
-    		},
-    		"/participations/{participation-id}": {
-    			"put": {
-    				"summary": "Update participation",
-    				"description": "Updates participation information by ID",
-    				"tags": ["Participations"]
-    			},
-    			"delete": {
-    				"summary": "Delete participation",
-    				"description": "Deletes participation by ID",
-    				"tags": ["Participations"]
-    			}
-    		},
-        
-        
-        
-        
-        "/products": {
-            "get": {
-                "summary": "Product Types",
-                "description": "The Products endpoint returns information about the *Uber* products\noffered at a given location. The response includes the display name\nand other details about each product, and lists the products in the\nproper display order.\n",
-                "parameters": [
-                    {
-                        "name": "latitude",
-                        "in": "query",
-                        "description": "Latitude component of location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "longitude",
-                        "in": "query",
-                        "description": "Longitude component of location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    }
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An array of products",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Product"
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/estimates/price": {
-            "get": {
-                "summary": "Price Estimates",
-                "description": "The Price Estimates endpoint returns an estimated price range\nfor each product offered at a given location. The price estimate is\nprovided as a formatted string with the full price range and the localized\ncurrency symbol.<br><br>The response also includes low and high estimates,\nand the [ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code for\nsituations requiring currency conversion. When surge is active for a particular\nproduct, its surge_multiplier will be greater than 1, but the price estimate\nalready factors in this multiplier.\n",
-                "parameters": [
-                    {
-                        "name": "start_latitude",
-                        "in": "query",
-                        "description": "Latitude component of start location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "start_longitude",
-                        "in": "query",
-                        "description": "Longitude component of start location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "end_latitude",
-                        "in": "query",
-                        "description": "Latitude component of end location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "end_longitude",
-                        "in": "query",
-                        "description": "Longitude component of end location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    }
-                ],
-                "tags": [
-                    "Estimates"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An array of price estimates by product",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/PriceEstimate"
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/estimates/time": {
-            "get": {
-                "summary": "Time Estimates",
-                "description": "The Time Estimates endpoint returns ETAs for all products offered at a given location, with the responses expressed as integers in seconds. We recommend that this endpoint be called every minute to provide the most accurate, up-to-date ETAs.",
-                "parameters": [
-                    {
-                        "name": "start_latitude",
-                        "in": "query",
-                        "description": "Latitude component of start location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "start_longitude",
-                        "in": "query",
-                        "description": "Longitude component of start location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "customer_uuid",
-                        "in": "query",
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Unique customer identifier to be used for experience customization."
-                    },
-                    {
-                        "name": "product_id",
-                        "in": "query",
-                        "type": "string",
-                        "description": "Unique identifier representing a specific product for a given latitude & longitude."
-                    }
-                ],
-                "tags": [
-                    "Estimates"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An array of products",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Product"
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/me": {
-            "get": {
-                "summary": "User Profile",
-                "description": "The User Profile endpoint returns information about the Uber user that has authorized with the application.",
-                "tags": [
-                    "User"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Profile information for a user",
-                        "schema": {
-                            "$ref": "#/definitions/Profile"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/history": {
-            "get": {
-                "summary": "User Activity",
-                "description": "The User Activity endpoint returns data about a user's lifetime activity with Uber. The response will include pickup locations and times, dropoff locations and times, the distance of past requests, and information about which products were requested.<br><br>The history array in the response will have a maximum length based on the limit parameter. The response value count may exceed limit, therefore subsequent API requests may be necessary.",
-                "parameters": [
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "Offset the list of returned results by this amount. Default is zero."
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "Number of items to retrieve. Default is 5, maximum is 100."
-                    }
-                ],
-                "tags": [
-                    "User"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "History information for the given user",
-                        "schema": {
-                            "$ref": "#/definitions/Activities"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "definitions": {
-        "Product": {
-            "type": "object",
-            "properties": {
-                "product_id": {
-                    "type": "string",
-                    "description": "Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles."
-                },
-                "description": {
-                    "type": "string",
-                    "description": "Description of product."
-                },
-                "display_name": {
-                    "type": "string",
-                    "description": "Display name of product."
-                },
-                "capacity": {
-                    "type": "string",
-                    "description": "Capacity of product. For example, 4 people."
-                },
-                "image": {
-                    "type": "string",
-                    "description": "Image URL representing the product."
-                }
-            }
-        },
-        "PriceEstimate": {
-            "type": "object",
-            "properties": {
-                "product_id": {
-                    "type": "string",
-                    "description": "Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles"
-                },
-                "currency_code": {
-                    "type": "string",
-                    "description": "[ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code."
-                },
-                "display_name": {
-                    "type": "string",
-                    "description": "Display name of product."
-                },
-                "estimate": {
-                    "type": "string",
-                    "description": "Formatted string of estimate in local currency of the start location. Estimate could be a range, a single number (flat rate) or \"Metered\" for TAXI."
-                },
-                "low_estimate": {
-                    "type": "number",
-                    "description": "Lower bound of the estimated price."
-                },
-                "high_estimate": {
-                    "type": "number",
-                    "description": "Upper bound of the estimated price."
-                },
-                "surge_multiplier": {
-                    "type": "number",
-                    "description": "Expected surge multiplier. Surge is active if surge_multiplier is greater than 1. Price estimate already factors in the surge multiplier."
-                }
-            }
-        },
-        "Profile": {
-            "type": "object",
-            "properties": {
-                "first_name": {
-                    "type": "string",
-                    "description": "First name of the Uber user."
-                },
-                "last_name": {
-                    "type": "string",
-                    "description": "Last name of the Uber user."
-                },
-                "email": {
-                    "type": "string",
-                    "description": "Email address of the Uber user"
-                },
-                "picture": {
-                    "type": "string",
-                    "description": "Image URL of the Uber user."
-                },
-                "promo_code": {
-                    "type": "string",
-                    "description": "Promo code of the Uber user."
-                }
-            }
-        },
-        "Activity": {
-            "type": "object",
-            "properties": {
-                "uuid": {
-                    "type": "string",
-                    "description": "Unique identifier for the activity"
-                }
-            }
-        },
-        "Activities": {
-            "type": "object",
-            "properties": {
-                "offset": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Position in pagination."
-                },
-                "limit": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Number of items to retrieve (100 max)."
-                },
-                "count": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Total number of items available."
-                },
-                "history": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Activity"
-                    }
-                }
-            }
-        },
-        "Error": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "format": "int32"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "fields": {
-                    "type": "string"
-                }
-            }
-        }
-    }
+	"swagger": "2.0",
+	"info": {
+		"title": "Curago API",
+		"description": "API documentation for Curago",
+		"version": "1.0.1"
+	},
+	"host": "api.curagolife.com",
+	"schemes": [
+		"https"
+	],
+	"basePath": "/api/v1",
+	"produces": [
+		"application/json"
+	],
+	"paths": {
+		"/auth": {
+			"post": {
+				"summary": "Registers user",
+				"description": "Email registration. Requires email, password, and password_confirmation params. A verification email will be sent to the email address provided.",
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"403": {
+						"description": "redurect_url is missing or not allowed, or user creation error"
+					}
+				},
+				"tags": ["Auth"]
+			},
+			"put": {
+				"summary": "Updates user",
+				"description": "This method will update an existing user's account settings.",
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"403": {
+						"description": "Account update errors"
+					},
+					"404": {
+						"description": "User not found"
+					}
+				},
+				"tags": ["Auth"]
+			},
+			"delete": {
+				"summary": "Removes user account",
+				"description": "This method will destroy users identified by their uid and auth_token headers.",
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"404": {
+						"description": "User not found"
+					}
+				},
+				"tags": ["Auth"]
+			}
+		},
+		"/auth/sign_in": {
+			"post": {
+				"summary": "Authenticates user",
+				"description": "Email authentication. Requires email and password as params. This method will return a JSON representation of the User model on successful login along with the access-token and client in the header of the response.",
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"401": {
+						"description": "Authentication error"
+					}
+				},
+				"tags": ["Auth"]
+			}
+		},
+		"/auth/sign_out": {
+			"delete": {
+				"summary": "Destroys users sessions",
+				"description": "This method will invalidate the user's authentication token.",
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"404": {
+						"description": "Session not found"
+					}
+				},
+				"tags": ["Auth"]
+			}
+		},
+		"/auth/password": {
+			"post": {
+				"summary": "Resets user's password",
+				"description": "Use this method to send a password reset confirmation email to users that registered by email. Accepts email and redirect_url as params. The user matching the email param will be sent instructions on how to reset their password. redirect_url is the url to which the user will be redirected after visiting the link contained in the email.",
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"401": {
+						"description": "Missing email or redirect_url"
+					},
+					"403": {
+						"description": "Redirect to %{redirect_url} not allowed."
+					}
+				},
+				"tags": ["Auth"]
+			},
+			"put": {
+				"summary": "Updates user's password",
+				"description": "Use this method to change users' passwords. Requires password and password_confirmation as params. This method is only valid for users that registered by email.",
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"401": {
+						"description": "Authorization required"
+					},
+					"422": {
+						"description": "Missing password, or you tries putting password for oauth, or other errors"
+					}
+				},
+				"tags": ["Auth"]
+			}
+		},
+		"/users": {
+			"get": {
+				"summary": "Current user friends",
+				"description": "Returns current user and all his friends. Every time someone share to current user, or current user shares to someone - this person automatically goes to friends",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfUsers"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Users"]
+			},
+			"post": {
+				"summary": "Create user",
+				"description": "Creates new user",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/User"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Users"]
+			}
+		},
+		"/users/me": {
+			"get": {
+				"summary": "Current user",
+				"description": "Returns current user",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/User"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Users"]
+			},
+			"put": {
+				"summary": "Update current user",
+				"description": "Updates current user information",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/User"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Users"]
+			},
+			"delete": {
+				"summary": "Delete current user",
+				"description": "Removes current user from system and clears all it's data",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Users"]
+			}
+		},
+		"/users/{user-id}": {
+			"get": {
+				"summary": "User",
+				"description": "Returns user by ID",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/User"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Users"]
+			}
+		},
+		"/calendar_groups": {
+			"get": {
+				"summary": "Current user calendar groups",
+				"description": "Returns all calendar groups created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfCalendarGroups"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendar Groups", "Calendars"]
+			},
+			"post": {
+				"summary": "Create calendar group",
+				"description": "Creates new calendar group",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/CalendarGroup"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendar Groups", "Calendars"]
+			}
+		},
+		"/calendar_groups/{group-id}": {
+			"put": {
+				"summary": "Update calendar group",
+				"description": "Updates calendar group information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/CalendarGroup"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendar Groups", "Calendars"]
+			},
+			"delete": {
+				"summary": "Delete calendar group",
+				"description": "Deletes calendar group by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendar Groups", "Calendars"]
+			}
+		},
+		"/calendars": {
+			"get": {
+				"summary": "Current user calendars",
+				"description": "Returns all calendars created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfCalendars"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendars"]
+			},
+			"post": {
+				"summary": "Create calendar",
+				"description": "Creates new calendar",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/Calendar"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendars"]
+			}
+		},
+		"/calendars/{calendar-id}": {
+			"put": {
+				"summary": "Update calendar",
+				"description": "Updates calendar information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/Calendar"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendars"]
+			},
+			"delete": {
+				"summary": "Delete calendar",
+				"description": "Deletes calendar by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendars"]
+			}
+		},
+		"/calendar_items": {
+			"get": {
+				"summary": "Current user calendar items",
+				"description": "Returns all calendar items created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfCalendarItems"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendar Items", "Calendars"]
+			},
+			"post": {
+				"summary": "Create calendar item",
+				"description": "Creates new calendar item",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/CalendarItem"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendar Items", "Calendars"]
+			}
+		},
+		"/calendar_items/{item-id}": {
+			"put": {
+				"summary": "Update calendar item",
+				"description": "Updates calendar item information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/CalendarItem"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendar Items", "Calendars"]
+			},
+			"delete": {
+				"summary": "Delete calendar item",
+				"description": "Deletes calendar item by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Calendar Items", "Calendars"]
+			}
+		},
+		"/documents": {
+			"get": {
+				"summary": "Current user documents",
+				"description": "Returns all documents created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfDocuments"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Documents"]
+			},
+			"post": {
+				"summary": "Create document",
+				"description": "Creates new document",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/Document"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Documents"]
+			}
+		},
+		"/documents/{document-id}": {
+			"put": {
+				"summary": "Update document",
+				"description": "Updates document information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/Document"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Documents"]
+			},
+			"delete": {
+				"summary": "Delete document",
+				"description": "Deletes document by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Documents"]
+			}
+		},
+		"/lists": {
+			"get": {
+				"summary": "Current user lists",
+				"description": "Returns all lists created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfLists"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Lists"]
+			},
+			"post": {
+				"summary": "Create list",
+				"description": "Creates new list",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/List"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Lists"]
+			}
+		},
+		"/lists/{list-id}": {
+			"put": {
+				"summary": "Update list",
+				"description": "Updates list information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/List"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Lists"]
+			},
+			"delete": {
+				"summary": "Delete list",
+				"description": "Deletes list by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Lists"]
+			}
+		},
+		"/lists/{list-id}/items": {
+			"get": {
+				"summary": "List items",
+				"description": "Returns all items in specific list by list ID",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfListItems"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["List Items", "Lists"]
+			},
+			"post": {
+				"summary": "Create list item",
+				"description": "Creates new list item in specific list by list ID",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/ListItem"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["List Items", "Lists"]
+			}
+		},
+		"/lists/{list-id}/items/{item-id}": {
+			"put": {
+				"summary": "Update list item",
+				"description": "Updates list item information by list ID and item ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/ListItem"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["List Items", "Lists"]
+			},
+			"delete": {
+				"summary": "Delete list item",
+				"description": "Deletes list item by list ID and item ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["List Items", "Lists"]
+			}
+		},
+		"/notification_prefs": {
+			"get": {
+				"summary": "Current user notification preferences",
+				"description": "Returns all notification preferences created by current user",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfNotificationPreferences"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Notifications", "Calendars", "Calendar Items"]
+			},
+			"post": {
+				"summary": "Create notification preference",
+				"description": "Creates new notification preference",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/NotificationPreference"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Notifications", "Calendars", "Calendar Items"]
+			}
+		},
+		"/notification_prefs/{pref-id}": {
+			"put": {
+				"summary": "Update notification preference",
+				"description": "Updates notification preference by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/NotificationPreference"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Notifications", "Calendars", "Calendar Items"]
+			},
+			"delete": {
+				"summary": "Delete notification preference",
+				"description": "Deletes notification preference by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Notifications", "Calendars", "Calendar Items"]
+			}
+		},
+		"/participations": {
+			"get": {
+				"summary": "Current user participations",
+				"description": "Returns all shareable items (calendar group, calendar, calendar item, document or list) shared BY current user",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfParticipations"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Participations"]
+			},
+			"post": {
+				"summary": "Create participation",
+				"description": "Share some shareable item (calendar group, calendar, calendar item, document or list) with friend",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/Participation"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Participations"]
+			}
+		},
+		"/participations/{participation-id}": {
+			"put": {
+				"summary": "Update participation",
+				"description": "Updates participation information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/Participation"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Participations"]
+			},
+			"delete": {
+				"summary": "Delete participation",
+				"description": "Deletes participation by ID",
+				"responses": {
+					"204": {
+						"description" : "Deleted"
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Participations"]
+			}
+		}
+	},
+	"definitions": {
+		"Calendar": {
+			"type": "object",
+			"properties": {
+				"identifier": {
+					"type": "string",
+					"description": "Calendar ID"
+				},
+				"title": {
+					"type": "string",
+					"description": "Calendar title"
+				},
+				"creator": {
+					"type": "string",
+					"description": "User ID who created this calendar"
+				},
+				"hexColor": {
+					"type": "string",
+					"description": "Calendar color in hex string"
+				},
+				"main": {
+					"type": "boolean",
+					"description": "Specifies is it default Curago calendar for user or not",
+					"default": false
+				},
+				"readOnly": {
+					"type": "boolean",
+					"description": "Specifies if calendar read only or not",
+					"default": false
+				},
+				"type": {
+					"type": "integer",
+					"format": "int16",
+					"description": "Enumeration specifies the type of calendar",
+					"default": 0
+				},
+				"visible": {
+					"type": "boolean",
+					"description": "Specifies if calendar visible in UI",
+					"default": true
+				}
+			}
+		},
+		"CalendarGroup": {
+			"type": "object",
+			"properties": {
+				"identifier": {
+					"type": "string",
+					"description": "Calendar group ID"
+				},
+				"title": {
+					"type": "string",
+					"description": "Calendar group title"
+				},
+				"creator": {
+					"type": "string",
+					"description": "User ID who created this calendar group"
+				}
+			}
+		},
+		"CalendarItem": {
+			"type": "object",
+			"properties": {
+				"identifier": {
+					"type": "string",
+					"description": "Calendar item ID"
+				},
+				"title": {
+					"type": "string",
+					"description": "Calendar item title"
+				},
+				"creator": {
+					"type": "string",
+					"description": "User ID who created this calendar item"
+				},
+				"startDate": {
+					"type": "string",
+					"format": "date-time",
+					"description": "Start date and time for calendar item"
+				},
+				"endDate": {
+					"type": "string",
+					"format": "date-time",
+					"description": "End date and time for calendar item"
+				},
+				"notes": {
+					"type": "string",
+					"description": "Additional notes"
+				},
+				"readOnly": {
+					"type": "boolean",
+					"description": "Specifies if calendar item read only or not",
+					"default": false
+				},
+				"timeZone": {
+					"type": "string",
+					"description": "Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter"
+				},
+				"type": {
+					"type": "integer",
+					"format": "int16",
+					"description": "Enumeration specifies the type of calendar item",
+					"default": 0
+				},
+				"location": {
+					"type": "object",
+					"description": "Location specified for calendar item",
+					"properties": {
+						"lattitude": {
+							"type": "number",
+							"format": "double",
+							"description": "Location lattitude",
+						},
+						"longitude": {
+							"type": "number",
+							"format": "double",
+							"description": "Location longitude",
+						},
+						"name": {
+							"type": "string",
+							"description": "Location name. It might be city name, neighborhood name or anything else"
+						},
+					}
+				},
+				"lists": {
+					"type": "array",
+					"description": "Associated lists IDs",
+					"items": {
+						"type": "string"
+					}
+				},
+				"event": {
+					"type": "object",
+					"description": "Event specific data",
+					"properties": {
+						"allDay": {
+							"type": "boolean",
+							"description": "Specifies all day event type",
+							"default": false
+						}
+					}
+				},
+				"reminder": {
+					"type": "object",
+					"description": "Reminder specific data",
+					"properties": {
+						"completed": {
+							"type": "boolean",
+							"description": "Specifies completion state of reminder. Synchronizes with completionDate property",
+							"default": false
+						},
+						"completionDate": {
+							"type": "string",
+							"format": "date-time",
+							"description": "Reminder completion time. Synchronizes with completion property"
+						},
+						"hour": {
+							"type": "integer",
+							"format": "int16",
+							"description": "Hours value for reminder",
+							"default": 0,
+							"minimum": 0,
+							"maximum": 23
+						},
+						"minute": {
+							"type": "integer",
+							"format": "int16",
+							"description": "Minutes value for reminder",
+							"default": 0,
+							"minimum": 0,
+							"maximum": 59
+						},
+						"priority": {
+							"type": "integer",
+							"format": "int16",
+							"description": "Priority (importance) value for reminder",
+							"default": 0,
+							"minimum": 0,
+							"maximum": 3
+						}
+					}
+				}
+			}
+		},
+		"Document": {
+			"type": "object",
+			"properties": {
+				"identifier": {
+					"type": "string",
+					"description": "Document ID"
+				},
+				"title": {
+					"type": "string",
+					"description": "Document title"
+				},
+				"creator": {
+					"type": "string",
+					"description": "User ID who created this document"
+				},
+				"localPath": {
+					"type": "string",
+					"description": "Local path for stored document or just filename with extension"
+				},
+				"remoteUrl": {
+					"type": "string",
+					"description": "Remote URL to download document"
+				},
+				"notes": {
+					"type": "string",
+					"description": "Additional notes"
+				},
+				"tags": {
+					"type": "string",
+					"description": "Comma separated tags"
+				}
+			}
+		},
+		"List": {
+			"type": "object",
+			"properties": {
+				"identifier": {
+					"type": "string",
+					"description": "List ID"
+				},
+				"title": {
+					"type": "string",
+					"description": "List title"
+				},
+				"creator": {
+					"type": "string",
+					"description": "User ID who created this list"
+				},
+				"notes": {
+					"type": "string",
+					"description": "Additional notes"
+				},
+				"private": {
+					"type": "boolean",
+					"description": "Specifies visibility of list to anyone else",
+					"default": false
+				},
+				"listItems": {
+					"type": "array",
+					"description": "Associated lists items",
+					"items": {
+						"$ref" : "#/definitions/ListItem"
+					}
+				}
+			}
+		},
+		"ListItem": {
+			"type": "object",
+			"properties": {
+				"identifier": {
+					"type": "string",
+					"description": "List item ID"
+				},
+				"title": {
+					"type": "string",
+					"description": "List item title"
+				},
+				"creator": {
+					"type": "string",
+					"description": "User ID who created this list item"
+				},
+				"notes": {
+					"type": "string",
+					"description": "Additional notes"
+				},
+				"order": {
+					"type": "integer",
+					"format": "int16",
+					"description": "Sorting order for item in the list",
+					"default": 0
+				},
+				"list": {
+					"type": "string",
+					"description": "Parent list ID"
+				}
+			}
+		},
+		"NotificationPreference": {
+			"type": "object",
+			"properties": {
+				"email": {
+					"type": "boolean",
+					"description": "Preference for getting email notification",
+					"default": false
+				},
+				"push": {
+					"type": "boolean",
+					"description": "Preference for getting push notification",
+					"default": false
+				},
+				"sms": {
+					"type": "boolean",
+					"description": "Preference for getting sms notification",
+					"default": false
+				},
+				"calendar": {
+					"type": "string",
+					"description": "Optional calendar ID to apply this preferences"
+				},
+				"calendarItem": {
+					"type": "string",
+					"description": "Optional calendar item ID to apply this preferences"
+				}
+			}
+		},
+		"Participation": {
+			"type": "object",
+			"properties": {
+				"identifier": {
+					"type": "string",
+					"description": "Calendar item ID"
+				},
+				"participant": {
+					"type": "string",
+					"description": "User ID with whom to share"
+				},
+				"sharedBy": {
+					"type": "string",
+					"description": "User ID who shares"
+				},
+				"startDate": {
+					"type": "string",
+					"format": "date-time",
+					"description": "Optional start date and time for share"
+				},
+				"endDate": {
+					"type": "string",
+					"format": "date-time",
+					"description": "Optional end date and time for share"
+				},
+				"readOnly": {
+					"type": "boolean",
+					"description": "Specifies if this is read only share",
+					"default": true
+				},
+				"sharedItem": {
+					"type": "object",
+					"description": "Item to be shared. It should be only one item - calendar, calendar group, calendar item, document or list",
+					"properties": {
+						"calendar": {
+							"type": "string",
+							"description": "Optional calendar ID to be shared"
+						},
+						"calendarGroup": {
+							"type": "string",
+							"description": "Optional calendar group ID to be shared"
+						},
+						"calendarItem": {
+							"type": "string",
+							"description": "Optional calendar item ID to be shared"
+						},
+						"document": {
+							"type": "string",
+							"description": "Optional document ID to be shared"
+						},
+						"list": {
+							"type": "string",
+							"description": "Optional list ID to be shared"
+						},
+					}
+				}
+			}
+		},
+		"User": {
+			"type": "object",
+			"properties": {
+				"identifier": {
+					"type": "string",
+					"description": "User ID"
+				},
+				"name": {
+					"type": "string",
+					"description": "User full name"
+				},
+				"email": {
+					"type": "string",
+					"description": "User email"
+				},
+				"phone": {
+					"type": "string",
+					"description": "User phone"
+				},
+				"systemNotificationsEnabled": {
+					"type": "boolean",
+					"description": "Specifies if notifications for some system events enabled by default",
+					"default": true
+				},
+				"calendarNotificationsEnabled": {
+					"type": "boolean",
+					"description": "Specifies if notifications for calendars enabled by default",
+					"default": false
+				},
+				"current": {
+					"type": "boolean",
+					"description": "Specifies if this is current authenticated user",
+				}
+			}
+		},
+		"Error": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"message": {
+					"type": "string"
+				}
+			}
+		},
+		"ArrayOfUsers": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/User"
+			}
+		},
+		"ArrayOfCalendars": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Calendar"
+			}
+		},
+		"ArrayOfCalendarGroups": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/CalendarGroup"
+			}
+		},
+		"ArrayOfCalendarItems": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/CalendarItem"
+			}
+		},
+		"ArrayOfDocuments": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Document"
+			}
+		},
+		"ArrayOfLists": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/List"
+			}
+		},
+		"ArrayOfListItems": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/ListItem"
+			}
+		},
+		"ArrayOfNotificationPreferences": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/NotificationPreference"
+			}
+		},
+		"ArrayOfParticipations": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Participation"
+			}
+		}
+	}
 }
