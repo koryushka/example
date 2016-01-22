@@ -148,10 +148,10 @@
 		},
 		"/users": {
 			"get": {
-				"summary": "All users",
-				"description": "Returns all users",
+				"summary": "Current user friends",
+				"description": "Returns current user and all his friends. Every time someone share to current user, or current user shares to someone - this person automatically goes to friends",
 				"tags": ["Users"]
-			},
+			}
 			"post": {
 				"summary": "Create user",
 				"description": "Creates new user",
@@ -179,14 +179,6 @@
 			"get": {
 				"summary": "User",
 				"description": "Returns user by ID",
-				"tags": ["Users"]
-			}
-		},
-	
-		"/users/me/friends": {
-			"get": {
-				"summary": "Current user friends",
-				"description": "Returns friends of current user. Every time someone share to current user, or current user shares to someone - this person automatically goes to friends",
 				"tags": ["Users"]
 			}
 		},
