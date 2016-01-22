@@ -185,6 +185,20 @@
 			"put": {
 				"summary": "Update current user",
 				"description": "Updates current user information",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/User"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Users"]
 			},
 			"delete": {
@@ -269,6 +283,20 @@
 			"put": {
 				"summary": "Update calendar group",
 				"description": "Updates calendar group information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/CalendarGroup"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendar Groups", "Calendars"]
 			},
 			"delete": {
@@ -332,6 +360,20 @@
 			"put": {
 				"summary": "Update calendar",
 				"description": "Updates calendar information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/Calendar"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendars"]
 			},
 			"delete": {
@@ -395,6 +437,20 @@
 			"put": {
 				"summary": "Update calendar item",
 				"description": "Updates calendar item information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/CalendarItem"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendar Items", "Calendars"]
 			},
 			"delete": {
@@ -458,6 +514,20 @@
 			"put": {
 				"summary": "Update document",
 				"description": "Updates document information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/Document"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Documents"]
 			},
 			"delete": {
@@ -521,6 +591,20 @@
 			"put": {
 				"summary": "Update list",
 				"description": "Updates list information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/List"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Lists"]
 			},
 			"delete": {
@@ -584,6 +668,20 @@
 			"put": {
 				"summary": "Update list item",
 				"description": "Updates list item information by list ID and item ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/ListItem"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["List Items", "Lists"]
 			},
 			"delete": {
@@ -647,6 +745,20 @@
 			"put": {
 				"summary": "Update notification preference",
 				"description": "Updates notification preference by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/NotificationPreference"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Notifications", "Calendars", "Calendar Items"]
 			},
 			"delete": {
@@ -710,6 +822,20 @@
 			"put": {
 				"summary": "Update participation",
 				"description": "Updates participation information by ID",
+				"responses": {
+					"201": {
+						"description" : "Updated",
+						"schema" : {
+							"$ref" : "#/definitions/Participation"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Participations"]
 			},
 			"delete": {
