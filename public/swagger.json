@@ -122,36 +122,26 @@
 				"tags": ["Auth"]
 			}
 		},
-		"/notification_prefs": {
-			"get": {
-				"summary": "Current user notification preferences",
-				"description": "Returns all notification preferences created by current user",
-				"tags": ["Notifications", "Calendars", "Calendar Items"]
-			},
-			"post": {
-				"summary": "Create notification preference",
-				"description": "Creates new notification preference",
-				"tags": ["Notifications", "Calendars", "Calendar Items"]
-			}
-		},
-		"/notification_prefs/{pref-id}": {
-			"put": {
-				"summary": "Update notification preference",
-				"description": "Updates notification preference by ID",
-				"tags": ["Notifications", "Calendars", "Calendar Items"]
-			},
-			"delete": {
-				"summary": "Delete notification preference",
-				"description": "Deletes notification preference by ID",
-				"tags": ["Notifications", "Calendars", "Calendar Items"]
-			}
-		},
 		"/users": {
 			"get": {
 				"summary": "Current user friends",
 				"description": "Returns current user and all his friends. Every time someone share to current user, or current user shares to someone - this person automatically goes to friends",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfUsers"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Users"]
-			}
+			},
 			"post": {
 				"summary": "Create user",
 				"description": "Creates new user",
@@ -162,6 +152,20 @@
 			"get": {
 				"summary": "Current user",
 				"description": "Returns current user",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/User"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Users"]
 			},
 			"put": {
@@ -179,6 +183,20 @@
 			"get": {
 				"summary": "User",
 				"description": "Returns user by ID",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/User"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Users"]
 			}
 		},
@@ -186,6 +204,20 @@
 			"get": {
 				"summary": "Current user calendar groups",
 				"description": "Returns all calendar groups created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfCalendarGroups"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendar Groups", "Calendars"]
 			},
 			"post": {
@@ -210,6 +242,20 @@
 			"get": {
 				"summary": "Current user calendars",
 				"description": "Returns all calendars created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfCalendars"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendars"]
 			},
 			"post": {
@@ -234,6 +280,20 @@
 			"get": {
 				"summary": "Current user calendar items",
 				"description": "Returns all calendar items created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfCalendarItems"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendar Items", "Calendars"]
 			},
 			"post": {
@@ -258,6 +318,20 @@
 			"get": {
 				"summary": "Current user documents",
 				"description": "Returns all documents created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfDocuments"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Documents"]
 			},
 			"post": {
@@ -282,6 +356,20 @@
 			"get": {
 				"summary": "Current user lists",
 				"description": "Returns all lists created by current user or shared with him",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfLists"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Lists"]
 			},
 			"post": {
@@ -306,6 +394,20 @@
 			"get": {
 				"summary": "List items",
 				"description": "Returns all items in specific list by list ID",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfListItems"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["List Items", "Lists"]
 			},
 			"post": {
@@ -326,10 +428,62 @@
 				"tags": ["List Items", "Lists"]
 			}
 		},
+		"/notification_prefs": {
+			"get": {
+				"summary": "Current user notification preferences",
+				"description": "Returns all notification preferences created by current user",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfNotificationPreferences"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
+				"tags": ["Notifications", "Calendars", "Calendar Items"]
+			},
+			"post": {
+				"summary": "Create notification preference",
+				"description": "Creates new notification preference",
+				"tags": ["Notifications", "Calendars", "Calendar Items"]
+			}
+		},
+		"/notification_prefs/{pref-id}": {
+			"put": {
+				"summary": "Update notification preference",
+				"description": "Updates notification preference by ID",
+				"tags": ["Notifications", "Calendars", "Calendar Items"]
+			},
+			"delete": {
+				"summary": "Delete notification preference",
+				"description": "Deletes notification preference by ID",
+				"tags": ["Notifications", "Calendars", "Calendar Items"]
+			}
+		},
 		"/participations": {
 			"get": {
 				"summary": "Current user participations",
 				"description": "Returns all shareable items (calendar group, calendar, calendar item, document or list) shared BY current user",
+				"responses": {
+					"200": {
+						"description" : "OK",
+						"schema" : {
+							"$ref" : "#/definitions/ArrayOfParticipations"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Participations"]
 			},
 			"post": {
@@ -762,10 +916,61 @@
 				},
 				"message": {
 					"type": "string"
-				},
-				"fields": {
-					"type": "string"
 				}
+			}
+		},
+		"ArrayOfUsers": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/User"
+			}
+		},
+		"ArrayOfCalendars": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Calendar"
+			}
+		},
+		"ArrayOfCalendarGroups": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/CalendarGroup"
+			}
+		},
+		"ArrayOfCalendarItems": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/CalendarItem"
+			}
+		},
+		"ArrayOfDocuments": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Document"
+			}
+		},
+		"ArrayOfLists": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/List"
+			}
+		},
+		"ArrayOfListItems": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/ListItem"
+			}
+		},
+		"ArrayOfNotificationPreferences": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/NotificationPreference"
+			}
+		},
+		"ArrayOfParticipations": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Participation"
 			}
 		}
 	}
