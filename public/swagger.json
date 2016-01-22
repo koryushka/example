@@ -145,6 +145,20 @@
 			"post": {
 				"summary": "Create user",
 				"description": "Creates new user",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/User"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Users"]
 			}
 		},
@@ -223,6 +237,20 @@
 			"post": {
 				"summary": "Create calendar group",
 				"description": "Creates new calendar group",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/CalendarGroup"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendar Groups", "Calendars"]
 			}
 		},
@@ -261,6 +289,20 @@
 			"post": {
 				"summary": "Create calendar",
 				"description": "Creates new calendar",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/Calendar"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendars"]
 			}
 		},
@@ -299,6 +341,20 @@
 			"post": {
 				"summary": "Create calendar item",
 				"description": "Creates new calendar item",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/CalendarItem"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Calendar Items", "Calendars"]
 			}
 		},
@@ -337,6 +393,20 @@
 			"post": {
 				"summary": "Create document",
 				"description": "Creates new document",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/Document"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Documents"]
 			}
 		},
@@ -375,6 +445,20 @@
 			"post": {
 				"summary": "Create list",
 				"description": "Creates new list",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/List"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Lists"]
 			}
 		},
@@ -413,6 +497,20 @@
 			"post": {
 				"summary": "Create list item",
 				"description": "Creates new list item in specific list by list ID",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/ListItem"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["List Items", "Lists"]
 			}
 		},
@@ -451,6 +549,20 @@
 			"post": {
 				"summary": "Create notification preference",
 				"description": "Creates new notification preference",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/NotificationPreference"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Notifications", "Calendars", "Calendar Items"]
 			}
 		},
@@ -489,6 +601,20 @@
 			"post": {
 				"summary": "Create participation",
 				"description": "Share some shareable item (calendar group, calendar, calendar item, document or list) with friend",
+				"responses": {
+					"201": {
+						"description" : "Created",
+						"schema" : {
+							"$ref" : "#/definitions/Participation"
+						}
+					},
+					"default": {
+						"description" : "Unexpected error",
+						"schema" : {
+							"$ref" : "#/definitions/Error"
+						}
+					}
+				},
 				"tags": ["Participations"]
 			}
 		},
