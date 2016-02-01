@@ -1,4 +1,7 @@
 class User < ActiveRecord::Base
+  has_many :calendars
+  has_many :calendar_items
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,

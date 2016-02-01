@@ -10,6 +10,9 @@ Rails.application.routes.draw do
       mount_devise_token_auth_for 'User', at: 'auth'
       #resources :users
       get 'users/me' => 'users/me'
+
+      resources :calendars, only: [:index]
+      resources :calendar_items, only: [:index]
     end
   end
 end
