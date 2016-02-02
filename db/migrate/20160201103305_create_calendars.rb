@@ -4,7 +4,6 @@ class CreateCalendars < ActiveRecord::Migration
       t.string :title, null: false, limit: 128
       t.integer :user_id, null: false
       t.string :hex_color, null: false, default: '', limit: 6
-      t.boolean :read_only, null: false, default: false
       t.boolean :main, null: false, default: false
       t.integer :kind, null: false, default: 0
       t.boolean :visible, null: false, default: true

@@ -6,7 +6,6 @@ class CreateCalendarItems < ActiveRecord::Migration
       t.datetime :start_date
       t.datetime :end_date
       t.string :notes, null: false, default: '', limit: 2048
-      t.boolean :read_only, null: false, default: false
       t.string :timezone
       t.integer :kind, null: false, default: 0
       t.float :latitude
