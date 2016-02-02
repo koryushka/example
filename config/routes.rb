@@ -11,8 +11,8 @@ Rails.application.routes.draw do
       #resources :users
       get 'users/me' => 'users/me'
 
-      resources :calendars, only: [:index]
-      resources :calendar_items, only: [:index]
+      resources :calendars
+      resources :calendar_items
     end
   end
 end
