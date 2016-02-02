@@ -21,7 +21,7 @@ class Api::V1::CalendarsController < ApiController
       return render json: { validation_errors: @calendar_item.errors.messages }, status: :bad_request
     end
 
-    render partial: 'calendar', locals: { calendar: @calendar_item }
+    render partial: 'calendar', locals: { calendar: @calendar_item }, status: :created
   end
 
   def update

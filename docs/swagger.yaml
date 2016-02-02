@@ -13,17 +13,22 @@ paths:
   /auth:
     post:
       summary: Registers user
-      description: 'Email registration. Requires email, password, and password_confirmation params. A verification email will be sent to the email address provided.'
+      description: Email registration. Requires email, password, and password_confirmation params. A verification email will be sent to the email address provided.
+      parameters:
+        - name: registration_data
+          in: body
+          schema:
+            $ref: '#/definitions/RegistrationData'
       responses:
         '200':
           description: OK
         '403':
-          description: 'redurect_url is missing or not allowed, or user creation error'
+          description: redurect_url is missing or not allowed, or user creation error
       tags:
         - Auth
     put:
       summary: Updates user
-      description: "This method will update an existing user's account settings."
+      description: This method will update an existing user's account settings.
       responses:
         '200':
           description: OK
@@ -47,6 +52,11 @@ paths:
     post:
       summary: Authenticates user
       description: Email authentication. Requires email and password as params. This method will return a JSON representation of the User model on successful login along with the access-token and client in the header of the response.
+      parameters:
+        - name: credentials
+          in: body
+          schema:
+            $ref: '#/definitions/SignInCredentials'
       responses:
         '200':
           description: OK
@@ -68,7 +78,7 @@ paths:
   /auth/password:
     post:
       summary: "Resets user's password"
-      description: Use this method to send a password reset confirmation email to users that registered by email. Accepts email and redirect_url as params. The user matching the email param will be sent instructions on how to reset their password. redirect_url is the url to which the user will be redirected after visiting the link contained in the email.
+      description: Use this method for sending a password reset confirmation email to users that registered by email. Accepts email and redirect_url as params. The user matching the email param will be sent instructions on how to reset their password. redirect_url is the url to which the user will be redirected after visiting the link contained in the email.
       responses:
         '200':
           description: OK
@@ -249,6 +259,12 @@ paths:
     post:
       summary: Create calendar
       description: Creates new calendar
+      parameters:
+        - name: calendar
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalendarInput'
       responses:
         '201':
           description: Created
@@ -264,11 +280,17 @@ paths:
     put:
       summary: Update calendar
       description: Updates calendar information by ID
+      parameters:
+        - name: calendar
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalendarInput'
       responses:
         '201':
           description: Updated
           schema:
-            $ref: '#/definitions/Calendar'
+            $ref: '#/definitions/CalendarInput'
         default:
           description: Unexpected error
           schema:
@@ -305,6 +327,12 @@ paths:
     post:
       summary: Create calendar item
       description: Creates new calendar item
+      parameters:
+        - name: calendar_item
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalendarItemInput'
       responses:
         '201':
           description: Created
@@ -320,6 +348,12 @@ paths:
     put:
       summary: Update calendar item
       description: Updates calendar item information by ID
+      parameters:
+        - name: calendar_item
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalendarItemInput'
       responses:
         '201':
           description: Updated
@@ -636,6 +670,25 @@ paths:
       tags:
         - Participations
 definitions:
+  RegistrationData:
+    type: object
+    properties:
+      email:
+        type: string
+        description: Email of registered user
+      password:
+        type: string
+      password_confirmation:
+        type: string
+        description: Must be the same as password
+  SignInCredentials:
+    type: object
+    properties:
+      email:
+        type: string
+        description: Email of registered user
+      password:
+        type: string
   Calendar:
     type: object
     properties:
@@ -655,7 +708,33 @@ definitions:
         type: boolean
         description: Specifies is it default Curago calendar for user or not
         default: false
-      readOnly:
+      read_only:
+        type: boolean
+        description: Specifies if calendar read only or not
+        default: false
+      kind:
+        type: integer
+        format: int16
+        description: Enumeration specifies the type of calendar
+        default: 0
+      visible:
+        type: boolean
+        description: Specifies if calendar visible in UI
+        default: true
+  CalendarInput:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Calendar title
+      hex_color:
+        type: string
+        description: Calendar color in hex string
+      main:
+        type: boolean
+        description: Specifies is it default Curago calendar for user or not
+        default: false
+      read_only:
         type: boolean
         description: Specifies if calendar read only or not
         default: false
@@ -772,6 +851,46 @@ definitions:
             default: 0
             minimum: 0
             maximum: 3
+  CalendarItemInput:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Calendar item title
+      start_date:
+        type: string
+        format: date-time
+        description: Start date and time for calendar item
+      end_date:
+        type: string
+        format: date-time
+        description: End date and time for calendar item
+      notes:
+        type: string
+        description: Additional notes
+      read_only:
+        type: boolean
+        description: Specifies if calendar item read only or not
+        default: false
+      timezone:
+        type: string
+        description: Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter
+      kind:
+        type: integer
+        format: int16
+        description: Enumeration specifies the type of calendar item
+        default: 0
+      lattitude:
+        type: number
+        format: double
+        description: Location lattitude
+      longitude:
+        type: number
+        format: double
+        description: Location longitude
+      location_name:
+        type: string
+        description: 'Location name. It might be city name, neighborhood name or anything else'
   Document:
     type: object
     properties:
