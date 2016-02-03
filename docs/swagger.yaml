@@ -253,7 +253,7 @@ paths:
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendars
     post:
@@ -273,7 +273,7 @@ paths:
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendars
   /calendars/:id:
@@ -321,7 +321,7 @@ paths:
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendar Items
     post:
@@ -341,7 +341,7 @@ paths:
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendar Items
   /calendar_items/:id:
@@ -362,7 +362,7 @@ paths:
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendar Items
     delete:
@@ -374,7 +374,7 @@ paths:
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendar Items
   /documents:
@@ -1060,6 +1060,33 @@ definitions:
         format: int32
       message:
         type: string
+  ValidationError:
+    type: object
+    description: >
+      Name of this field will be the same as the name of model field which has validation errors.
+      For example, we have model with invalid email field. In this case we have following error object:
+      "validation_errors": {
+        "email": [
+            "Email address is invalid"
+        ]
+      }
+    properties:
+      error_field_name:
+        type: array
+        items:
+          type: string
+  ErrorsContainer:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/Error'
+      validation_errors:
+        type: array
+        description: This field may be ommited in case when there are no validation errors.
+        items:
+          $ref: '#/definitions/ValidationError'
   ArrayOfUsers:
     type: array
     items:

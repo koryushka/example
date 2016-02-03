@@ -382,7 +382,7 @@
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -413,7 +413,7 @@
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -487,7 +487,7 @@
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -518,7 +518,7 @@
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -551,7 +551,7 @@
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -569,7 +569,7 @@
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -1535,6 +1535,36 @@
                 },
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "ValidationError": {
+            "type": "object",
+            "description": "Name of this field will be the same as the name of model field which has validation errors. For example, we have model with invalid email field. In this case we have following error object: \"validation_errors\": {\n  \"email\": [\n      \"Email address is invalid\"\n  ]\n}\n",
+            "properties": {
+                "error_field_name": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "ErrorsContainer": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Error"
+                    }
+                },
+                "validation_errors": {
+                    "type": "array",
+                    "description": "This field may be ommited in case when there are no validation errors.",
+                    "items": {
+                        "$ref": "#/definitions/ValidationError"
+                    }
                 }
             }
         },

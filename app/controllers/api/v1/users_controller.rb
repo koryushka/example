@@ -1,8 +1,8 @@
 class Api::V1::UsersController < ApiController
-  before_filter :authenticate_api_v1_user!, only: [:show, :me]
+  #before_filter :authenticate_api_v1_user!, only: [:show, :me]
 
   def me
-    @user = current_user
+    @user = tmp_user
     render json: {user: 'me'}
   end
 

@@ -1,9 +1,9 @@
 class Api::V1::CalendarsController < ApiController
-  before_filter :authenticate_api_v1_user!
+  #before_filter :authenticate_api_v1_user!
   before_filter :find_calendar, except: [:index, :create]
 
   def index
-    @calendars = current_api_v1_user.calendars
+    @calendars = tmp_user.calendars
   end
 
   def show
@@ -12,7 +12,7 @@ class Api::V1::CalendarsController < ApiController
 
   def create
     @calendar_item = Calendar.new(calendar_params)
-    @calendar_item.user = current_api_v1_user
+    @calendar_item.user = tmp_user
     if @calendar_item.valid?
       unless @calendar_item.save!
         return render nothing: true, status: :internal_server_error

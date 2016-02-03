@@ -1,9 +1,9 @@
 class Api::V1::CalendarItemsController < ApiController
-  before_filter :authenticate_api_v1_user!
+  #before_filter :authenticate_api_v1_user!
   before_filter :find_calendar_item, except: [:index, :create]
 
   def index
-    @calendar_items = current_api_v1_user.calendar_items
+    @calendar_items = tmp_user.calendar_items
   end
 
   def show
@@ -12,7 +12,7 @@ class Api::V1::CalendarItemsController < ApiController
 
   def create
     @calendar_item = CalendarItem.new(calendar_item_params)
-    @calendar_item.user = current_api_v1_user
+    @calendar_item.user = tmp_user
     if @calendar_item.valid?
       unless @calendar_item.save!
         return render nothing: true, status: :internal_server_error
@@ -45,7 +45,7 @@ class Api::V1::CalendarItemsController < ApiController
 
 private
   def calendar_item_params
-    params.permit(:title, :start_date, :end_date, :notes, :read_only, :kind, :latitude, :longitude, :location_name)
+    params.permit(:title, :start_date, :end_date, :notes, :kind, :latitude, :longitude, :location_name)
   end
 
   def find_calendar_item
