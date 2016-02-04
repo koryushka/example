@@ -266,10 +266,14 @@ paths:
           schema:
             $ref: '#/definitions/CalendarInput'
       responses:
-        '201':
+        201:
           description: Created
           schema:
             $ref: '#/definitions/Calendar'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
@@ -287,10 +291,14 @@ paths:
           schema:
             $ref: '#/definitions/CalendarInput'
       responses:
-        '201':
+        201:
           description: Updated
           schema:
             $ref: '#/definitions/CalendarInput'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
@@ -314,7 +322,7 @@ paths:
       summary: Current user calendar items
       description: Returns all calendar items created by current user or shared with him
       responses:
-        '200':
+        200:
           description: OK
           schema:
             $ref: '#/definitions/ArrayOfCalendarItems'
@@ -334,10 +342,14 @@ paths:
           schema:
             $ref: '#/definitions/CalendarItemInput'
       responses:
-        '201':
+        201:
           description: Created
           schema:
             $ref: '#/definitions/CalendarItem'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
@@ -355,10 +367,14 @@ paths:
           schema:
             $ref: '#/definitions/CalendarItemInput'
       responses:
-        '201':
+        201:
           description: Updated
           schema:
             $ref: '#/definitions/CalendarItem'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
@@ -1082,9 +1098,11 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Error'
+  ValidationErrorsContainer:
+    type: object
+    properties:
       validation_errors:
         type: array
-        description: This field may be ommited in case when there are no validation errors.
         items:
           $ref: '#/definitions/ValidationError'
   ArrayOfUsers:

@@ -410,6 +410,12 @@
                             "$ref": "#/definitions/Calendar"
                         }
                     },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
+                        }
+                    },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
@@ -441,6 +447,12 @@
                         "description": "Updated",
                         "schema": {
                             "$ref": "#/definitions/CalendarInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
                         }
                     },
                     "default": {
@@ -515,6 +527,12 @@
                             "$ref": "#/definitions/CalendarItem"
                         }
                     },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
+                        }
+                    },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
@@ -546,6 +564,12 @@
                         "description": "Updated",
                         "schema": {
                             "$ref": "#/definitions/CalendarItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
                         }
                     },
                     "default": {
@@ -1558,10 +1582,14 @@
                     "items": {
                         "$ref": "#/definitions/Error"
                     }
-                },
+                }
+            }
+        },
+        "ValidationErrorsContainer": {
+            "type": "object",
+            "properties": {
                 "validation_errors": {
                     "type": "array",
-                    "description": "This field may be ommited in case when there are no validation errors.",
                     "items": {
                         "$ref": "#/definitions/ValidationError"
                     }
