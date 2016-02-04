@@ -7,39 +7,40 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def show
-    render partial: 'calendar', locals: { calendar: @calendar_item }
+    render partial: 'calendar', locals: { calendar: @calendar }
   end
 
   def create
-    @calendar_item = Calendar.new(calendar_params)
-    @calendar_item.user = tmp_user
-    if @calendar_item.valid?
-      unless @calendar_item.save!
+    @calendar = Calendar.new(calendar_params)
+    @calendar.user = tmp_user
+    @calendar.notifications_preference = NotificationsPreference.new
+    if @calendar.valid?
+      unless @calendar.save!
         return render nothing: true, status: :internal_server_error
       end
     else
-      return render json: { validation_errors: @calendar_item.errors.messages }, status: :bad_request
+      return render json: { validation_errors: @calendar.errors.messages }, status: :bad_request
     end
 
-    render partial: 'calendar', locals: { calendar: @calendar_item }, status: :created
+    render partial: 'calendar', locals: { calendar: @calendar }, status: :created
   end
 
   def update
-    @calendar_item.assign_attributes(calendar_params)
+    @calendar.assign_attributes(calendar_params)
 
-    if @calendar_item.valid?
-      unless @calendar_item.save!
+    if @calendar.valid?
+      unless @calendar.save!
         return render nothing: true, status: :internal_server_error
       end
     else
-      return render json: { validation_errors: @calendar_item.errors.messages }, status: :bad_request
+      return render json: { validation_errors: @calendar.errors.messages }, status: :bad_request
     end
 
-    render partial: 'calendar', locals: { calendar: @calendar_item }
+    render partial: 'calendar', locals: { calendar: @calendar }
   end
 
   def destroy
-    @calendar_item.destroy
+    @calendar.destroy
     render nothing: true, status: :no_content
   end
 
@@ -50,7 +51,7 @@ class Api::V1::CalendarsController < ApiController
 
   def find_calendar
     calendar_id = params[:id]
-    @calendar_item = Calendar.find_by(id: calendar_id)
+    @calendar = Calendar.find_by(id: calendar_id)
 
     if @calendar.nil?
       render nothing: true, status: :not_found

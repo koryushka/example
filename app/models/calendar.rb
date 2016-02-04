@@ -1,6 +1,7 @@
 class Calendar < ActiveRecord::Base
   belongs_to :user
   has_many :calendar_items
+  belongs_to :notifications_preference
 
   validates :title, length: {maximum: 128}, presence: true
   validates :hex_color, length: {maximum: 6}
