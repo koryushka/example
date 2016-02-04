@@ -16,16 +16,12 @@ gem 'devise'
 gem 'devise_token_auth', '0.1.37.beta4'
 
 gem 'validates_email_format_of'
-
-# Use Unicorn as the app server
-# gem 'unicorn'
-
-# Use Capistrano for deployment
-gem 'capistrano-rails', group: :development
+gem 'date_validator'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
+# Use Capistrano for deployment
 group :development do
   gem 'capistrano'
   gem 'capistrano-rails'

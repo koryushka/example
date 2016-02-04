@@ -40,7 +40,7 @@ class Api::V1::CalendarsController < ApiController
 
   def destroy
     @calendar_item.destroy
-    render nothing: true
+    render nothing: true, status: :no_content
   end
 
   private
