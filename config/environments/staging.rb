@@ -68,4 +68,11 @@ Rails.application.configure do
   Devise.setup do |config|
     config.secret_key = '00889083261c354cc2e8106daaeff0cb10e02137cf087f76f6177adf44399fb6b2ed43c3b865ca8af0de4b37cfef5357b24980e11ee2cb1ed7e3541764319c70'
   end
+
+  config.middleware.insert_before 0, 'Rack::Cors' do
+    allow do
+      origins '*'
+      resource '*', :headers => :any, :methods => [:get, :post, :options, :put, :delete]
+    end
+  end
 end
