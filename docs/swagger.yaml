@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Curago API
   description: API documentation for Curago
-  version: 1.0.1
+  version: 1.0.2
 host: api.curagolife.com
 schemes:
   - https
@@ -185,7 +185,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Users
-  /calendar_groups:
+  /calendars_groups:
     get:
       summary: Current user calendar groups
       description: Returns all calendar groups created by current user or shared with him
@@ -203,42 +203,73 @@ paths:
     post:
       summary: Create calendar group
       description: Creates new calendar group
+      parameters:
+        - name: calendars_group
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalendarsGroupInput'
       responses:
-        '201':
+        201:
           description: Created
           schema:
-            $ref: '#/definitions/CalendarGroup'
+            $ref: '#/definitions/CalendarsGroup'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendar Groups
-  /calendar_groups/:id:
+  /calendars_groups/:id:
     put:
       summary: Update calendar group
       description: Updates calendar group information by ID
+      parameters:
+        - name: id
+          description: Calendars group ID
+          in: query
+          required: true
+          type: integer
+        - name: calendars_group
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalendarsGroupInput'
       responses:
-        '201':
+        201:
           description: Updated
           schema:
-            $ref: '#/definitions/CalendarGroup'
+            $ref: '#/definitions/CalendarsGroup'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendar Groups
     delete:
       summary: Delete calendar group
       description: Deletes calendar group by ID
+      parameters:
+        - name: id
+          description: Calendars group ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '204':
+        204:
           description: Deleted
         default:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendar Groups
   /calendars:
@@ -285,6 +316,11 @@ paths:
       summary: Update calendar
       description: Updates calendar information by ID
       parameters:
+        - name: id
+          description: Calendar ID
+          in: query
+          required: true
+          type: integer
         - name: calendar
           in: body
           required: true
@@ -308,6 +344,12 @@ paths:
     delete:
       summary: Delete calendar
       description: Deletes calendar by ID
+      parameters:
+        - name: id
+          description: Calendars ID
+          in: query
+          required: true
+          type: integer
       responses:
         '204':
           description: Deleted
@@ -763,18 +805,21 @@ definitions:
         type: boolean
         description: Specifies if calendar visible in UI
         default: true
-  CalendarGroup:
+  CalendarsGroup:
     type: object
     properties:
-      identifier:
-        type: string
+      id:
+        type: integer
         description: Calendar group ID
       title:
         type: string
         description: Calendar group title
-      creator:
+  CalendarsGroupInput:
+    type: object
+    properties:
+      title:
         type: string
-        description: User ID who created this calendar group
+        description: Calendar group title
   CalendarItem:
     type: object
     properties:
@@ -1116,7 +1161,7 @@ definitions:
   ArrayOfCalendarGroups:
     type: array
     items:
-      $ref: '#/definitions/CalendarGroup'
+      $ref: '#/definitions/CalendarsGroup'
   ArrayOfCalendarItems:
     type: array
     items:

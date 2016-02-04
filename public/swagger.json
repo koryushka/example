@@ -3,7 +3,7 @@
     "info": {
         "title": "Curago API",
         "description": "API documentation for Curago",
-        "version": "1.0.1"
+        "version": "1.0.2"
     },
     "host": "api.curagolife.com",
     "schemes": [
@@ -283,7 +283,7 @@
                 ]
             }
         },
-        "/calendar_groups": {
+        "/calendars_groups": {
             "get": {
                 "summary": "Current user calendar groups",
                 "description": "Returns all calendar groups created by current user or shared with him",
@@ -308,17 +308,33 @@
             "post": {
                 "summary": "Create calendar group",
                 "description": "Creates new calendar group",
+                "parameters": [
+                    {
+                        "name": "calendars_group",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CalendarsGroupInput"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/CalendarGroup"
+                            "$ref": "#/definitions/CalendarsGroup"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
                         }
                     },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -327,21 +343,44 @@
                 ]
             }
         },
-        "/calendar_groups/:id": {
+        "/calendars_groups/:id": {
             "put": {
                 "summary": "Update calendar group",
                 "description": "Updates calendar group information by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars group ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "calendars_group",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CalendarsGroupInput"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Updated",
                         "schema": {
-                            "$ref": "#/definitions/CalendarGroup"
+                            "$ref": "#/definitions/CalendarsGroup"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
                         }
                     },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -352,6 +391,15 @@
             "delete": {
                 "summary": "Delete calendar group",
                 "description": "Deletes calendar group by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars group ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -359,7 +407,7 @@
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -434,6 +482,13 @@
                 "description": "Updates calendar information by ID",
                 "parameters": [
                     {
+                        "name": "id",
+                        "description": "Calendar ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
                         "name": "calendar",
                         "in": "body",
                         "required": true,
@@ -469,6 +524,15 @@
             "delete": {
                 "summary": "Delete calendar",
                 "description": "Deletes calendar by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -1145,20 +1209,25 @@
                 }
             }
         },
-        "CalendarGroup": {
+        "CalendarsGroup": {
             "type": "object",
             "properties": {
-                "identifier": {
-                    "type": "string",
+                "id": {
+                    "type": "integer",
                     "description": "Calendar group ID"
                 },
                 "title": {
                     "type": "string",
                     "description": "Calendar group title"
-                },
-                "creator": {
+                }
+            }
+        },
+        "CalendarsGroupInput": {
+            "type": "object",
+            "properties": {
+                "title": {
                     "type": "string",
-                    "description": "User ID who created this calendar group"
+                    "description": "Calendar group title"
                 }
             }
         },
@@ -1611,7 +1680,7 @@
         "ArrayOfCalendarGroups": {
             "type": "array",
             "items": {
-                "$ref": "#/definitions/CalendarGroup"
+                "$ref": "#/definitions/CalendarsGroup"
             }
         },
         "ArrayOfCalendarItems": {
