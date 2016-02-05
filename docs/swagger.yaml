@@ -312,6 +312,19 @@ paths:
       tags:
         - Calendars
   /calendars/:id:
+    get:
+      summary: Returns single calendar by its ID
+      parameters:
+        - name: id
+          description: Calendar ID
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Calendar object
+          schema:
+            $ref: '#/definitions/Calendar'
     put:
       summary: Update calendar
       description: Updates calendar information by ID
@@ -330,7 +343,7 @@ paths:
         201:
           description: Updated
           schema:
-            $ref: '#/definitions/CalendarInput'
+            $ref: '#/definitions/Calendar'
         400:
           description: Validation errors
           schema:
@@ -399,6 +412,19 @@ paths:
       tags:
         - Calendar Items
   /calendar_items/:id:
+    get:
+      summary: Returns single calendar item by its ID
+      parameters:
+        - name: id
+          description: Calendar item ID
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Calendar item object
+          schema:
+            $ref: '#/definitions/CalendarItem'
     put:
       summary: Update calendar item
       description: Updates calendar item information by ID
@@ -843,10 +869,6 @@ definitions:
       notes:
         type: string
         description: Additional notes
-      read_only:
-        type: boolean
-        description: Specifies if calendar item read only or not
-        default: false
       timezone:
         type: string
         description: Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter
@@ -929,10 +951,6 @@ definitions:
       notes:
         type: string
         description: Additional notes
-      read_only:
-        type: boolean
-        description: Specifies if calendar item read only or not
-        default: false
       timezone:
         type: string
         description: Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter
