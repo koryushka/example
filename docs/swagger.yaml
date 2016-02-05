@@ -522,7 +522,7 @@ paths:
       summary: Current user lists
       description: Returns all lists created by current user or shared with him
       responses:
-        '200':
+        200:
           description: OK
           schema:
             $ref: '#/definitions/ArrayOfLists'
@@ -535,9 +535,46 @@ paths:
     post:
       summary: Create list
       description: Creates new list
+      parameters:
+        - name: id
+          description: List ID
+          in: query
+          required: true
+          type: integer
+        - name: list
+          description: List object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListInput'
       responses:
-        '201':
+        201:
           description: Created
+          schema:
+            $ref: '#/definitions/List'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Lists
+  /lists/:id:
+    get:
+      summary: Returns list
+      description: Returns single list by its ID
+      parameters:
+        - name: id
+          description: List ID
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Singel list
           schema:
             $ref: '#/definitions/List'
         default:
@@ -546,15 +583,30 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Lists
-  /lists/:id:
     put:
       summary: Update list
       description: Updates list information by ID
+      parameters:
+        - name: id
+          description: List ID
+          in: query
+          required: true
+          type: integer
+        - name: list
+          description: List object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListInput'
       responses:
-        '201':
+        201:
           description: Updated
           schema:
             $ref: '#/definitions/List'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
@@ -565,7 +617,7 @@ paths:
       summary: Delete list
       description: Deletes list by ID
       responses:
-        '204':
+        204:
           description: Deleted
         default:
           description: Unexpected error
@@ -578,7 +630,7 @@ paths:
       summary: List items
       description: Returns all items in specific list by list ID
       responses:
-        '200':
+        200:
           description: OK
           schema:
             $ref: '#/definitions/ArrayOfListItems'
@@ -588,29 +640,49 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - List Items
-        - Lists
     post:
       summary: Create list item
       description: Creates new list item in specific list by list ID
+      parameters:
+        - name: id
+          description: List ID
+          in: query
+          required: true
+          type: integer
+        - name: list_item
+          description: List item object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListItemInput'
       responses:
-        '201':
+        201:
           description: Created
           schema:
             $ref: '#/definitions/ListItem'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
       tags:
         - List Items
-        - Lists
-  /lists/:id/items/:id:
-    put:
-      summary: Update list item
-      description: Updates list item information by list ID and item ID
+  /list_items/:id:
+    get:
+      summary: Returns list item
+      description: Returns single list item by its ID
+      parameters:
+        - name: id
+          description: List ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '201':
-          description: Updated
+        200:
+          description: Singel list item
           schema:
             $ref: '#/definitions/ListItem'
         default:
@@ -619,10 +691,39 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - List Items
-        - Lists
+    put:
+      summary: Update list item
+      description: Updates list item information by list ID and item ID
+      parameters:
+        - name: id
+          description: List item ID
+          in: query
+          required: true
+          type: integer
+        - name: list_item
+          description: List item object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListItemInput'
+      responses:
+        201:
+          description: Updated
+          schema:
+            $ref: '#/definitions/ListItem'
+        400:
+          description: Validation errors
+          schema:
+            $ref: '#/definitions/ValidationErrorsContainer'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - List Items
     delete:
       summary: Delete list item
-      description: Deletes list item by list ID and item ID
+      description: Deletes list item by ID
       responses:
         '204':
           description: Deleted
@@ -632,7 +733,6 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - List Items
-        - Lists
   /notification_prefs:
     get:
       summary: Current user notification preferences
@@ -994,42 +1094,36 @@ definitions:
       tags:
         type: string
         description: Comma separated tags
+  ListInput:
+    type: object
+    properties:
+      title:
+        type: string
+        description: List title
+      notes:
+        type: string
+        description: Additional notes
   List:
     type: object
     properties:
-      identifier:
-        type: string
+      id:
+        type: integer
         description: List ID
       title:
         type: string
         description: List title
-      creator:
-        type: string
+      user_id:
+        type: integer
         description: User ID who created this list
       notes:
         type: string
         description: Additional notes
-      private:
-        type: boolean
-        description: Specifies visibility of list to anyone else
-        default: false
-      listItems:
-        type: array
-        description: Associated lists items
-        items:
-          $ref: '#/definitions/ListItem'
-  ListItem:
+  ListItemInput:
     type: object
     properties:
-      identifier:
-        type: string
-        description: List item ID
       title:
         type: string
         description: List item title
-      creator:
-        type: string
-        description: User ID who created this list item
       notes:
         type: string
         description: Additional notes
@@ -1038,9 +1132,23 @@ definitions:
         format: int16
         description: Sorting order for item in the list
         default: 0
-      list:
+  ListItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: List item ID
+      title:
         type: string
-        description: Parent list ID
+        description: List item title
+      notes:
+        type: string
+        description: Additional notes
+      order:
+        type: integer
+        format: int16
+        description: Sorting order for item in the list
+        default: 0
   NotificationPreference:
     type: object
     properties:

@@ -11,9 +11,13 @@ Rails.application.routes.draw do
       #resources :users
       get 'users/me' => 'users/me'
 
-      resources :calendars, except: [:edit]
-      resources :calendar_items, except: [:edit]
-      resources :calendars_groups, except: [:edit]
+      resources :calendars, except: [:edit, :new]
+      resources :calendar_items, except: [:edit, :new]
+      resources :calendars_groups, except: [:edit, :new]
+      resources :lists, except: [:edit, :new] do
+        resources :list_items, only: [:index, :create], path: 'items'
+      end
+      resources :list_items, except: [:new, :edit, :index, :create]
     end
   end
 end
