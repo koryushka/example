@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       end
       resources :list_items, except: [:new, :edit, :index, :create]
       resources :documents, except: [:edit, :new]
+      resources :files, only: [:create]
     end
   end
 end

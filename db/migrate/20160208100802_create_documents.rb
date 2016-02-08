@@ -3,7 +3,6 @@ class CreateDocuments < ActiveRecord::Migration
     create_table :documents do |t|
       t.string :title, null: false, limit: 128
       t.string :notes, null: false, default: '', limit: 2048
-      t.string :remote_url, null: false, default: '', limit: 2048
       t.string :tags, null: false, default: '', limit: 2048
       t.integer :user_id, null: false
 
