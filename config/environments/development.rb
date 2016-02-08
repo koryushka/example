@@ -4,37 +4,39 @@ Rails.application.configure do
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
-  config.cache_classes = false
+  config.cache_classes                       = false
 
   # Do not eager load code on boot.
-  config.eager_load = false
+  config.eager_load                          = false
 
   # Show full error reports and disable caching.
-  config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = false
+  config.consider_all_requests_local         = true
+  config.action_controller.perform_caching   = false
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
   # Print deprecation notices to the Rails logger.
-  config.active_support.deprecation = :log
+  config.active_support.deprecation          = :log
 
   # Raise an error on page load if there are pending migrations.
-  config.active_record.migration_error = :page_load
+  config.active_record.migration_error       = :page_load
 
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  config.action_mailer.default_url_options   = {host: 'localhost', port: 3000}
 
   DeviseTokenAuth.setup do |config|
     config.change_headers_on_each_request = false
   end
 
-  CarrierWave.configure do |config|
-    config.storage = :file
-    config.root = "#{Rails.root}/public"
-    config.fog_directory  = '' # required
+  S3Upload.configuration do |config|
+    config.fog_params = {
+        provider:   'Local',
+        local_root: "#{Rails.root}/public",
+        endpoint:   'http://192.168.121.129:3000'
+    }
   end
 end

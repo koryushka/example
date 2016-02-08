@@ -22,7 +22,7 @@ gem 'date_validator'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'rack-cors', require: 'rack/cors'
-gem 'carrierwave_direct'
+gem 'fog'
 gem 'fog-aws'
 
 # Use Capistrano for deployment
