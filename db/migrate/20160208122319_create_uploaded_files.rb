@@ -1,7 +1,8 @@
 class CreateUploadedFiles < ActiveRecord::Migration
   def change
     create_table :uploaded_files do |t|
-      t.string :path, null: false, limit: 2048
+      t.string :public_url, null: false, limit: 2048
+      t.string :key, null: false, limit: 512
       t.timestamps null: false
     end
 

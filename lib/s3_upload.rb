@@ -9,12 +9,9 @@ module S3Upload
   define_setting :subdir
 
   class Uploader
-    def initialize(file)
-      @file = file.tempfile
-    end
 
-    def save
-      filename = SecureRandom.hex(24) + File.extname(@file)
+    def save(file)
+      filename = SecureRandom.hex(24) + File.extname(file.tempfile)
 
       unless S3Upload.subdir.nil?
         filename = "#{S3Upload.subdir}/#{filename}"
@@ -29,9 +26,18 @@ module S3Upload
 
       directory.files.create(
           key: filename,
-          body: @file,
+          body: file.tempfile,
           public: true
       )
+    end
+
+    def remove_file(key)
+      client = Fog::Storage.new(S3Upload.fog_params)
+      directory = client.directories.get(S3Upload.bucket)
+      unless directory.nil?
+        file = directory.files.get(key)
+        file.destroy unless file.nil?
+      end
     end
   end
 end
