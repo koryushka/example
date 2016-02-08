@@ -18,6 +18,7 @@ Rails.application.routes.draw do
         resources :list_items, only: [:index, :create], path: 'items'
       end
       resources :list_items, except: [:new, :edit, :index, :create]
+      resources :documents, except: [:edit, :new]
     end
   end
 end

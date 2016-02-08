@@ -31,4 +31,10 @@ Rails.application.configure do
   DeviseTokenAuth.setup do |config|
     config.change_headers_on_each_request = false
   end
+
+  CarrierWave.configure do |config|
+    config.storage = :file
+    config.root = "#{Rails.root}/public"
+    config.fog_directory  = '' # required
+  end
 end

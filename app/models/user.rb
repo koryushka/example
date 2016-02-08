@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   has_many :calendar_items
   has_many :calendars_groups
   has_many :lists
+  has_many :documents
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

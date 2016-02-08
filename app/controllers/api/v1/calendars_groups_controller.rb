@@ -1,7 +1,6 @@
 class Api::V1::CalendarsGroupsController < ApiController
   before_filter :find_calendars_group, except: [:index, :create]
 
-
   def index
     @groups = tmp_user.calendars_groups
   end

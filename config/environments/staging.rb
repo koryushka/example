@@ -75,4 +75,19 @@ Rails.application.configure do
       resource '*', :headers => :any, :methods => [:get, :post, :options, :put, :delete]
     end
   end
+
+  CarrierWave.configure do |config|
+
+    config.fog_credentials = {
+        :provider               => 'AWS',
+        :aws_access_key_id      => ENV['AWS_ACCESS_KEY'],
+        :aws_secret_access_key  => AWS['AWS_SECRET_ACCESS_KEY'],
+        :region                 => 'eu-west-1'
+    }
+
+    config.storage = :fog
+    config.cache_dir = "#{Rails.root}/tmp/uploads"
+    config.fog_directory = "curago-staging"
+    config.fog_attributes = {'Cache-Control'=>'max-age=315576000'}
+  end
 end
