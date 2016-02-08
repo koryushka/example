@@ -50,7 +50,7 @@ class Api::V1::CalendarsController < ApiController
 
   def find_calendar
     calendar_id = params[:id]
-    @calendar_item = Calendar.find_by(id: calendar_id)
+    @calendar = Calendar.find_by(id: calendar_id)
 
     if @calendar.nil?
       render nothing: true, status: :not_found
