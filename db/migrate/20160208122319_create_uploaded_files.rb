@@ -6,7 +6,8 @@ class CreateUploadedFiles < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_column :documents, :file_id, :integer, null: false
-    add_index :documents, :file_id
+    add_column :documents, :uploaded_file_id, :integer, null: false
+    add_index :documents, :uploaded_file_id
+    add_foreign_key :documents, :uploaded_files
   end
 end

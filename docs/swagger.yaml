@@ -312,19 +312,6 @@ paths:
       tags:
         - Calendars
   /calendars/:id:
-    get:
-      summary: Returns single calendar by its ID
-      parameters:
-        - name: id
-          description: Calendar ID
-          in: query
-          required: true
-          type: integer
-      responses:
-        200:
-          description: Calendar object
-          schema:
-            $ref: '#/definitions/Calendar'
     put:
       summary: Update calendar
       description: Updates calendar information by ID
@@ -343,7 +330,7 @@ paths:
         201:
           description: Updated
           schema:
-            $ref: '#/definitions/Calendar'
+            $ref: '#/definitions/CalendarInput'
         400:
           description: Validation errors
           schema:
@@ -412,19 +399,6 @@ paths:
       tags:
         - Calendar Items
   /calendar_items/:id:
-    get:
-      summary: Returns single calendar item by its ID
-      parameters:
-        - name: id
-          description: Calendar item ID
-          in: query
-          required: true
-          type: integer
-      responses:
-        200:
-          description: Calendar item object
-          schema:
-            $ref: '#/definitions/CalendarItem'
     put:
       summary: Update calendar item
       description: Updates calendar item information by ID
@@ -461,12 +435,52 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendar Items
+  /calendar_items/:id/documents:
+    get:
+      summary: Returns list of documents relate to this calendar item
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ArrayOfDocuments'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Calendar Items
+        - Documents
+  /calendar_items/:id/documents/:document_id:
+    post:
+      summary: Attaches document to calendar item
+      responses:
+        200:
+          description: OK
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Calendar Items
+        - Documents
+    delete:
+      summary: Detaches document from calendar item
+      responses:
+        204:
+          description: Detached
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Calendar Items
+        - Documents
   /documents:
     get:
       summary: Current user documents
       description: Returns all documents created by current user or shared with him
       responses:
-        '200':
+        200:
           description: OK
           schema:
             $ref: '#/definitions/ArrayOfDocuments'
@@ -517,12 +531,55 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Documents
+  /files:
+    post:
+      summary: Accepts files
+      description: Accept files and sends them to storage
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/File'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Files
+        - Documents
+  /files/:id:
+    get:
+      summary: Returns information about file by its ID
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/File'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Files
+        - Documents
+    delete:
+      summary: Removes file
+      responses:
+        204:
+          description: Detached
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Files
+        - Documents
   /lists:
     get:
       summary: Current user lists
       description: Returns all lists created by current user or shared with him
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/ArrayOfLists'
@@ -535,27 +592,11 @@ paths:
     post:
       summary: Create list
       description: Creates new list
-      parameters:
-        - name: id
-          description: List ID
-          in: query
-          required: true
-          type: integer
-        - name: list
-          description: List object
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ListInput'
       responses:
-        201:
+        '201':
           description: Created
           schema:
             $ref: '#/definitions/List'
-        400:
-          description: Validation errors
-          schema:
-            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
@@ -563,50 +604,14 @@ paths:
       tags:
         - Lists
   /lists/:id:
-    get:
-      summary: Returns list
-      description: Returns single list by its ID
-      parameters:
-        - name: id
-          description: List ID
-          in: query
-          required: true
-          type: integer
-      responses:
-        200:
-          description: Singel list
-          schema:
-            $ref: '#/definitions/List'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Lists
     put:
       summary: Update list
       description: Updates list information by ID
-      parameters:
-        - name: id
-          description: List ID
-          in: query
-          required: true
-          type: integer
-        - name: list
-          description: List object
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ListInput'
       responses:
-        201:
+        '201':
           description: Updated
           schema:
             $ref: '#/definitions/List'
-        400:
-          description: Validation errors
-          schema:
-            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
@@ -617,7 +622,7 @@ paths:
       summary: Delete list
       description: Deletes list by ID
       responses:
-        204:
+        '204':
           description: Deleted
         default:
           description: Unexpected error
@@ -630,7 +635,7 @@ paths:
       summary: List items
       description: Returns all items in specific list by list ID
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/ArrayOfListItems'
@@ -640,90 +645,41 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - List Items
+        - Lists
     post:
       summary: Create list item
       description: Creates new list item in specific list by list ID
-      parameters:
-        - name: id
-          description: List ID
-          in: query
-          required: true
-          type: integer
-        - name: list_item
-          description: List item object
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ListItemInput'
       responses:
-        201:
+        '201':
           description: Created
           schema:
             $ref: '#/definitions/ListItem'
-        400:
-          description: Validation errors
-          schema:
-            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
       tags:
         - List Items
-  /list_items/:id:
-    get:
-      summary: Returns list item
-      description: Returns single list item by its ID
-      parameters:
-        - name: id
-          description: List ID
-          in: query
-          required: true
-          type: integer
-      responses:
-        200:
-          description: Singel list item
-          schema:
-            $ref: '#/definitions/ListItem'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - List Items
+        - Lists
+  /lists/:id/items/:id:
     put:
       summary: Update list item
       description: Updates list item information by list ID and item ID
-      parameters:
-        - name: id
-          description: List item ID
-          in: query
-          required: true
-          type: integer
-        - name: list_item
-          description: List item object
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ListItemInput'
       responses:
-        201:
+        '201':
           description: Updated
           schema:
             $ref: '#/definitions/ListItem'
-        400:
-          description: Validation errors
-          schema:
-            $ref: '#/definitions/ValidationErrorsContainer'
         default:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
       tags:
         - List Items
+        - Lists
     delete:
       summary: Delete list item
-      description: Deletes list item by ID
+      description: Deletes list item by list ID and item ID
       responses:
         '204':
           description: Deleted
@@ -733,6 +689,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - List Items
+        - Lists
   /notification_prefs:
     get:
       summary: Current user notification preferences
@@ -969,6 +926,10 @@ definitions:
       notes:
         type: string
         description: Additional notes
+      read_only:
+        type: boolean
+        description: Specifies if calendar item read only or not
+        default: false
       timezone:
         type: string
         description: Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter
@@ -1051,6 +1012,10 @@ definitions:
       notes:
         type: string
         description: Additional notes
+      read_only:
+        type: boolean
+        description: Specifies if calendar item read only or not
+        default: false
       timezone:
         type: string
         description: Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter
@@ -1073,74 +1038,56 @@ definitions:
   Document:
     type: object
     properties:
-      identifier:
-        type: string
+      id:
+        type: integer
         description: Document ID
       title:
         type: string
         description: Document title
-      creator:
-        type: string
-        description: User ID who created this document
-      localPath:
-        type: string
-        description: Local path for stored document or just filename with extension
-      remoteUrl:
-        type: string
-        description: Remote URL to download document
       notes:
         type: string
         description: Additional notes
       tags:
         type: string
         description: Comma separated tags
-  ListInput:
-    type: object
-    properties:
-      title:
-        type: string
-        description: List title
-      notes:
-        type: string
-        description: Additional notes
+      file:
+        $ref: '#/definitions/File'
   List:
     type: object
     properties:
-      id:
-        type: integer
+      identifier:
+        type: string
         description: List ID
       title:
         type: string
         description: List title
-      user_id:
-        type: integer
+      creator:
+        type: string
         description: User ID who created this list
       notes:
         type: string
         description: Additional notes
-  ListItemInput:
-    type: object
-    properties:
-      title:
-        type: string
-        description: List item title
-      notes:
-        type: string
-        description: Additional notes
-      order:
-        type: integer
-        format: int16
-        description: Sorting order for item in the list
-        default: 0
+      private:
+        type: boolean
+        description: Specifies visibility of list to anyone else
+        default: false
+      listItems:
+        type: array
+        description: Associated lists items
+        items:
+          $ref: '#/definitions/ListItem'
   ListItem:
     type: object
     properties:
-      id:
-        type: integer
+      identifier:
+        type: string
         description: List item ID
       title:
         type: string
         description: List item title
+      creator:
+        type: string
+        description: User ID who created this list item
       notes:
         type: string
         description: Additional notes
@@ -1149,6 +1096,9 @@ definitions:
         format: int16
         description: Sorting order for item in the list
         default: 0
+      list:
+        type: string
+        description: Parent list ID
   NotificationPreference:
     type: object
     properties:
@@ -1239,6 +1189,15 @@ definitions:
       current:
         type: boolean
         description: Specifies if this is current authenticated user
+  File:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: File identifier
+      public_url:
+        type: string
+        description: URL of file. You can use it for file dwonloading
   Error:
     type: object
     properties:

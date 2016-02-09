@@ -1,1 +1,0 @@
-json.extract! @file, :id, :public_url
