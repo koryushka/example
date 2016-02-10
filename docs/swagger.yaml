@@ -401,6 +401,9 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Calendar Items
+        - Calendar
     delete:
       summary: Removed spcified item from specified calendar
       parameters:
