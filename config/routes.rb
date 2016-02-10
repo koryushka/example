@@ -12,9 +12,12 @@ Rails.application.routes.draw do
       get 'users/me' => 'users/me'
 
       resources :calendars, except: [:edit, :new]
+      post 'calendars/:id/items/:item_id', to: 'calendars#add_item'
+      delete 'calendars/:id/items/:item_id', to: 'calendars#remove_item'
+      get 'calendars/:id/items', to: 'calendars#show_items'
+
       resources :calendar_items, except: [:edit, :new] do
         resources :documents, only: [:index, :create]
-
       end
       post 'calendar_items/:id/documents/:document_id', to: 'calendar_items#attach_document'
       get 'calendar_items/:id/documents', to: 'calendar_items#show_documents'

@@ -351,7 +351,7 @@ paths:
           required: true
           type: integer
       responses:
-        '204':
+        204:
           description: Deleted
         default:
           description: Unexpected error
@@ -359,6 +359,71 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Calendars
+  /calendars/:id/items:
+    get:
+      summary: Returns items of specified calendar
+      parameters:
+        - name: id
+          description: Calendars ID
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ArrayOfCalendarItems'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Calendar Items
+        - Calendar
+  /calendars/:id/items/:item_id:
+    post:
+      summary: Add specified item to specified calendar
+      parameters:
+        - name: id
+          description: Calendars ID
+          in: query
+          required: true
+          type: integer
+        - name: item_id
+          description: ID of item which should be added
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+    delete:
+      summary: Removed spcified item from specified calendar
+      parameters:
+        - name: id
+          description: Calendars ID
+          in: query
+          required: true
+          type: integer
+        - name: item_id
+          description: ID of item which should be removed
+          in: query
+          required: true
+          type: integer
+      responses:
+        204:
+          description: Deleted
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Calendar Items
+        - Calendar
   /calendar_items:
     get:
       summary: Current user calendar items
@@ -426,8 +491,14 @@ paths:
     delete:
       summary: Delete calendar item
       description: Deletes calendar item by ID
+      parameters:
+        - name: id
+          description: Calendar's ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '204':
+        204:
           description: Deleted
         default:
           description: Unexpected error
@@ -438,6 +509,12 @@ paths:
   /calendar_items/:id/documents:
     get:
       summary: Returns list of documents relate to this calendar item
+      parameters:
+        - name: id
+          description: Calendar item ID
+          in: query
+          required: true
+          type: integer
       responses:
         200:
           description: OK
@@ -453,6 +530,18 @@ paths:
   /calendar_items/:id/documents/:document_id:
     post:
       summary: Attaches document to calendar item
+      parameters:
+        - name: id
+          description: Calendar item ID
+          in: query
+          required: true
+          type: integer
+      parameters:
+        - name: document_id
+          description: Document's ID
+          in: query
+          required: true
+          type: integer
       responses:
         200:
           description: OK
@@ -465,6 +554,18 @@ paths:
         - Documents
     delete:
       summary: Detaches document from calendar item
+      parameters:
+        - name: id
+          description: Calendar item ID
+          in: query
+          required: true
+          type: integer
+      parameters:
+        - name: document_id
+          description: Document's ID
+          in: query
+          required: true
+          type: integer
       responses:
         204:
           description: Detached
@@ -508,8 +609,14 @@ paths:
     put:
       summary: Update document
       description: Updates document information by ID
+      parameters:
+        - name: id
+          description: Document's ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '201':
+        201:
           description: Updated
           schema:
             $ref: '#/definitions/Document'
@@ -522,8 +629,14 @@ paths:
     delete:
       summary: Delete document
       description: Deletes document by ID
+      parameters:
+        - name: id
+          description: Document's ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '204':
+        204:
           description: Deleted
         default:
           description: Unexpected error
@@ -535,6 +648,13 @@ paths:
     post:
       summary: Accepts files
       description: Accept files and sends them to storage
+      consumes: [multipart/form-data]
+      parameters:
+        - name: file
+          description: binary file
+          in: formData
+          required: true
+          type: file
       responses:
         201:
           description: Created
@@ -550,6 +670,12 @@ paths:
   /files/:id:
     get:
       summary: Returns information about file by its ID
+      parameters:
+        - name: id
+          description: File's ID
+          in: query
+          required: true
+          type: integer
       responses:
         200:
           description: OK
@@ -564,6 +690,12 @@ paths:
         - Documents
     delete:
       summary: Removes file
+      parameters:
+        - name: id
+          description: File's ID
+          in: query
+          required: true
+          type: integer
       responses:
         204:
           description: Detached
@@ -607,8 +739,14 @@ paths:
     put:
       summary: Update list
       description: Updates list information by ID
+      parameters:
+        - name: id
+          description: List's ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '201':
+        201:
           description: Updated
           schema:
             $ref: '#/definitions/List'
@@ -621,8 +759,14 @@ paths:
     delete:
       summary: Delete list
       description: Deletes list by ID
+      parameters:
+        - name: id
+          description: List's ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '204':
+        204:
           description: Deleted
         default:
           description: Unexpected error
@@ -634,8 +778,14 @@ paths:
     get:
       summary: List items
       description: Returns all items in specific list by list ID
+      parameters:
+        - name: id
+          description: List's ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '200':
+        200:
           description: OK
           schema:
             $ref: '#/definitions/ArrayOfListItems'
@@ -649,8 +799,14 @@ paths:
     post:
       summary: Create list item
       description: Creates new list item in specific list by list ID
+      parameters:
+        - name: id
+          description: List's ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '201':
+        201:
           description: Created
           schema:
             $ref: '#/definitions/ListItem'
@@ -661,12 +817,23 @@ paths:
       tags:
         - List Items
         - Lists
-  /lists/:id/items/:id:
+  /lists/:id/items/:item_id:
     put:
       summary: Update list item
       description: Updates list item information by list ID and item ID
+      parameters:
+        - name: id
+          description: List's ID
+          in: query
+          required: true
+          type: integer
+        - name: item_id
+          description: List item ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '201':
+        201:
           description: Updated
           schema:
             $ref: '#/definitions/ListItem'
@@ -680,8 +847,14 @@ paths:
     delete:
       summary: Delete list item
       description: Deletes list item by list ID and item ID
+      parameters:
+        - name: id
+          description: List's ID
+          in: query
+          required: true
+          type: integer
       responses:
-        '204':
+        204:
           description: Deleted
         default:
           description: Unexpected error
