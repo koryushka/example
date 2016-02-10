@@ -477,26 +477,6 @@
             }
         },
         "/calendars/:id": {
-            "get": {
-                "summary": "Returns single calendar by its ID",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "Calendar ID",
-                        "in": "query",
-                        "required": true,
-                        "type": "integer"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Calendar object",
-                        "schema": {
-                            "$ref": "#/definitions/Calendar"
-                        }
-                    }
-                }
-            },
             "put": {
                 "summary": "Update calendar",
                 "description": "Updates calendar information by ID",
@@ -521,7 +501,7 @@
                     "201": {
                         "description": "Updated",
                         "schema": {
-                            "$ref": "#/definitions/Calendar"
+                            "$ref": "#/definitions/CalendarInput"
                         }
                     },
                     "400": {
@@ -566,6 +546,108 @@
                 },
                 "tags": [
                     "Calendars"
+                ]
+            }
+        },
+        "/calendars/:id/items": {
+            "get": {
+                "summary": "Returns items of specified calendar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ArrayOfCalendarItems"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Calendar Items",
+                    "Calendar"
+                ]
+            }
+        },
+        "/calendars/:id/items/:item_id": {
+            "post": {
+                "summary": "Add specified item to specified calendar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "item_id",
+                        "description": "ID of item which should be added",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Calendar Items",
+                    "Calendar"
+                ]
+            },
+            "delete": {
+                "summary": "Removed spcified item from specified calendar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "item_id",
+                        "description": "ID of item which should be removed",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Calendar Items",
+                    "Calendar"
                 ]
             }
         },
@@ -630,26 +712,6 @@
             }
         },
         "/calendar_items/:id": {
-            "get": {
-                "summary": "Returns single calendar item by its ID",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "description": "Calendar item ID",
-                        "in": "query",
-                        "required": true,
-                        "type": "integer"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Calendar item object",
-                        "schema": {
-                            "$ref": "#/definitions/CalendarItem"
-                        }
-                    }
-                }
-            },
             "put": {
                 "summary": "Update calendar item",
                 "description": "Updates calendar item information by ID",
@@ -690,6 +752,15 @@
             "delete": {
                 "summary": "Delete calendar item",
                 "description": "Deletes calendar item by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendar's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -842,6 +913,15 @@
             "put": {
                 "summary": "Update document",
                 "description": "Updates document information by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Document's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Updated",
@@ -863,6 +943,15 @@
             "delete": {
                 "summary": "Delete document",
                 "description": "Deletes document by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Document's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -896,10 +985,10 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/ArrayOfLists"
+                            "$ref": "#/definitions/File"
                         }
                     },
                     "default": {
@@ -910,7 +999,8 @@
                     }
                 },
                 "tags": [
-                    "Lists"
+                    "Files",
+                    "Documents"
                 ]
             }
         },
@@ -1037,12 +1127,6 @@
                             "$ref": "#/definitions/List"
                         }
                     },
-                    "400": {
-                        "description": "Validation errors",
-                        "schema": {
-                            "$ref": "#/definitions/ValidationErrorsContainer"
-                        }
-                    },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
@@ -1086,6 +1170,15 @@
             "get": {
                 "summary": "List items",
                 "description": "Returns all items in specific list by list ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1101,7 +1194,8 @@
                     }
                 },
                 "tags": [
-                    "List Items"
+                    "List Items",
+                    "Lists"
                 ]
             },
             "post": {
@@ -1123,12 +1217,6 @@
                             "$ref": "#/definitions/ListItem"
                         }
                     },
-                    "400": {
-                        "description": "Validation errors",
-                        "schema": {
-                            "$ref": "#/definitions/ValidationErrorsContainer"
-                        }
-                    },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
@@ -1137,7 +1225,8 @@
                     }
                 },
                 "tags": [
-                    "List Items"
+                    "List Items",
+                    "Lists"
                 ]
             }
         },
@@ -1168,12 +1257,6 @@
                             "$ref": "#/definitions/ListItem"
                         }
                     },
-                    "400": {
-                        "description": "Validation errors",
-                        "schema": {
-                            "$ref": "#/definitions/ValidationErrorsContainer"
-                        }
-                    },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
@@ -1182,7 +1265,8 @@
                     }
                 },
                 "tags": [
-                    "List Items"
+                    "List Items",
+                    "Lists"
                 ]
             },
             "delete": {
@@ -1209,7 +1293,8 @@
                     }
                 },
                 "tags": [
-                    "List Items"
+                    "List Items",
+                    "Lists"
                 ]
             }
         },
@@ -1548,6 +1633,11 @@
                     "type": "string",
                     "description": "Additional notes"
                 },
+                "read_only": {
+                    "type": "boolean",
+                    "description": "Specifies if calendar item read only or not",
+                    "default": false
+                },
                 "timezone": {
                     "type": "string",
                     "description": "Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter"
@@ -1653,6 +1743,11 @@
                     "type": "string",
                     "description": "Additional notes"
                 },
+                "read_only": {
+                    "type": "boolean",
+                    "description": "Specifies if calendar item read only or not",
+                    "default": false
+                },
                 "timezone": {
                     "type": "string",
                     "description": "Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter"
@@ -1682,25 +1777,13 @@
         "Document": {
             "type": "object",
             "properties": {
-                "identifier": {
-                    "type": "string",
+                "id": {
+                    "type": "integer",
                     "description": "Document ID"
                 },
                 "title": {
                     "type": "string",
                     "description": "Document title"
-                },
-                "creator": {
-                    "type": "string",
-                    "description": "User ID who created this document"
-                },
-                "localPath": {
-                    "type": "string",
-                    "description": "Local path for stored document or just filename with extension"
-                },
-                "remoteUrl": {
-                    "type": "string",
-                    "description": "Remote URL to download document"
                 },
                 "notes": {
                     "type": "string",
@@ -1709,72 +1792,59 @@
                 "tags": {
                     "type": "string",
                     "description": "Comma separated tags"
-                }
-            }
-        },
-        "ListInput": {
-            "type": "object",
-            "properties": {
-                "title": {
-                    "type": "string",
-                    "description": "List title"
                 },
-                "notes": {
-                    "type": "string",
-                    "description": "Additional notes"
+                "file": {
+                    "$ref": "#/definitions/File"
                 }
             }
         },
         "List": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer",
+                "identifier": {
+                    "type": "string",
                     "description": "List ID"
                 },
                 "title": {
                     "type": "string",
                     "description": "List title"
                 },
-                "user_id": {
-                    "type": "integer",
+                "creator": {
+                    "type": "string",
                     "description": "User ID who created this list"
                 },
                 "notes": {
                     "type": "string",
                     "description": "Additional notes"
-                }
-            }
-        },
-        "ListItemInput": {
-            "type": "object",
-            "properties": {
-                "title": {
-                    "type": "string",
-                    "description": "List item title"
                 },
-                "notes": {
-                    "type": "string",
-                    "description": "Additional notes"
+                "private": {
+                    "type": "boolean",
+                    "description": "Specifies visibility of list to anyone else",
+                    "default": false
                 },
-                "order": {
-                    "type": "integer",
-                    "format": "int16",
-                    "description": "Sorting order for item in the list",
-                    "default": 0
+                "listItems": {
+                    "type": "array",
+                    "description": "Associated lists items",
+                    "items": {
+                        "$ref": "#/definitions/ListItem"
+                    }
                 }
             }
         },
         "ListItem": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer",
+                "identifier": {
+                    "type": "string",
                     "description": "List item ID"
                 },
                 "title": {
                     "type": "string",
                     "description": "List item title"
+                },
+                "creator": {
+                    "type": "string",
+                    "description": "User ID who created this list item"
                 },
                 "notes": {
                     "type": "string",
@@ -1785,6 +1855,10 @@
                     "format": "int16",
                     "description": "Sorting order for item in the list",
                     "default": 0
+                },
+                "list": {
+                    "type": "string",
+                    "description": "Parent list ID"
                 }
             }
         },
@@ -1906,6 +1980,19 @@
                 "current": {
                     "type": "boolean",
                     "description": "Specifies if this is current authenticated user"
+                }
+            }
+        },
+        "File": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "File identifier"
+                },
+                "public_url": {
+                    "type": "string",
+                    "description": "URL of file. You can use it for file dwonloading"
                 }
             }
         },
