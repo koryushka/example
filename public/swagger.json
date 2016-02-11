@@ -3,7 +3,7 @@
     "info": {
         "title": "Curago API",
         "description": "API documentation for Curago",
-        "version": "1.0.1"
+        "version": "1.0.2"
     },
     "host": "api.curagolife.com",
     "schemes": [
@@ -283,7 +283,7 @@
                 ]
             }
         },
-        "/calendar_groups": {
+        "/calendars_groups": {
             "get": {
                 "summary": "Current user calendar groups",
                 "description": "Returns all calendar groups created by current user or shared with him",
@@ -308,17 +308,33 @@
             "post": {
                 "summary": "Create calendar group",
                 "description": "Creates new calendar group",
+                "parameters": [
+                    {
+                        "name": "calendars_group",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CalendarsGroupInput"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/CalendarGroup"
+                            "$ref": "#/definitions/CalendarsGroup"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
                         }
                     },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -327,21 +343,44 @@
                 ]
             }
         },
-        "/calendar_groups/:id": {
+        "/calendars_groups/:id": {
             "put": {
                 "summary": "Update calendar group",
                 "description": "Updates calendar group information by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars group ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "calendars_group",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CalendarsGroupInput"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Updated",
                         "schema": {
-                            "$ref": "#/definitions/CalendarGroup"
+                            "$ref": "#/definitions/CalendarsGroup"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
                         }
                     },
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -352,6 +391,15 @@
             "delete": {
                 "summary": "Delete calendar group",
                 "description": "Deletes calendar group by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars group ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -359,7 +407,7 @@
                     "default": {
                         "description": "Unexpected error",
                         "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     }
                 },
@@ -434,6 +482,13 @@
                 "description": "Updates calendar information by ID",
                 "parameters": [
                     {
+                        "name": "id",
+                        "description": "Calendar ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
                         "name": "calendar",
                         "in": "body",
                         "required": true,
@@ -469,6 +524,15 @@
             "delete": {
                 "summary": "Delete calendar",
                 "description": "Deletes calendar by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -482,6 +546,108 @@
                 },
                 "tags": [
                     "Calendars"
+                ]
+            }
+        },
+        "/calendars/:id/items": {
+            "get": {
+                "summary": "Returns items of specified calendar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ArrayOfCalendarItems"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Calendar Items",
+                    "Calendar"
+                ]
+            }
+        },
+        "/calendars/:id/items/:item_id": {
+            "post": {
+                "summary": "Add specified item to specified calendar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "item_id",
+                        "description": "ID of item which should be added",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Calendar Items",
+                    "Calendar"
+                ]
+            },
+            "delete": {
+                "summary": "Removed spcified item from specified calendar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendars ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "item_id",
+                        "description": "ID of item which should be removed",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Calendar Items",
+                    "Calendar"
                 ]
             }
         },
@@ -586,6 +752,15 @@
             "delete": {
                 "summary": "Delete calendar item",
                 "description": "Deletes calendar item by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendar's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -599,6 +774,94 @@
                 },
                 "tags": [
                     "Calendar Items"
+                ]
+            }
+        },
+        "/calendar_items/:id/documents": {
+            "get": {
+                "summary": "Returns list of documents relate to this calendar item",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendar item ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ArrayOfDocuments"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Calendar Items",
+                    "Documents"
+                ]
+            }
+        },
+        "/calendar_items/:id/documents/:document_id": {
+            "post": {
+                "summary": "Attaches document to calendar item",
+                "parameters": [
+                    {
+                        "name": "document_id",
+                        "description": "Document's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Calendar Items",
+                    "Documents"
+                ]
+            },
+            "delete": {
+                "summary": "Detaches document from calendar item",
+                "parameters": [
+                    {
+                        "name": "document_id",
+                        "description": "Document's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Detached"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Calendar Items",
+                    "Documents"
                 ]
             }
         },
@@ -650,6 +913,15 @@
             "put": {
                 "summary": "Update document",
                 "description": "Updates document information by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Document's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Updated",
@@ -671,6 +943,15 @@
             "delete": {
                 "summary": "Delete document",
                 "description": "Deletes document by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Document's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -683,6 +964,101 @@
                     }
                 },
                 "tags": [
+                    "Documents"
+                ]
+            }
+        },
+        "/files": {
+            "post": {
+                "summary": "Accepts files",
+                "description": "Accept files and sends them to storage",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "name": "file",
+                        "description": "binary file",
+                        "in": "formData",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/File"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Files",
+                    "Documents"
+                ]
+            }
+        },
+        "/files/:id": {
+            "get": {
+                "summary": "Returns information about file by its ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "File's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/File"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Files",
+                    "Documents"
+                ]
+            },
+            "delete": {
+                "summary": "Removes file",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "File's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Detached"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Files",
                     "Documents"
                 ]
             }
@@ -735,6 +1111,15 @@
             "put": {
                 "summary": "Update list",
                 "description": "Updates list information by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Updated",
@@ -756,6 +1141,15 @@
             "delete": {
                 "summary": "Delete list",
                 "description": "Deletes list by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -776,6 +1170,15 @@
             "get": {
                 "summary": "List items",
                 "description": "Returns all items in specific list by list ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -798,6 +1201,15 @@
             "post": {
                 "summary": "Create list item",
                 "description": "Creates new list item in specific list by list ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -818,10 +1230,26 @@
                 ]
             }
         },
-        "/lists/:id/items/:id": {
+        "/lists/:id/items/:item_id": {
             "put": {
                 "summary": "Update list item",
                 "description": "Updates list item information by list ID and item ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "item_id",
+                        "description": "List item ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Updated",
@@ -844,6 +1272,15 @@
             "delete": {
                 "summary": "Delete list item",
                 "description": "Deletes list item by list ID and item ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Deleted"
@@ -1145,20 +1582,25 @@
                 }
             }
         },
-        "CalendarGroup": {
+        "CalendarsGroup": {
             "type": "object",
             "properties": {
-                "identifier": {
-                    "type": "string",
+                "id": {
+                    "type": "integer",
                     "description": "Calendar group ID"
                 },
                 "title": {
                     "type": "string",
                     "description": "Calendar group title"
-                },
-                "creator": {
+                }
+            }
+        },
+        "CalendarsGroupInput": {
+            "type": "object",
+            "properties": {
+                "title": {
                     "type": "string",
-                    "description": "User ID who created this calendar group"
+                    "description": "Calendar group title"
                 }
             }
         },
@@ -1335,25 +1777,13 @@
         "Document": {
             "type": "object",
             "properties": {
-                "identifier": {
-                    "type": "string",
+                "id": {
+                    "type": "integer",
                     "description": "Document ID"
                 },
                 "title": {
                     "type": "string",
                     "description": "Document title"
-                },
-                "creator": {
-                    "type": "string",
-                    "description": "User ID who created this document"
-                },
-                "localPath": {
-                    "type": "string",
-                    "description": "Local path for stored document or just filename with extension"
-                },
-                "remoteUrl": {
-                    "type": "string",
-                    "description": "Remote URL to download document"
                 },
                 "notes": {
                     "type": "string",
@@ -1362,6 +1792,9 @@
                 "tags": {
                     "type": "string",
                     "description": "Comma separated tags"
+                },
+                "file": {
+                    "$ref": "#/definitions/File"
                 }
             }
         },
@@ -1550,6 +1983,19 @@
                 }
             }
         },
+        "File": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "File identifier"
+                },
+                "public_url": {
+                    "type": "string",
+                    "description": "URL of file. You can use it for file dwonloading"
+                }
+            }
+        },
         "Error": {
             "type": "object",
             "properties": {
@@ -1611,7 +2057,7 @@
         "ArrayOfCalendarGroups": {
             "type": "array",
             "items": {
-                "$ref": "#/definitions/CalendarGroup"
+                "$ref": "#/definitions/CalendarsGroup"
             }
         },
         "ArrayOfCalendarItems": {

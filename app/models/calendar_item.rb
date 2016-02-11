@@ -1,6 +1,7 @@
 class CalendarItem < ActiveRecord::Base
   belongs_to :user
   has_and_belongs_to_many :calendars
+  has_and_belongs_to_many :documents
   belongs_to :notifications_preference
 
   validates :title, length: {maximum: 128}, presence: true

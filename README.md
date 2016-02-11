@@ -11,6 +11,9 @@
 ### Deployment
 * [Capistrano](http://capistranorb.com/) (See Gemfile for list of all Capistrano plugins)
 
+### Files uploading
+* [Fog](http://fog.io/)
+
 ## Servers environment
 * Ubuntu
 * RVM (with ruby 2.2.1)

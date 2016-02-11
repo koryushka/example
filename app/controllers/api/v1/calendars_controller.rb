@@ -1,6 +1,7 @@
 class Api::V1::CalendarsController < ApiController
   #before_filter :authenticate_api_v1_user!
   before_filter :find_calendar, except: [:index, :create]
+  before_filter :find_calendar_item, only: [:add_item, :remove_item]
 
   def index
     @calendars = tmp_user.calendars
@@ -13,7 +14,6 @@ class Api::V1::CalendarsController < ApiController
   def create
     @calendar = Calendar.new(calendar_params)
     @calendar.user = tmp_user
-    @calendar.notifications_preference = NotificationsPreference.new
     if @calendar.valid?
       unless @calendar.save!
         return render nothing: true, status: :internal_server_error
@@ -44,6 +44,21 @@ class Api::V1::CalendarsController < ApiController
     render nothing: true, status: :no_content
   end
 
+  def add_item
+    @calendar.calendar_items << @calendar_item
+    render nothing: true
+  end
+
+  def remove_item
+    @calendar.calendar_items.delete(@calendar_item)
+    render nothing: true, status: :no_content
+  end
+
+  def show_items
+    @calendar_items = @calendar.calendar_items
+    render 'api/v1/calendar_items/index'
+  end
+
   private
   def calendar_params
     params.permit(:title, :hex_color, :main, :kind, :visible)
@@ -54,6 +69,15 @@ class Api::V1::CalendarsController < ApiController
     @calendar = Calendar.find_by(id: calendar_id)
 
     if @calendar.nil?
+      render nothing: true, status: :not_found
+    end
+  end
+
+  def find_calendar_item
+    calendar_item_id = params[:item_id]
+    @calendar_item = CalendarItem.find_by(id: calendar_item_id)
+
+    if @calendar_item.nil?
       render nothing: true, status: :not_found
     end
   end
