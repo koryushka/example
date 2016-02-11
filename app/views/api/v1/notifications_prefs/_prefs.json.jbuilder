@@ -1,0 +1,1 @@
+json.extract! prefs, :id, :sms, :email, :push

@@ -18,9 +18,11 @@ Rails.application.routes.draw do
 
       resources :calendar_items, except: [:edit, :new] do
         resources :documents, only: [:index, :create]
+        resources :notifications_prefs, only: [:index, :create], path: 'notifications'
       end
       post 'calendar_items/:id/documents/:document_id', to: 'calendar_items#attach_document'
       get 'calendar_items/:id/documents', to: 'calendar_items#show_documents'
+      resources :notifications_prefs, only: [:update, :destroy]
 
       resources :documents, except: [:new, :edit, :index, :create]
       resources :calendars_groups, except: [:edit, :new]

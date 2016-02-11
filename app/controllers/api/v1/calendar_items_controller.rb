@@ -14,7 +14,6 @@ class Api::V1::CalendarItemsController < ApiController
   def create
     @calendar_item = CalendarItem.new(calendar_item_params)
     @calendar_item.user = tmp_user
-    @calendar_item.notifications_preference = NotificationsPreference.new
     if @calendar_item.valid?
       unless @calendar_item.save!
         return render nothing: true, status: :internal_server_error
