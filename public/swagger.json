@@ -1298,15 +1298,15 @@
                 ]
             }
         },
-        "/notification_prefs": {
-            "get": {
-                "summary": "Current user notification preferences",
-                "description": "Returns all notification preferences created by current user",
+        "/notification_prefs/:id": {
+            "put": {
+                "summary": "Update notification preference",
+                "description": "Updates notification preference by ID",
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Updated",
                         "schema": {
-                            "$ref": "#/definitions/ArrayOfNotificationPreferences"
+                            "$ref": "#/definitions/NotificationPreference"
                         }
                     },
                     "default": {
@@ -1318,7 +1318,48 @@
                 },
                 "tags": [
                     "Notifications",
-                    "Calendars",
+                    "Calendar Items"
+                ]
+            },
+            "delete": {
+                "summary": "Delete notification preference",
+                "description": "Deletes notification preference by ID",
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Notifications",
+                    "Calendar Items"
+                ]
+            }
+        },
+        "/calendar_items/:id/notifications": {
+            "get": {
+                "summary": "Returns notifications preferences for calendar item",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/NotificationPreference"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Notifications",
                     "Calendar Items"
                 ]
             },
@@ -1341,52 +1382,6 @@
                 },
                 "tags": [
                     "Notifications",
-                    "Calendars",
-                    "Calendar Items"
-                ]
-            }
-        },
-        "/notification_prefs/:id": {
-            "put": {
-                "summary": "Update notification preference",
-                "description": "Updates notification preference by ID",
-                "responses": {
-                    "201": {
-                        "description": "Updated",
-                        "schema": {
-                            "$ref": "#/definitions/NotificationPreference"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                },
-                "tags": [
-                    "Notifications",
-                    "Calendars",
-                    "Calendar Items"
-                ]
-            },
-            "delete": {
-                "summary": "Delete notification preference",
-                "description": "Deletes notification preference by ID",
-                "responses": {
-                    "204": {
-                        "description": "Deleted"
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                },
-                "tags": [
-                    "Notifications",
-                    "Calendars",
                     "Calendar Items"
                 ]
             }
@@ -1879,14 +1874,6 @@
                     "type": "boolean",
                     "description": "Preference for getting sms notification",
                     "default": false
-                },
-                "calendar": {
-                    "type": "string",
-                    "description": "Optional calendar ID to apply this preferences"
-                },
-                "calendarItem": {
-                    "type": "string",
-                    "description": "Optional calendar item ID to apply this preferences"
                 }
             }
         },
@@ -2082,12 +2069,6 @@
             "type": "array",
             "items": {
                 "$ref": "#/definitions/ListItem"
-            }
-        },
-        "ArrayOfNotificationPreferences": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/NotificationPreference"
             }
         },
         "ArrayOfParticipations": {
