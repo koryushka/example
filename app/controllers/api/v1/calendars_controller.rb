@@ -1,6 +1,8 @@
 class Api::V1::CalendarsController < ApiController
   before_filter :find_calendar, except: [:index, :create]
   before_filter :find_calendar_item, only: [:add_item, :remove_item]
+  authorize_resource
+  check_authorization
 
   def index
     @calendars = current_user.calendars

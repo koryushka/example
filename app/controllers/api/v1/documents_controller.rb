@@ -1,5 +1,7 @@
 class Api::V1::DocumentsController < ApiController
   before_filter :find_document, except: [:index, :create]
+  authorize_resource
+  check_authorization
 
   def index
     @documents = @calendar_item.documents

@@ -1,6 +1,8 @@
 class Api::V1::ListItemsController < ApiController
   before_filter :find_list_item, except: [:index, :create]
   before_filter :find_list, only: [:index, :create]
+  authorize_resource
+  check_authorization
 
   def index
     @list_items = @list.items

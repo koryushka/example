@@ -1,5 +1,7 @@
 class Api::V1::ListsController < ApiController
   before_filter :find_list, except: [:index, :create]
+  authorize_resource
+  check_authorization
 
   def index
     @lists = tmp_user.lists

@@ -2,6 +2,8 @@ class Api::V1::CalendarItemsController < ApiController
   #before_filter :authenticate_api_v1_user!
   before_filter :find_calendar_item, except: [:index, :create]
   before_filter :find_document, only: [:attach_document, :detach_document]
+  authorize_resource
+  check_authorization
 
   def index
     @calendar_items = tmp_user.calendar_items

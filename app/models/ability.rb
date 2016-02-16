@@ -1,7 +1,7 @@
 class Ability
   include CanCan::Ability
 
-  def initialize(user, request)
+  def initialize(user)
 
     #Define abilities for the passed in user here. For example:
     # if user
@@ -13,11 +13,14 @@ class Ability
     # end
     #can [:login, :create, :check_email, :password_recovery, :update_password, :me], User
     if user
-
+      can :manage, [Calendar, CalendarItem, CalendarsGroup, Document, File, List, NotificationsPreference] do |subject|
+        user.sharing_permissions
+            .exists?(subject_class: subject.class.name.downcase, subject_id: subject.id)
+      end
+      #can :manage, Calendar, user_id: user.id
+      can :manage, User, id: user.id
     end
-    can :manage, [Calendar, CalendarItem, CalendarsGroup, Document, File, List, NotificationsPreference], user_id: user.id
-    #can :manage, Calendar, user_id: user.id
-    can :manage, User, id: user.id
+
 
     # The first argument to `can` is the action you are giving the user
     # permission to do.

@@ -2,10 +2,7 @@ class ApiController < ActionController::Base
   include DeviseTokenAuth::Concerns::SetUserByToken
   before_filter :authenticate_api_user!
 
-  #cancan_resource_class.add_before_filter(self, :authorize_resource, nil)
-  authorize_resource
-  check_authorization
-  rescue_from CanCan::AccessDenied do |exception|
+  rescue_from CanCan::AccessDenied do
     render :text => '401. Unauthorized. You are not permited for this resourse.', :status => :unauthorized
   end
 
@@ -24,9 +21,5 @@ private
 
   def authenticate_api_user!
     send "authenticate_#{controller_scope}_user!"
-  end
-
-  def current_ability
-    @current_ability ||= Ability.new(current_user, request)
   end
 end

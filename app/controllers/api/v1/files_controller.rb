@@ -1,5 +1,7 @@
 class Api::V1::FilesController < ApiController
   before_filter :find_file, except: [:create]
+  authorize_resource
+  check_authorization
 
   def show
     render partial: 'file', locals: { file: @file }
