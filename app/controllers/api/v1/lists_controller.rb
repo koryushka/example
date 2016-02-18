@@ -1,5 +1,6 @@
 class Api::V1::ListsController < ApiController
   before_filter :find_list, except: [:index, :create]
+  after_filter :something_updated, except: [:index, :show]
 
   def index
     @lists = tmp_user.lists

@@ -71,6 +71,7 @@ GEM
       devise (~> 3.5.2)
       rails (~> 4.2)
     erubis (2.7.0)
+    eventmachine (1.0.9.1)
     excon (0.45.4)
     fission (0.5.0)
       CFPropertyList (~> 2.2)
@@ -201,6 +202,7 @@ GEM
     mini_portile2 (2.0.0)
     minitest (5.8.3)
     multi_json (1.11.2)
+    net-http-persistent (2.9.4)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (3.0.2)
@@ -211,6 +213,10 @@ GEM
     orm_adapter (0.5.0)
     pg (0.18.4)
     pg (0.18.4-x86-mingw32)
+    pubnub (3.7.10)
+      eventmachine (~> 1.0)
+      json (~> 1.8)
+      net-http-persistent (~> 2.9)
     rack (1.6.4)
     rack-cors (0.4.0)
     rack-test (0.6.3)
@@ -287,6 +293,7 @@ DEPENDENCIES
   fog-aws
   jbuilder (~> 2.0)
   pg
+  pubnub
   rack-cors
   rails (= 4.2.3)
   tzinfo-data

@@ -1,5 +1,6 @@
 class Api::V1::FilesController < ApiController
   before_filter :find_file, except: [:create]
+  after_filter :something_updated, except: [:show]
 
   def show
     render partial: 'file', locals: { file: @file }

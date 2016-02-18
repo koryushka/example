@@ -24,6 +24,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'rack-cors', require: 'rack/cors'
 gem 'fog'
 gem 'fog-aws'
+gem 'pubnub'
 
 # Use Capistrano for deployment
 group :development do

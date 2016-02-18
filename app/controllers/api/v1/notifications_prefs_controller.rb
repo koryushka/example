@@ -1,6 +1,7 @@
 class Api::V1::NotificationsPrefsController < ApiController
   before_filter :find_calendar_item
   before_filter :find_prefs, except: [:create, :index]
+  after_filter :something_updated, except: [:index]
 
   def index
     @prefs = @calendar_item.notifications_preference

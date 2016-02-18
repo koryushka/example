@@ -2,6 +2,7 @@ class Api::V1::CalendarsController < ApiController
   #before_filter :authenticate_api_v1_user!
   before_filter :find_calendar, except: [:index, :create]
   before_filter :find_calendar_item, only: [:add_item, :remove_item]
+  after_filter :something_updated, except: [:index, :show, :show_items]
 
   def index
     @calendars = tmp_user.calendars
