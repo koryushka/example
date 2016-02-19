@@ -3,6 +3,7 @@ class Api::V1::CalendarsController < ApiController
   before_filter :find_calendar_item, only: [:add_item, :remove_item]
   authorize_resource
   check_authorization
+  after_filter :something_updated, except: [:index, :show, :show_items]
 
   def index
     @calendars = current_user.calendars

@@ -25,6 +25,7 @@ gem 'rack-cors', require: 'rack/cors'
 gem 'fog'
 gem 'fog-aws'
 gem 'cancancan', '~> 1.10'
+gem 'pubnub'
 
 # Use Capistrano for deployment
 group :development do

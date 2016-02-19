@@ -1,5 +1,6 @@
 class Api::V1::FilesController < ApiController
   before_filter :find_file, except: [:create]
+  after_filter :something_updated, except: [:show]
   authorize_resource
   check_authorization
 

@@ -4,6 +4,7 @@ class Api::V1::CalendarItemsController < ApiController
   before_filter :find_document, only: [:attach_document, :detach_document]
   authorize_resource
   check_authorization
+  after_filter :something_updated, except: [:index, :show, :show_documents]
 
   def index
     @calendar_items = tmp_user.calendar_items
