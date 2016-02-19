@@ -1,9 +1,8 @@
 class Api::V1::CalendarItemsController < ApiController
-  #before_filter :authenticate_api_v1_user!
-  before_filter :find_calendar_item, except: [:index, :create]
+  before_filter :find_entity, except: [:index, :create]
   before_filter :find_document, only: [:attach_document, :detach_document]
-  authorize_resource
-  check_authorization
+  #authorize_resource
+  #check_authorization
   after_filter :something_updated, except: [:index, :show, :show_documents]
 
   def index
@@ -65,15 +64,6 @@ class Api::V1::CalendarItemsController < ApiController
 private
   def calendar_item_params
     params.permit(:title, :start_date, :end_date, :notes, :kind, :latitude, :longitude, :location_name)
-  end
-
-  def find_calendar_item
-    calendar_item_id = params[:id]
-    @calendar_item = CalendarItem.find_by(id: calendar_item_id)
-
-    if @calendar_item.nil?
-      render nothing: true, status: :not_found
-    end
   end
 
   def find_document

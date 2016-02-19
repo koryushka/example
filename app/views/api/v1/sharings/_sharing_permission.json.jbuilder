@@ -1,0 +1,1 @@
+json.extract! sharing_permission, :id, :subject_class, :action, :subject_id, :user_id
