@@ -6,6 +6,8 @@ class ApiController < ActionController::Base
     render :text => '401. Unauthorized. You are not permited for this resourse.', :status => :unauthorized
   end
 
+private
+
   def current_user
     send "current_#{controller_scope}_user"
   end
@@ -30,7 +32,6 @@ class ApiController < ActionController::Base
     publish('updated')
   end
 
-private
   def tmp_user
     @tmp_user ||= User.find(5)
   end

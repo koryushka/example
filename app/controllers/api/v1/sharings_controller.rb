@@ -12,6 +12,24 @@ class Api::V1::SharingsController < ApiController
     render partial: 'sharing_permission', locals: { sharing_permission: @sharing_permission }, status: :created
   end
 
+  def resources
+    result = []
+    hidden_actions = []
+    Rails.application.eager_load!
+    ApiController.descendants.each do |controller|
+      actions = []
+      (controller.action_methods.to_a - hidden_actions).each do |action|
+        actions << action
+      end
+      result << {
+          name: controller.controller_name.classify,
+          actions: actions
+      }
+    end
+
+    render json: result
+  end
+
 private
   def sharing_params
     params.permit(:subject_class, :subject_id, :user_id, :action)

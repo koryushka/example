@@ -32,6 +32,9 @@ Rails.application.routes.draw do
       resources :list_items, except: [:new, :edit, :index, :create]
       resources :documents, except: [:edit, :new]
       resources :files, only: [:create]
+
+      resources :sharings, only: [:create]
+      get 'sharings/resources' => 'sharings#resources'
     end
   end
 end
