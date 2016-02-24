@@ -14,6 +14,9 @@ class Ability
     #can [:login, :create, :check_email, :password_recovery, :update_password, :me], User
     if user
       can :manage, [Calendar, CalendarItem, CalendarsGroup, Document, File, List, NotificationsPreference] do |subject|
+        subject.user_id == user.id
+      end
+      can :read, [Calendar, CalendarItem, CalendarsGroup, Document, File, List, NotificationsPreference] do |subject|
         user.sharing_permissions
             .exists?(subject_class: subject.class.name.downcase, subject_id: subject.id)
       end

@@ -1,6 +1,6 @@
 class ApiController < ActionController::Base
-  #include DeviseTokenAuth::Concerns::SetUserByToken
-  #before_filter :authenticate_api_user!
+  include DeviseTokenAuth::Concerns::SetUserByToken
+  before_filter :authenticate_api_user!
 
   rescue_from CanCan::AccessDenied do
     render :text => '401. Unauthorized. You are not permited for this resourse.', :status => :unauthorized
@@ -37,7 +37,7 @@ private
   end
 
   def controller_scope
-    self.class.name.parent_name.split('::').join('_').downcase
+    self.class.parent_name.split('::').join('_').downcase
   end
 
   def authenticate_api_user!

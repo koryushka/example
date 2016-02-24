@@ -1,9 +1,9 @@
 class Api::V1::CalendarsController < ApiController
   before_filter :find_calendar, except: [:index, :create]
   before_filter :find_calendar_item, only: [:add_item, :remove_item]
+  after_filter :something_updated, except: [:index, :show, :show_items]
   authorize_resource
   check_authorization
-  after_filter :something_updated, except: [:index, :show, :show_items]
 
   def index
     @calendars = current_user.calendars
@@ -57,6 +57,7 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def show_items
+    #permited_items = SharingPermission.where(subject_class: CalendarItem.class.name, user_id: current_user.id)
     @calendar_items = @calendar.calendar_items
     render 'api/v1/calendar_items/index'
   end

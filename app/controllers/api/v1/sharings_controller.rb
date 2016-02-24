@@ -1,4 +1,8 @@
 class Api::V1::SharingsController < ApiController
+  before_filter only:[:destroy] do
+    find_entity :sharing_permision
+  end
+
   def create
     @sharing_permission = SharingPermission.new(sharing_params)
     if @sharing_permission.valid?
@@ -12,6 +16,11 @@ class Api::V1::SharingsController < ApiController
     render partial: 'sharing_permission', locals: { sharing_permission: @sharing_permission }, status: :created
   end
 
+  def destroy
+    @sharing_permission.destroy
+    render nothing: true, status: :no_content
+  end
+
   def resources
     result = []
     hidden_actions = []
@@ -22,8 +31,8 @@ class Api::V1::SharingsController < ApiController
         actions << action
       end
       result << {
-          name: controller.controller_name.classify,
-          actions: actions
+        name: controller.controller_name.classify,
+        actions: actions
       }
     end
 

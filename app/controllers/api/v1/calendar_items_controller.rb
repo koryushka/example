@@ -1,12 +1,12 @@
 class Api::V1::CalendarItemsController < ApiController
   before_filter :find_entity, except: [:index, :create]
   before_filter :find_document, only: [:attach_document, :detach_document]
-  #authorize_resource
-  #check_authorization
   after_filter :something_updated, except: [:index, :show, :show_documents]
+  authorize_resource
+  check_authorization
 
   def index
-    @calendar_items = tmp_user.calendar_items
+    @calendar_items = current_user.calendar_items
   end
 
   def show
@@ -15,7 +15,7 @@ class Api::V1::CalendarItemsController < ApiController
 
   def create
     @calendar_item = CalendarItem.new(calendar_item_params)
-    @calendar_item.user = tmp_user
+    @calendar_item.user = current_user
     if @calendar_item.valid?
       unless @calendar_item.save!
         return render nothing: true, status: :internal_server_error

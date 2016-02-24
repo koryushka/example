@@ -33,7 +33,7 @@ Rails.application.routes.draw do
       resources :documents, except: [:edit, :new]
       resources :files, only: [:create]
 
-      resources :sharings, only: [:create]
+      resources :sharings, only: [:create, :destroy]
       get 'sharings/resources' => 'sharings#resources'
     end
   end
