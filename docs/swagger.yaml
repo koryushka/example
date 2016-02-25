@@ -985,7 +985,7 @@ paths:
     post:
       summary: Shares some entity with some user
       parameters:
-        - name: calendar_item
+        - name: sharing_data
           in: body
           required: true
           schema:
@@ -995,6 +995,8 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/SharingItem'
+      tags:
+        - Sharings
 definitions:
   RegistrationData:
     type: object
