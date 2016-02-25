@@ -57,9 +57,8 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def show_items
-    #permited_items = SharingPermission.where(subject_class: CalendarItem.class.name, user_id: current_user.id)
-    @calendar_items = @calendar.calendar_items
-    render 'api/v1/calendar_items/index'
+    #@calendar_items = @calendar.calendar_items
+    render 'items'
   end
 
   private
