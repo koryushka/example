@@ -8,8 +8,8 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
       mount_devise_token_auth_for 'User', at: 'auth'
-      #resources :users
-      get 'users/me' => 'users/me'
+      get 'users/me' => 'users#me'
+      put 'users' => 'users#update'
 
       resources :calendars, except: [:edit, :new]
       post 'calendars/:id/items/:item_id', to: 'calendars#add_item'

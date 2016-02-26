@@ -101,26 +101,17 @@ paths:
       tags:
         - Auth
   /users:
-    get:
-      summary: Current user friends
-      description: 'Returns current user and all his friends. Every time someone share to current user, or current user shares to someone - this person automatically goes to friends'
+    put:
+      summary: Updates user data
+      parameters:
+        - name: user_data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserInput'
       responses:
-        '200':
+        200:
           description: OK
-          schema:
-            $ref: '#/definitions/ArrayOfUsers'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Users
-    post:
-      summary: Create user
-      description: Creates new user
-      responses:
-        '201':
-          description: Created
           schema:
             $ref: '#/definitions/User'
         default:
@@ -134,48 +125,7 @@ paths:
       summary: Current user
       description: Returns current user
       responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/User'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Users
-    put:
-      summary: Update current user
-      description: Updates current user information
-      responses:
-        '201':
-          description: Updated
-          schema:
-            $ref: '#/definitions/User'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Users
-    delete:
-      summary: Delete current user
-      description: "Removes current user from system and clears all it's data"
-      responses:
-        '204':
-          description: Deleted
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Users
-  /users/:id:
-    get:
-      summary: User
-      description: Returns user by ID
-      responses:
-        '200':
+        200:
           description: OK
           schema:
             $ref: '#/definitions/User'
@@ -372,7 +322,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/CalendarItemsContaner'
+            $ref: '#/definitions/ArrayOfCalendarItems'
         default:
           description: Unexpected error
           schema:
@@ -981,20 +931,6 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Participations
-  /sharings:
-    post:
-      summary: Shares some entity with some user
-      parameters:
-        - name: calendar_item
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/SharingInput'
-      responses:
-        201:
-          description: Created
-          schema:
-            $ref: '#/definitions/SharingItem'
 definitions:
   RegistrationData:
     type: object
@@ -1134,6 +1070,52 @@ definitions:
       location_name:
         type: string
         description: 'Location name. It might be city name, neighborhood name or anything else'
+      lists:
+        type: array
+        description: Associated lists IDs
+        items:
+          type: string
+      event:
+        type: object
+        description: Event specific data
+        properties:
+          all_day:
+            type: boolean
+            description: Specifies all day event type
+            default: false
+      reminder:
+        type: object
+        description: Reminder specific data
+        properties:
+          completed:
+            type: boolean
+            description: Specifies completion state of reminder. Synchronizes with completionDate property
+            default: false
+          completionDate:
+            type: string
+            format: date-time
+            description: Reminder completion time. Synchronizes with completion property
+          hour:
+            type: integer
+            format: int16
+            description: Hours value for reminder
+            default: 0
+            minimum: 0
+            maximum: 23
+          minute:
+            type: integer
+            format: int16
+            description: Minutes value for reminder
+            default: 0
+            minimum: 0
+            maximum: 59
+          priority:
+            type: integer
+            format: int16
+            description: Priority (importance) value for reminder
+            default: 0
+            minimum: 0
+            maximum: 3
   CalendarItemInput:
     type: object
     properties:
@@ -1296,32 +1278,27 @@ definitions:
           list:
             type: string
             description: Optional list ID to be shared
-  User:
+  UserInput:
     type: object
     properties:
-      identifier:
-        type: string
-        description: User ID
-      name:
+      user_name:
         type: string
         description: User full name
       email:
         type: string
         description: User email
-      phone:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: User ID
+      user_name:
         type: string
-        description: User phone
-      systemNotificationsEnabled:
-        type: boolean
-        description: Specifies if notifications for some system events enabled by default
-        default: true
-      calendarNotificationsEnabled:
-        type: boolean
-        description: Specifies if notifications for calendars enabled by default
-        default: false
-      current:
-        type: boolean
-        description: Specifies if this is current authenticated user
+        description: User full name
+      email:
+        type: string
+        description: User email
   File:
     type: object
     properties:
@@ -1368,38 +1345,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ValidationError'
-  SharingItem:
-    type: object
-    properties:
-      id:
-        type: integer
-      subject_class:
-        type: string
-        description: >
-          Type of sharing entity for example: Calendar, CalendarItem, etc.
-      subject_id:
-        type: integer
-        description: ID of entity which should be shared
-      user_id:
-        type: integer
-        description: ID of user you're going to share with
-  SharingInput:
-    type: object
-    properties:
-      subject_class:
-        type: string
-        description: >
-          Type of sharing entity for example: Calendar, CalendarItem, etc.
-      subject_id:
-        type: integer
-        description: ID of entity which should be shared
-      user_id:
-        type: integer
-        description: ID of user you're going to share with
-  ArrayOfUsers:
-    type: array
-    items:
-      $ref: '#/definitions/User'
   ArrayOfCalendars:
     type: array
     items:
@@ -1412,19 +1357,6 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/CalendarItem'
-  CalendarItemsContaner:
-    type: object
-    properties:
-      items:
-        type: array
-        description: List of items created by current user
-        items:
-          $ref: '#/definitions/CalendarItem'
-      shared_items:
-        type: array
-        description: List of items shared with current user
-        items:
-          $ref: '#/definitions/CalendarItem'
   ArrayOfDocuments:
     type: array
     items:
