@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   include DeviseTokenAuth::Concerns::User
 
-  validates :user_name, length: {maximum: 32}, presence: true
+  #validates :user_name, length: {maximum: 32}, presence: true
   validates :email, length: {maximum: 128}, presence: true,
             email_format: {:message => "doesn't look like an email address."},
             uniqueness: true
