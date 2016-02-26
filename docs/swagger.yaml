@@ -2,8 +2,8 @@ swagger: '2.0'
 info:
   title: Curago API
   description: API documentation for Curago
-  version: 1.0.2
-host: api.curagolife.com
+  version: 1.0.3
+host: staging.curagolife.com
 schemes:
   - https
 basePath: /api/v1
@@ -1342,11 +1342,6 @@ definitions:
         description: ID of entity which should be shared
       user_id:
         type: integer
-        description: ID of user you're going to share with
-  ArrayOfUsers:
-    type: array
-    items:
-      $ref: '#/definitions/User'
   ArrayOfCalendars:
     type: array
     items:
