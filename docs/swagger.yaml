@@ -322,7 +322,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/ArrayOfCalendarItems'
+            $ref: '#/definitions/CalendarItemsContaner'
         default:
           description: Unexpected error
           schema:
@@ -931,6 +931,22 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Participations
+  /sharings:
+    post:
+      summary: Shares some entity with some user
+      parameters:
+        - name: sharing_data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SharingInput'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/SharingItem'
+      tags:
+        - Sharings
 definitions:
   RegistrationData:
     type: object
@@ -1070,52 +1086,6 @@ definitions:
       location_name:
         type: string
         description: 'Location name. It might be city name, neighborhood name or anything else'
-      lists:
-        type: array
-        description: Associated lists IDs
-        items:
-          type: string
-      event:
-        type: object
-        description: Event specific data
-        properties:
-          all_day:
-            type: boolean
-            description: Specifies all day event type
-            default: false
-      reminder:
-        type: object
-        description: Reminder specific data
-        properties:
-          completed:
-            type: boolean
-            description: Specifies completion state of reminder. Synchronizes with completionDate property
-            default: false
-          completionDate:
-            type: string
-            format: date-time
-            description: Reminder completion time. Synchronizes with completion property
-          hour:
-            type: integer
-            format: int16
-            description: Hours value for reminder
-            default: 0
-            minimum: 0
-            maximum: 23
-          minute:
-            type: integer
-            format: int16
-            description: Minutes value for reminder
-            default: 0
-            minimum: 0
-            maximum: 59
-          priority:
-            type: integer
-            format: int16
-            description: Priority (importance) value for reminder
-            default: 0
-            minimum: 0
-            maximum: 3
   CalendarItemInput:
     type: object
     properties:
@@ -1345,6 +1315,38 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ValidationError'
+  SharingItem:
+    type: object
+    properties:
+      id:
+        type: integer
+      subject_class:
+        type: string
+        description: >
+          Type of sharing entity for example: Calendar, CalendarItem, etc.
+      subject_id:
+        type: integer
+        description: ID of entity which should be shared
+      user_id:
+        type: integer
+        description: ID of user you're going to share with
+  SharingInput:
+    type: object
+    properties:
+      subject_class:
+        type: string
+        description: >
+          Type of sharing entity for example: Calendar, CalendarItem, etc.
+      subject_id:
+        type: integer
+        description: ID of entity which should be shared
+      user_id:
+        type: integer
+        description: ID of user you're going to share with
+  ArrayOfUsers:
+    type: array
+    items:
+      $ref: '#/definitions/User'
   ArrayOfCalendars:
     type: array
     items:
@@ -1357,6 +1359,19 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/CalendarItem'
+  CalendarItemsContaner:
+    type: object
+    properties:
+      items:
+        type: array
+        description: List of items created by current user
+        items:
+          $ref: '#/definitions/CalendarItem'
+      shared_items:
+        type: array
+        description: List of items shared with current user
+        items:
+          $ref: '#/definitions/CalendarItem'
   ArrayOfDocuments:
     type: array
     items:
