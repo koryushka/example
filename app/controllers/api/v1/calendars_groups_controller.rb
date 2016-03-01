@@ -1,7 +1,7 @@
 class Api::V1::CalendarsGroupsController < ApiController
   before_filter :find_calendars_group, except: [:index, :create]
-  authorize_resource
-  check_authorization
+  #authorize_resource
+  #check_authorization
   after_filter :something_updated, except: [:index, :show]
 
   def index

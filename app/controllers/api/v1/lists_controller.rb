@@ -1,8 +1,8 @@
 class Api::V1::ListsController < ApiController
   before_filter :find_list, except: [:index, :create]
   after_filter :something_updated, except: [:index, :show]
-  authorize_resource
-  check_authorization
+  #authorize_resource
+  #check_authorization
 
   def index
     @lists = tmp_user.lists
