@@ -14,7 +14,7 @@ class Api::V1::CalendarItemsController < ApiController
   end
 
   def create
-    @calendar_item = CalendarItem.new(calendar_item_params)
+    @calendar_item = Event.new(calendar_item_params)
     @calendar_item.user = current_user
     if @calendar_item.valid?
       unless @calendar_item.save!
@@ -63,7 +63,9 @@ class Api::V1::CalendarItemsController < ApiController
 
 private
   def calendar_item_params
-    params.permit(:title, :start_date, :end_date, :notes, :kind, :latitude, :longitude, :location_name)
+    params.permit(:title, :starts_at, :ends_at, :notes, :kind, :latitude,
+                  :longitude, :location_name, :separation, :count, :until,
+                  :timezone_name, :frequency)
   end
 
   def find_document

@@ -1,6 +1,6 @@
 class Document < ActiveRecord::Base
   belongs_to :user
-  has_and_belongs_to_many :calendar_items
+  has_and_belongs_to_many :events
   belongs_to :uploaded_file
 
   validates :title, length: {maximum: 128}, presence: true

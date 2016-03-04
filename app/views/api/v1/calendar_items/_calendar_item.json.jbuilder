@@ -1,1 +1,1 @@
-json.extract! calendar_item, :id, :title, :user_id, :start_date, :end_date, :notes, :timezone, :kind, :latitude, :longitude, :location_name
+json.extract! calendar_item, :id, :title, :user_id, :starts_at, :ends_at, :notes, :timezone_name, :kind, :latitude, :longitude, :location_name

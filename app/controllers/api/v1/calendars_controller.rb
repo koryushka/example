@@ -77,7 +77,7 @@ class Api::V1::CalendarsController < ApiController
 
   def find_calendar_item
     calendar_item_id = params[:item_id]
-    @calendar_item = CalendarItem.find_by(id: calendar_item_id)
+    @calendar_item = Event.find_by(id: calendar_item_id)
 
     if @calendar_item.nil?
       render nothing: true, status: :not_found

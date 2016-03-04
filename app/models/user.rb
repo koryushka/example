@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   has_many :calendars
-  has_many :calendar_items
+  has_many :events
   has_many :calendars_groups
   has_many :lists
   has_many :documents
