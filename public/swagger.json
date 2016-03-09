@@ -7,7 +7,7 @@
     },
     "host": "staging.curagolife.com",
     "schemes": [
-        "https"
+        "http"
     ],
     "basePath": "/api/v1",
     "produces": [
@@ -475,7 +475,7 @@
                 ]
             }
         },
-        "/calendars/:id/items": {
+        "/calendars/:id/events": {
             "get": {
                 "summary": "Returns items of specified calendar",
                 "parameters": [
@@ -502,12 +502,12 @@
                     }
                 },
                 "tags": [
-                    "Calendar Items",
-                    "Calendar"
+                    "Events",
+                    "Calendars"
                 ]
             }
         },
-        "/calendars/:id/items/:item_id": {
+        "/calendars/:id/events/:item_id": {
             "post": {
                 "summary": "Add specified item to specified calendar",
                 "parameters": [
@@ -538,8 +538,8 @@
                     }
                 },
                 "tags": [
-                    "Calendar Items",
-                    "Calendar"
+                    "Events",
+                    "Calendars"
                 ]
             },
             "delete": {
@@ -572,12 +572,12 @@
                     }
                 },
                 "tags": [
-                    "Calendar Items",
+                    "Events",
                     "Calendar"
                 ]
             }
         },
-        "/calendar_items": {
+        "/events": {
             "get": {
                 "summary": "Current user calendar items",
                 "description": "Returns all calendar items created by current user or shared with him",
@@ -596,7 +596,7 @@
                     }
                 },
                 "tags": [
-                    "Calendar Items"
+                    "Events"
                 ]
             },
             "post": {
@@ -633,11 +633,11 @@
                     }
                 },
                 "tags": [
-                    "Calendar Items"
+                    "Events"
                 ]
             }
         },
-        "/calendar_items/:id": {
+        "/events/:id": {
             "put": {
                 "summary": "Update calendar item",
                 "description": "Updates calendar item information by ID",
@@ -699,11 +699,11 @@
                     }
                 },
                 "tags": [
-                    "Calendar Items"
+                    "Events"
                 ]
             }
         },
-        "/calendar_items/:id/documents": {
+        "/events/:id/documents": {
             "get": {
                 "summary": "Returns list of documents relate to this calendar item",
                 "parameters": [
@@ -730,12 +730,12 @@
                     }
                 },
                 "tags": [
-                    "Calendar Items",
+                    "Events",
                     "Documents"
                 ]
             }
         },
-        "/calendar_items/:id/documents/:document_id": {
+        "/events/:id/documents/:document_id": {
             "post": {
                 "summary": "Attaches document to calendar item",
                 "parameters": [
@@ -759,7 +759,7 @@
                     }
                 },
                 "tags": [
-                    "Calendar Items",
+                    "Events",
                     "Documents"
                 ]
             },
@@ -786,7 +786,7 @@
                     }
                 },
                 "tags": [
-                    "Calendar Items",
+                    "Events",
                     "Documents"
                 ]
             }

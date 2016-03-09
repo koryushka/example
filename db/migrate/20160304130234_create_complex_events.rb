@@ -4,7 +4,7 @@ class CreateComplexEvents < ActiveRecord::Migration
       dir.up do
         execute <<-SQL
           CREATE  OR REPLACE VIEW complex_events AS
-            SELECT * FROM recurring_events_for('epoch', 'now', NULL, NULL)
+            SELECT * FROM recurring_events_for('epoch')
             UNION ALL (SELECT * FROM events WHERE frequency IS NULL)
         SQL
       end

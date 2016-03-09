@@ -5,7 +5,7 @@ info:
   version: 1.0.3
 host: staging.curagolife.com
 schemes:
-  - https
+  - http
 basePath: /api/v1
 produces:
   - application/json
@@ -20,9 +20,9 @@ paths:
           schema:
             $ref: '#/definitions/RegistrationData'
       responses:
-        '200':
+        200:
           description: OK
-        '403':
+        403:
           description: redurect_url is missing or not allowed, or user creation error
       tags:
         - Auth
@@ -30,11 +30,11 @@ paths:
       summary: Updates user
       description: This method will update an existing user's account settings.
       responses:
-        '200':
+        200:
           description: OK
-        '403':
+        403:
           description: Account update errors
-        '404':
+        404:
           description: User not found
       tags:
         - Auth
@@ -42,9 +42,9 @@ paths:
       summary: Removes user account
       description: This method will destroy users identified by their uid and auth_token headers.
       responses:
-        '200':
+        200:
           description: OK
-        '404':
+        404:
           description: User not found
       tags:
         - Auth
@@ -58,9 +58,9 @@ paths:
           schema:
             $ref: '#/definitions/SignInCredentials'
       responses:
-        '200':
+        200:
           description: OK
-        '401':
+        401:
           description: Authentication error
       tags:
         - Auth
@@ -69,9 +69,9 @@ paths:
       summary: Destroys users sessions
       description: "This method will invalidate the user's authentication token."
       responses:
-        '200':
+        200:
           description: OK
-        '404':
+        404:
           description: Session not found
       tags:
         - Auth
@@ -80,11 +80,11 @@ paths:
       summary: "Resets user's password"
       description: Use this method for sending a password reset confirmation email to users that registered by email. Accepts email and redirect_url as params. The user matching the email param will be sent instructions on how to reset their password. redirect_url is the url to which the user will be redirected after visiting the link contained in the email.
       responses:
-        '200':
+        200:
           description: OK
-        '401':
+        401:
           description: Missing email or redirect_url
-        '403':
+        403:
           description: 'Redirect to %{redirect_url} not allowed.'
       tags:
         - Auth
@@ -92,11 +92,11 @@ paths:
       summary: "Updates user's password"
       description: "Use this method to change users' passwords. Requires password and password_confirmation as params. This method is only valid for users that registered by email."
       responses:
-        '200':
+        200:
           description: OK
-        '401':
+        401:
           description: Authorization required
-        '422':
+        422:
           description: 'Missing password, or you tries putting password for oauth, or other errors'
       tags:
         - Auth
@@ -140,7 +140,7 @@ paths:
       summary: Current user calendar groups
       description: Returns all calendar groups created by current user or shared with him
       responses:
-        '200':
+        200:
           description: OK
           schema:
             $ref: '#/definitions/ArrayOfCalendarGroups'
@@ -309,7 +309,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Calendars
-  /calendars/:id/items:
+  /calendars/:id/events:
     get:
       summary: Returns items of specified calendar
       parameters:
@@ -328,9 +328,9 @@ paths:
           schema:
             $ref: '#/definitions/ErrorsContainer'
       tags:
-        - Calendar Items
-        - Calendar
-  /calendars/:id/items/:item_id:
+        - Events
+        - Calendars
+  /calendars/:id/events/:item_id:
     post:
       summary: Add specified item to specified calendar
       parameters:
@@ -352,8 +352,8 @@ paths:
           schema:
             $ref: '#/definitions/ErrorsContainer'
       tags:
-        - Calendar Items
-        - Calendar
+        - Events
+        - Calendars
     delete:
       summary: Removed spcified item from specified calendar
       parameters:
@@ -375,9 +375,9 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - Calendar Items
+        - Events
         - Calendar
-  /calendar_items:
+  /events:
     get:
       summary: Current user calendar items
       description: Returns all calendar items created by current user or shared with him
@@ -391,7 +391,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorsContainer'
       tags:
-        - Calendar Items
+        - Events
     post:
       summary: Create calendar item
       description: Creates new calendar item
@@ -415,8 +415,8 @@ paths:
           schema:
             $ref: '#/definitions/ErrorsContainer'
       tags:
-        - Calendar Items
-  /calendar_items/:id:
+        - Events
+  /events/:id:
     put:
       summary: Update calendar item
       description: Updates calendar item information by ID
@@ -458,8 +458,8 @@ paths:
           schema:
             $ref: '#/definitions/ErrorsContainer'
       tags:
-        - Calendar Items
-  /calendar_items/:id/documents:
+        - Events
+  /events/:id/documents:
     get:
       summary: Returns list of documents relate to this calendar item
       parameters:
@@ -478,9 +478,9 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - Calendar Items
+        - Events
         - Documents
-  /calendar_items/:id/documents/:document_id:
+  /events/:id/documents/:document_id:
     post:
       summary: Attaches document to calendar item
       parameters:
@@ -503,7 +503,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - Calendar Items
+        - Events
         - Documents
     delete:
       summary: Detaches document from calendar item
@@ -527,7 +527,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - Calendar Items
+        - Events
         - Documents
   /documents:
     get:

@@ -12,15 +12,15 @@ class Calendar < ActiveRecord::Base
 
   def shared_events
     if self.main?
-      cic = Arel::Table.new(:calendar_items_calendars)
+      cic = Arel::Table.new(:calendars_events)
       sharings = SharingPermission.arel_table
       complex_events = ComplexEvent.arel_table
       # items shared through calendars
-      shared_items_from_calendars = complex_events.join(cic).on(cic[:calendar_item_id].eq(complex_events[:id]))
+      shared_items_from_calendars = complex_events.join(cic).on(cic[:event_id].eq(complex_events[:id]))
                                .join(sharings).on(sharings[:subject_id].eq(cic[:calendar_id])
                                                       .and(sharings[:subject_class].eq(Calendar.name))
                                                       .and(sharings[:user_id].eq(self.user_id)))
-                               .project(complex_events[Arel.star]).where(complex_events[:frequency])
+                               .project(complex_events[Arel.star]).where(complex_events[:frequency].not_eq(nil))
       # items shared directly
       shared_items = complex_events.join(sharings).on(sharings[:subject_id].eq(complex_events[:id])
                                                  .and(sharings[:subject_class].eq(Event.name))

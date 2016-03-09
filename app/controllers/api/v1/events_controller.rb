@@ -1,4 +1,4 @@
-class Api::V1::CalendarItemsController < ApiController
+class Api::V1::EventsController < ApiController
   before_filter :find_entity, except: [:index, :create]
   before_filter :find_document, only: [:attach_document, :detach_document]
   after_filter :something_updated, except: [:index, :show, :show_documents]
@@ -6,63 +6,63 @@ class Api::V1::CalendarItemsController < ApiController
   #check_authorization
 
   def index
-    @calendar_items = current_user.calendar_items
+    @calendar_items = current_user.events
   end
 
   def show
-    render partial: 'calendar_item', locals: { calendar_item: @calendar_item }
+    render partial: 'event', locals: {event: @event }
   end
 
   def create
-    @calendar_item = Event.new(calendar_item_params)
-    @calendar_item.user = current_user
-    if @calendar_item.valid?
-      unless @calendar_item.save!
+    @event = Event.new(event_params)
+    @event.user = current_user
+    if @event.valid?
+      unless @event.save!
         return render nothing: true, status: :internal_server_error
       end
     else
-      return render json: { validation_errors: @calendar_item.errors.messages }, status: :bad_request
+      return render json: { validation_errors: @event.errors.messages }, status: :bad_request
     end
 
-    render partial: 'calendar_item', locals: { calendar_item: @calendar_item }, status: :created
+    render partial: 'event', locals: {event: @event }, status: :created
   end
 
   def update
-    @calendar_item.assign_attributes(calendar_item_params)
+    @event.assign_attributes(event_params)
 
-    if @calendar_item.valid?
-      unless @calendar_item.save!
+    if @event.valid?
+      unless @event.save!
         return render nothing: true, status: :internal_server_error
       end
     else
-      return render json: { validation_errors: @calendar_item.errors.messages }, status: :bad_request
+      return render json: { validation_errors: @event.errors.messages }, status: :bad_request
     end
 
-    render partial: 'calendar_item', locals: { calendar_item: @calendar_item }
+    render partial: 'event', locals: {event: @event }
   end
 
   def destroy
-    @calendar_item.destroy
+    @event.destroy
     render nothing: true, status: :no_content
   end
 
   def attach_document
-    @calendar_item.documents << @document
-    render partial: 'calendar_item', locals: { calendar_item: @calendar_item }
+    @event.documents << @document
+    render partial: 'event', locals: {event: @event }
   end
 
   def detach_document
-    @calendar_item.documents.delete(@document)
+    @event.documents.delete(@document)
     render nothing: true, status: :no_content
   end
 
   def show_documents
-    @documents = @calendar_item.documents
+    @documents = @event.documents
     render 'api/v1/documents/index'
   end
 
 private
-  def calendar_item_params
+  def event_params
     params.permit(:title, :starts_at, :ends_at, :notes, :kind, :latitude,
                   :longitude, :location_name, :separation, :count, :until,
                   :timezone_name, :frequency)

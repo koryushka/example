@@ -1,6 +1,6 @@
 class Api::V1::CalendarsController < ApiController
   before_filter :find_calendar, except: [:index, :create]
-  before_filter :find_calendar_item, only: [:add_item, :remove_item]
+  before_filter :find_event, only: [:add_item, :remove_item]
   after_filter :something_updated, except: [:index, :show, :show_items]
   #authorize_resource
   #check_authorization
@@ -47,12 +47,12 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def add_item
-    @calendar.calendar_items << @calendar_item
+    @calendar.events << @event
     render nothing: true
   end
 
   def remove_item
-    @calendar.calendar_items.delete(@calendar_item)
+    @calendar.calendar_items.delete(@event)
     render nothing: true, status: :no_content
   end
 
@@ -75,11 +75,11 @@ class Api::V1::CalendarsController < ApiController
     end
   end
 
-  def find_calendar_item
-    calendar_item_id = params[:item_id]
-    @calendar_item = Event.find_by(id: calendar_item_id)
+  def find_event
+    event_id = params[:item_id]
+    @event = Event.find_by(id: event_id)
 
-    if @calendar_item.nil?
+    if @event.nil?
       render nothing: true, status: :not_found
     end
   end

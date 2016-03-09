@@ -1,1 +1,0 @@
-json.array! @calendar_items, partial: 'api/v1/calendar_items/calendar_item', as: :calendar_item

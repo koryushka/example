@@ -6,9 +6,9 @@ class ReccuringEventsFunctions < ActiveRecord::Migration
         execute <<-SQL
           CREATE OR REPLACE FUNCTION recurring_events_for(
             range_start TIMESTAMP,
-            range_end  TIMESTAMP,
-            time_zone CHARACTER VARYING,
-            events_limit INT
+            range_end  TIMESTAMP DEFAULT now(),
+            time_zone CHARACTER VARYING DEFAULT NULL,
+            events_limit INT DEFAULT NULL
           )
             RETURNS SETOF events
             LANGUAGE plpgsql STABLE
