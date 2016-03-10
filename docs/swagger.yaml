@@ -322,7 +322,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/CalendarItemsContaner'
+            $ref: '#/definitions/EventsContaner'
         default:
           description: Unexpected error
           schema:
@@ -400,12 +400,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/CalendarItemInput'
+            $ref: '#/definitions/EventInput'
       responses:
         201:
           description: Created
           schema:
-            $ref: '#/definitions/CalendarItem'
+            $ref: '#/definitions/Event'
         400:
           description: Validation errors
           schema:
@@ -425,12 +425,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/CalendarItemInput'
+            $ref: '#/definitions/EventInput'
       responses:
         201:
           description: Updated
           schema:
-            $ref: '#/definitions/CalendarItem'
+            $ref: '#/definitions/Event'
         400:
           description: Validation errors
           schema:
@@ -1040,7 +1040,7 @@ definitions:
       title:
         type: string
         description: Calendar group title
-  CalendarItem:
+  Event:
     type: object
     properties:
       id:
@@ -1049,25 +1049,21 @@ definitions:
       title:
         type: string
         description: Calendar item title
-      creator:
-        type: string
+      user_id:
+        type: number
         description: User ID who created this calendar item
-      start_date:
+      starts_at:
         type: string
         format: date-time
         description: Start date and time for calendar item
-      end_date:
+      ends_at:
         type: string
         format: date-time
         description: End date and time for calendar item
       notes:
         type: string
         description: Additional notes
-      read_only:
-        type: boolean
-        description: Specifies if calendar item read only or not
-        default: false
-      timezone:
+      timezone_name:
         type: string
         description: Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter
       kind:
@@ -1086,34 +1082,30 @@ definitions:
       location_name:
         type: string
         description: 'Location name. It might be city name, neighborhood name or anything else'
-  CalendarItemInput:
+  EventInput:
     type: object
     properties:
       title:
         type: string
-        description: Calendar item title
-      start_date:
+        description: Event's title
+      starts_at:
         type: string
         format: date-time
-        description: Start date and time for calendar item
-      end_date:
+        description: Start date and time for event
+      ends_at:
         type: string
         format: date-time
-        description: End date and time for calendar item
+        description: End date and time for event
       notes:
         type: string
         description: Additional notes
-      read_only:
-        type: boolean
-        description: Specifies if calendar item read only or not
-        default: false
-      timezone:
+      timezone_name:
         type: string
         description: Optional time zone to apply to starting and ending dates. For reminders time zone usually does not matter
       kind:
         type: integer
         format: int16
-        description: Enumeration specifies the type of calendar item
+        description: Enumeration specifies the type of event
         default: 0
       lattitude:
         type: number
@@ -1125,7 +1117,30 @@ definitions:
         description: Location longitude
       location_name:
         type: string
-        description: 'Location name. It might be city name, neighborhood name or anything else'
+        description: Location name. It might be city name, neighborhood name or anything else
+      separation:
+        type: number
+        description: >
+          The number of intervals at en event's frequency in between occurrences of
+          the event. For instance, if an event occurs every other week, it has a
+          frequency of weekly and a separation of 2 because there are 2 weeks in
+          between occurrences. This column defaults to 1
+      count:
+        type: number
+        description: >
+          Specifies a limit number of times the event will occur. Set this column to
+          NULL for no limit
+      until:
+        type: string
+        format: date-time
+        description: >
+          Specifies a limiting date and time after which no recurrences will be
+          generated for this event. Set this column to NULL for no limit
+      frequency:
+        type: string
+        description: >
+          This column specifies the frequency at which this event recurs.
+          Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'
   Document:
     type: object
     properties:
@@ -1353,20 +1368,20 @@ definitions:
   ArrayOfCalendarItems:
     type: array
     items:
-      $ref: '#/definitions/CalendarItem'
-  CalendarItemsContaner:
+      $ref: '#/definitions/Event'
+  EventsContaner:
     type: object
     properties:
       items:
         type: array
         description: List of items created by current user
         items:
-          $ref: '#/definitions/CalendarItem'
+          $ref: '#/definitions/Event'
       shared_items:
         type: array
         description: List of items shared with current user
         items:
-          $ref: '#/definitions/CalendarItem'
+          $ref: '#/definitions/Event'
   ArrayOfDocuments:
     type: array
     items:

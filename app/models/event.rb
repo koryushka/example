@@ -15,5 +15,5 @@ class Event < ActiveRecord::Base
   validates :kind, allow_blank: true, numericality: {only_integer: true}
   validates :longitude, numericality: {only_integer: false}, allow_blank: true
   validates :latitude, numericality: {only_integer: false}, allow_blank: true
-  validates :frequency, inclusion: {in: ['once', 'daily', 'weekly', 'monthly', 'yearly', nil]}
+  validates :frequency, inclusion: {in: %w(once daily weekly monthly yearly)}
 end
