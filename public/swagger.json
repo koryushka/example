@@ -1670,7 +1670,10 @@
                     "description": "This property specifies the frequency at which this event recurs. Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'\n"
                 },
                 "event_recurrences_attributes": {
-                    "$ref": "#/definitions/EventReccurenceInput"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/EventReccurenceInput"
+                    }
                 }
             }
         },
