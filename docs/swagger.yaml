@@ -394,9 +394,20 @@ paths:
         - Events
     post:
       summary: Create calendar item
-      description: Creates new calendar item
+      description: |
+        Creates new calendar item.
+        
+        Examples:
+        
+        **E.B. choir practice weekdays at 5:30pm:**
+        
+        *Event object properties:*
+        > - **title**: E.B. choir practice
+        > - **starts_at:** 5:30pm with date
+        > - **event_recurrences_attributes**: array of EventReccurenceInput objects
+        > with following day property values: 1, 2, 3, 4, 5
       parameters:
-        - name: calendar_item
+        - name: event
           in: body
           required: true
           schema:
@@ -421,7 +432,7 @@ paths:
       summary: Update calendar item
       description: Updates calendar item information by ID
       parameters:
-        - name: calendar_item
+        - name: event
           in: body
           required: true
           schema:
@@ -440,7 +451,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorsContainer'
       tags:
-        - Calendar Items
+        - Events
     delete:
       summary: Delete calendar item
       description: Deletes calendar item by ID
@@ -831,7 +842,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Notifications
-        - Calendar Items
+        - Events
     delete:
       summary: Delete notification preference
       description: Deletes notification preference by ID
@@ -859,7 +870,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Notifications
-        - Calendar Items
+        - Events
     post:
       summary: Create notification preference
       description: Creates new notification preference
@@ -874,7 +885,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Notifications
-        - Calendar Items
+        - Events
   /participations:
     get:
       summary: Current user participations
@@ -1120,27 +1131,63 @@ definitions:
         description: Location name. It might be city name, neighborhood name or anything else
       separation:
         type: number
+        default: 1
         description: >
           The number of intervals at en event's frequency in between occurrences of
           the event. For instance, if an event occurs every other week, it has a
           frequency of weekly and a separation of 2 because there are 2 weeks in
-          between occurrences. This column defaults to 1
+          between occurrences. This property defaults to 1
       count:
         type: number
         description: >
-          Specifies a limit number of times the event will occur. Set this column to
+          Specifies a limit number of times the event will occur. Set this property to
           NULL for no limit
       until:
         type: string
         format: date-time
         description: >
           Specifies a limiting date and time after which no recurrences will be
-          generated for this event. Set this column to NULL for no limit
+          generated for this event. Set this property to NULL for no limit
       frequency:
         type: string
         description: >
-          This column specifies the frequency at which this event recurs.
+          This property specifies the frequency at which this event recurs.
           Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'
+      event_recurrences_attributes:
+        $ref: '#/definitions/EventReccurenceInput'
+  EventReccurenceInput:
+    type: object
+    properties:
+      day:
+        type: integer
+        description: >
+          "For weekly recurring events:
+            the day of the week the event occurs.
+            0 = Sunday, 1 = Monday, ..., 6 = Saturday.
+          For monthly recurring events:
+            if the week property is NULL, the day property specifies the day of the
+            month that the event occurs. If the week property is non-NULL, the day
+            property specifies the day of the week that the event occurs in that week
+            of the month."
+      week:
+        type: integer
+        description: >
+          "For weekly recurring events:
+            these properties should be set to NULL for weekly recurring events.
+            Setting these properties to non-NULL values will cause unspecified results.
+          For yearly recurring events:
+            the usage for the week and day properties of a yearly recurring event are
+            exactly the same as their usage for monthly recurring events."
+      month:
+        type: integer
+        description: >
+          "For monthly recurring events:
+            this property should be set to NULL for monthly recurring events.
+            Setting this property to a non-NULL value will cause unspecified results.
+          For yearly recurring events:
+            if the month property is non-NULL, it specifies the month for which this
+            pattern should be used. If it is NULL, this pattern will be for the
+            month of the original date/time of the event."
   Document:
     type: object
     properties:

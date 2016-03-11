@@ -57,7 +57,6 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def show_items
-    #@calendar_items = @calendar.calendar_items
     render 'items'
   end
 

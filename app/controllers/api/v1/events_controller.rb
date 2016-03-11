@@ -65,7 +65,8 @@ private
   def event_params
     params.permit(:title, :starts_at, :ends_at, :notes, :kind, :latitude,
                   :longitude, :location_name, :separation, :count, :until,
-                  :timezone_name, :frequency)
+                  :timezone_name, :frequency,
+                  event_recurrences_attributes: [:day, :week, :month])
   end
 
   def find_document
