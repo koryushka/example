@@ -601,7 +601,7 @@
             },
             "post": {
                 "summary": "Create calendar item",
-                "description": "Creates new calendar item.\n\nExamples:\n\n**E.B. choir practice weekdays at 5:30pm:**\n\n*Event object properties:*\n> - **title**: E.B. choir practice\n> - **starts_at:** 5:30pm with date\n> - **event_recurrences_attributes**: array of EventReccurenceInput objects\n> with following day property values: 1, 2, 3, 4, 5\n",
+                "description": "Creates new calendar item.\n\nExamples:\n\n**E.B. choir practice weekdays at 5:30pm:**\n\n*Event object properties:*\n- **title**: E.B. choir practice\n- **starts_at:** 5:30pm with date\n- **event_recurrences_attributes**: array of EventReccurenceInput objects\n  with following day property values: 1, 2, 3, 4, 5\n",
                 "parameters": [
                     {
                         "name": "event",
