@@ -703,13 +703,134 @@
                 ]
             }
         },
+        "/events/:id/cancellations": {
+            "post": {
+                "summary": "Cancels event for a specific date",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Event ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "data",
+                        "description": "Cancellation data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/EventCancellationInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/EventCancellation"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Events",
+                    "Event Cancelations"
+                ]
+            }
+        },
+        "/event_cancellations/:id": {
+            "put": {
+                "summary": "Updates event cancellation",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Event ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "data",
+                        "description": "Cancellation data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/EventCancellationInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "schema": {
+                            "$ref": "#/definitions/EventCancellation"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation errors",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationErrorsContainer"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Events",
+                    "Event Cancellations"
+                ]
+            },
+            "delete": {
+                "summary": "Removes event cancellation",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Event ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Events",
+                    "Event Cancellations"
+                ]
+            }
+        },
         "/events/:id/documents": {
             "get": {
                 "summary": "Returns list of documents relate to this calendar item",
                 "parameters": [
                     {
                         "name": "id",
-                        "description": "Calendar item ID",
+                        "description": "Event ID",
                         "in": "query",
                         "required": true,
                         "type": "integer"
@@ -1674,6 +1795,9 @@
                     "items": {
                         "$ref": "#/definitions/EventReccurenceInput"
                     }
+                },
+                "event_cancelation_attributes": {
+                    "$ref": "#/definitions/EventCancellationInput"
                 }
             }
         },
@@ -1691,6 +1815,29 @@
                 "month": {
                     "type": "integer",
                     "description": "\"For monthly recurring events:\n  this property should be set to NULL for monthly recurring events.\n  Setting this property to a non-NULL value will cause unspecified results.\nFor yearly recurring events:\n  if the month property is non-NULL, it specifies the month for which this\n  pattern should be used. If it is NULL, this pattern will be for the\n  month of the original date/time of the event.\"\n"
+                }
+            }
+        },
+        "EventCancellationInput": {
+            "type": "object",
+            "description": "Specifies a date when event shall not occur or be canceled",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "the date of the recurrence of an event which should be cancelled. If the\nevent spans multiple days, this column should be set to the first date on\nwhich the recurrence to be cancelled falls\n"
+                }
+            }
+        },
+        "EventCancellation": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time"
                 }
             }
         },

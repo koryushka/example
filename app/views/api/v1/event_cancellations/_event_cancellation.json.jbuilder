@@ -1,0 +1,1 @@
+json.extract! event_cancellation, :id, :date

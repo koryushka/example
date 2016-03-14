@@ -66,7 +66,8 @@ private
     params.permit(:title, :starts_at, :ends_at, :notes, :kind, :latitude,
                   :longitude, :location_name, :separation, :count, :until,
                   :timezone_name, :frequency,
-                  event_recurrences_attributes: [:day, :week, :month])
+                  event_recurrences_attributes: [:day, :week, :month],
+                  event_cancelation_attributes: [:date])
   end
 
   def find_document
