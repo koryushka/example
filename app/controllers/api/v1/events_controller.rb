@@ -6,7 +6,7 @@ class Api::V1::EventsController < ApiController
   #check_authorization
 
   def index
-    @calendar_items = current_user.events
+    @events = current_user.events
   end
 
   def show
