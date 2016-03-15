@@ -376,7 +376,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Events
-        - Calendar
+        - Calendars
   /events:
     get:
       summary: Current user calendar items
@@ -500,7 +500,7 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Events
-        - Event Cancelations
+        - Event Cancellations
   /event_cancellations/:id:
     put:
       summary: Updates event cancellation
@@ -935,7 +935,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Notifications
-        - Calendar Items
+        - Events
   /calendar_items/:id/notifications:
     get:
       summary: Returns notifications preferences for calendar item
@@ -1237,7 +1237,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/EventReccurenceInput'
-      event_cancelation_attributes:
+      event_cancellation_attributes:
         $ref: '#/definitions/EventCancellationInput'
   EventReccurenceInput:
     type: object

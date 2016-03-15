@@ -573,7 +573,7 @@
                 },
                 "tags": [
                     "Events",
-                    "Calendar"
+                    "Calendars"
                 ]
             }
         },
@@ -746,7 +746,7 @@
                 },
                 "tags": [
                     "Events",
-                    "Event Cancelations"
+                    "Event Cancellations"
                 ]
             }
         },
@@ -1384,7 +1384,7 @@
                 },
                 "tags": [
                     "Notifications",
-                    "Calendar Items"
+                    "Events"
                 ]
             }
         },
@@ -1796,7 +1796,7 @@
                         "$ref": "#/definitions/EventReccurenceInput"
                     }
                 },
-                "event_cancelation_attributes": {
+                "event_cancellation_attributes": {
                     "$ref": "#/definitions/EventCancellationInput"
                 }
             }
