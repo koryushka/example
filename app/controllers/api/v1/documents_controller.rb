@@ -1,11 +1,14 @@
 class Api::V1::DocumentsController < ApiController
-  before_filter :find_document, except: [:index, :create]
+  before_filter :find_entity, except: [:index, :create]
+  before_filter only: [:index] do
+    find_entity type: :event, id_param: :event_id
+  end
   after_filter :something_updated, except: [:index, :show]
   #authorize_resource
   #check_authorization
 
   def index
-    @documents = @calendar_item.documents
+    @documents = @event.documents
   end
 
   def show
@@ -14,7 +17,7 @@ class Api::V1::DocumentsController < ApiController
 
   def create
     @document = Document.new(document_params)
-    @document.user = tmp_user
+    @document.user = current_user
     if @document.valid?
       unless @document.save!
         return render nothing: true, status: :internal_server_error

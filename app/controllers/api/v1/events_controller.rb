@@ -56,11 +56,6 @@ class Api::V1::EventsController < ApiController
     render nothing: true, status: :no_content
   end
 
-  def show_documents
-    @documents = @event.documents
-    render 'api/v1/documents/index'
-  end
-
 private
   def event_params
     params.permit(:title, :starts_at, :ends_at, :notes, :kind, :latitude,

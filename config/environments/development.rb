@@ -36,7 +36,7 @@ Rails.application.configure do
     config.fog_params = {
         provider:   'Local',
         local_root: "#{Rails.root}/public",
-        endpoint:   'http://192.168.121.129:3000'
+        endpoint:   'http://localhost:3000'
     }
   end
 end

@@ -52,7 +52,7 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def remove_item
-    @calendar.calendar_items.delete(@event)
+    @calendar.events.delete(@event)
     render nothing: true, status: :no_content
   end
 
