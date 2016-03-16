@@ -1,0 +1,4 @@
+boris:
+  provider: email
+  uid: templar8@gmail.com
+  email: templar8@gmail.com
