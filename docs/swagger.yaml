@@ -376,7 +376,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Events
-        - Calendars
+        - Calendar
   /events:
     get:
       summary: Current user calendar items
@@ -500,7 +500,7 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Events
-        - Event Cancellations
+        - Event Cancelations
   /event_cancellations/:id:
     put:
       summary: Updates event cancellation
@@ -638,8 +638,20 @@ paths:
     post:
       summary: Create document
       description: Creates new document
+      parameters:
+        - name: id
+          description: Event ID
+          in: query
+          required: true
+          type: integer
+        - name: document
+          description: Document
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DocumentInput'
       responses:
-        '201':
+        201:
           description: Created
           schema:
             $ref: '#/definitions/Document'
@@ -948,7 +960,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Notifications
-        - Events
+        - Calendar Items
   /calendar_items/:id/notifications:
     get:
       summary: Returns notifications preferences for calendar item
@@ -1250,7 +1262,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/EventReccurenceInput'
-      event_cancellation_attributes:
+      event_cancelation_attributes:
         $ref: '#/definitions/EventCancellationInput'
   EventReccurenceInput:
     type: object
@@ -1304,6 +1316,21 @@ definitions:
       date:
         type: string
         format: date-time
+  DocumentInput:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Document title
+      notes:
+        type: string
+        description: Additional notes
+      tags:
+        type: string
+        description: Comma separated tags
+      uploaded_file_id:
+        type: integer
+        description: ID of file which was uploaded earlier
   Document:
     type: object
     properties:

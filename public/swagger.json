@@ -573,7 +573,7 @@
                 },
                 "tags": [
                     "Events",
-                    "Calendars"
+                    "Calendar"
                 ]
             }
         },
@@ -746,7 +746,7 @@
                 },
                 "tags": [
                     "Events",
-                    "Event Cancellations"
+                    "Event Cancelations"
                 ]
             }
         },
@@ -937,6 +937,24 @@
             "post": {
                 "summary": "Create document",
                 "description": "Creates new document",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Event ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "document",
+                        "description": "Document",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DocumentInput"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -1404,7 +1422,7 @@
                 },
                 "tags": [
                     "Notifications",
-                    "Events"
+                    "Calendar Items"
                 ]
             }
         },
@@ -1816,7 +1834,7 @@
                         "$ref": "#/definitions/EventReccurenceInput"
                     }
                 },
-                "event_cancellation_attributes": {
+                "event_cancelation_attributes": {
                     "$ref": "#/definitions/EventCancellationInput"
                 }
             }
@@ -1858,6 +1876,27 @@
                 "date": {
                     "type": "string",
                     "format": "date-time"
+                }
+            }
+        },
+        "DocumentInput": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "Document title"
+                },
+                "notes": {
+                    "type": "string",
+                    "description": "Additional notes"
+                },
+                "tags": {
+                    "type": "string",
+                    "description": "Comma separated tags"
+                },
+                "uploaded_file_id": {
+                    "type": "integer",
+                    "description": "ID of file which was uploaded earlier"
                 }
             }
         },
