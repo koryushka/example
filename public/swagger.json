@@ -1135,6 +1135,17 @@
             "post": {
                 "summary": "Create list",
                 "description": "Creates new list",
+                "parameters": [
+                    {
+                        "name": "list",
+                        "description": "List object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ListInput"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -1165,6 +1176,15 @@
                         "in": "query",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "name": "list",
+                        "description": "List object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ListInput"
+                        }
                     }
                 ],
                 "responses": {
@@ -1865,10 +1885,27 @@
                 }
             }
         },
+        "ListInput": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "List title"
+                },
+                "notes": {
+                    "type": "string",
+                    "description": "Additional notes"
+                },
+                "kind": {
+                    "type": "integer",
+                    "description": "Specified type of list. Can be 1 - Grocery, 2 - ToDo"
+                }
+            }
+        },
         "List": {
             "type": "object",
             "properties": {
-                "identifier": {
+                "id": {
                     "type": "string",
                     "description": "List ID"
                 },
@@ -1876,7 +1913,7 @@
                     "type": "string",
                     "description": "List title"
                 },
-                "creator": {
+                "user_id": {
                     "type": "string",
                     "description": "User ID who created this list"
                 },
@@ -1884,17 +1921,9 @@
                     "type": "string",
                     "description": "Additional notes"
                 },
-                "private": {
-                    "type": "boolean",
-                    "description": "Specifies visibility of list to anyone else",
-                    "default": false
-                },
-                "listItems": {
-                    "type": "array",
-                    "description": "Associated lists items",
-                    "items": {
-                        "$ref": "#/definitions/ListItem"
-                    }
+                "kind": {
+                    "type": "integer",
+                    "description": "Specified type of list. Can be 1 - Grocery, 2 - ToDo"
                 }
             }
         },
