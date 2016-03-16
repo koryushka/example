@@ -17,7 +17,7 @@ class Api::V1::EventsController < ApiController
     @event = Event.new(event_params)
     @event.user = current_user
     if @event.valid?
-      unless @event.save!
+      unless @event.save
         return render nothing: true, status: :internal_server_error
       end
     else
