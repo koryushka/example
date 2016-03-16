@@ -1,1 +1,1 @@
-json.array! @events, partial: 'api/v1/calendar_items/event', as: :event
+json.array! @events, partial: 'api/v1/events/event', as: :event
