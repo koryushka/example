@@ -1,0 +1,2 @@
+class DocumentsControllerTest
+end
