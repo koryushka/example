@@ -385,7 +385,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/ArrayOfCalendarItems'
+            $ref: '#/definitions/ArrayOfEvents'
         default:
           description: Unexpected error
           schema:
@@ -1569,7 +1569,7 @@ definitions:
       subject_class:
         type: string
         description: >
-          Type of sharing entity for example: Calendar, CalendarItem, etc.
+          Type of sharing entity for example: Calendar, Event, etc.
       subject_id:
         type: integer
         description: ID of entity which should be shared
@@ -1582,7 +1582,7 @@ definitions:
       subject_class:
         type: string
         description: >
-          Type of sharing entity for example: Calendar, CalendarItem, etc.
+          Type of sharing entity for example: Calendar, Event, etc.
       subject_id:
         type: integer
         description: ID of entity which should be shared
@@ -1596,7 +1596,7 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/CalendarsGroup'
-  ArrayOfCalendarItems:
+  ArrayOfEvents:
     type: array
     items:
       $ref: '#/definitions/Event'
