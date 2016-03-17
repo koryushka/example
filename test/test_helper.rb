@@ -1,7 +1,12 @@
-ENV["RAILS_ENV"] = "test"
-require File.expand_path("../../config/environment", __FILE__)
-require "rails/test_help"
-require "minitest/rails"
+ENV['RAILS_ENV'] = 'test'
+
+require 'simplecov'
+SimpleCov.start 'rails'
+
+require File.expand_path('../../config/environment', __FILE__)
+require 'rails/test_help'
+require 'minitest/rails'
+Dir[Rails.root.join('test/support/**/*.rb')].each { |f| require f }
 
 # To add Capybara feature tests add `gem "minitest-rails-capybara"`
 # to the test group in the Gemfile and uncomment the following:
@@ -20,4 +25,7 @@ end
 #   def supports_disable_referential_integrity?
 #     false
 #   end
+# end
+# class ActionController::TestCase
+#   include Devise::TestHelpers
 # end

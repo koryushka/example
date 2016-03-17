@@ -1,7 +1,5 @@
-require 'test_helper'
+require File.expand_path('../../../../test_helper', __FILE__)
 
 class Api::V1::CalendarsControllerTest < ActionController::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+
 end
