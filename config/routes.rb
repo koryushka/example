@@ -7,7 +7,9 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
-      mount_devise_token_auth_for 'User', at: 'auth'
+      mount_devise_token_auth_for 'User', at: 'auth', controllers: {
+          registrations: 'devise_overrides/registrations'
+      }
       get 'users/me' => 'users#me'
       put 'users' => 'users#update'
 
