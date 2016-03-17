@@ -17,7 +17,7 @@ class Api::V1::FilesController < ApiController
     @file = UploadedFile.new public_url: file.public_url, key: file.key
     @file.save!
 
-    render :show
+    render partial: 'file', locals: { file: @file }
   end
 
   def destroy

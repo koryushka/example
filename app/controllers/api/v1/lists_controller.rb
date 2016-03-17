@@ -47,7 +47,7 @@ class Api::V1::ListsController < ApiController
 
 private
   def list_params
-    params.permit(:title, :notes)
+    params.permit(:title, :notes, :kind)
   end
 
   def find_list

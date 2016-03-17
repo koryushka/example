@@ -376,7 +376,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Events
-        - Calendars
+        - Calendar
   /events:
     get:
       summary: Current user calendar items
@@ -500,7 +500,7 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Events
-        - Event Cancellations
+        - Event Cancelations
   /event_cancellations/:id:
     put:
       summary: Updates event cancellation
@@ -638,8 +638,20 @@ paths:
     post:
       summary: Create document
       description: Creates new document
+      parameters:
+        - name: id
+          description: Event ID
+          in: query
+          required: true
+          type: integer
+        - name: document
+          description: Document
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DocumentInput'
       responses:
-        '201':
+        201:
           description: Created
           schema:
             $ref: '#/definitions/Document'
@@ -768,6 +780,13 @@ paths:
     post:
       summary: Create list
       description: Creates new list
+      parameters:
+        - name: list
+          description: List object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListInput'
       responses:
         '201':
           description: Created
@@ -789,6 +808,12 @@ paths:
           in: query
           required: true
           type: integer
+        - name: list
+          description: List object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListInput'
       responses:
         201:
           description: Updated
@@ -853,7 +878,7 @@ paths:
         201:
           description: Created
           schema:
-            $ref: '#/definitions/ListItem'
+            $ref: '#/definitions/ListItemInput'
         default:
           description: Unexpected error
           schema:
@@ -861,21 +886,40 @@ paths:
       tags:
         - List Items
         - Lists
-  /lists/:id/items/:item_id:
+  /lists_items/:id:
+    get:
+      summary: Shows list item
+      description: Returns single list item data
+      parameters:
+        - name: id
+          description: List item ID
+          in: query
+          required: true
+          type: integer
+      responses:
+          200:
+            description: OK
+            schema:
+              $ref: '#/definitions/ListItem'
+          default:
+            description: Unexpected error
+            schema:
+              $ref: '#/definitions/Error'
     put:
       summary: Update list item
       description: Updates list item information by list ID and item ID
       parameters:
         - name: id
-          description: List's ID
-          in: query
-          required: true
-          type: integer
-        - name: item_id
           description: List item ID
           in: query
           required: true
           type: integer
+        - name: list_item
+          description: Updated list item object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListItemInput'
       responses:
         201:
           description: Updated
@@ -890,10 +934,10 @@ paths:
         - Lists
     delete:
       summary: Delete list item
-      description: Deletes list item by list ID and item ID
+      description: Deletes list item by item ID
       parameters:
         - name: id
-          description: List's ID
+          description: List item ID
           in: query
           required: true
           type: integer
@@ -935,7 +979,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Notifications
-        - Events
+        - Calendar Items
   /calendar_items/:id/notifications:
     get:
       summary: Returns notifications preferences for calendar item
@@ -1237,7 +1281,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/EventReccurenceInput'
-      event_cancellation_attributes:
+      event_cancelation_attributes:
         $ref: '#/definitions/EventCancellationInput'
   EventReccurenceInput:
     type: object
@@ -1291,6 +1335,21 @@ definitions:
       date:
         type: string
         format: date-time
+  DocumentInput:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Document title
+      notes:
+        type: string
+        description: Additional notes
+      tags:
+        type: string
+        description: Comma separated tags
+      uploaded_file_id:
+        type: integer
+        description: ID of file which was uploaded earlier
   Document:
     type: object
     properties:
@@ -1308,42 +1367,45 @@ definitions:
         description: Comma separated tags
       file:
         $ref: '#/definitions/File'
+  ListInput:
+    type: object
+    properties:
+      title:
+        type: string
+        description: List title
+      notes:
+        type: string
+        description: Additional notes
+      kind:
+        type: integer
+        description: Specified type of list. Can be 1 - Grocery, 2 - ToDo
   List:
     type: object
     properties:
-      identifier:
+      id:
         type: string
         description: List ID
       title:
         type: string
         description: List title
-      creator:
+      user_id:
         type: string
         description: User ID who created this list
       notes:
         type: string
         description: Additional notes
-      private:
-        type: boolean
-        description: Specifies visibility of list to anyone else
-        default: false
-      listItems:
-        type: array
-        description: Associated lists items
-        items:
-          $ref: '#/definitions/ListItem'
+      kind:
+        type: integer
+        description: Specified type of list. Can be 1 - Grocery, 2 - ToDo
   ListItem:
     type: object
     properties:
-      identifier:
-        type: string
+      id:
+        type: integer
         description: List item ID
       title:
         type: string
         description: List item title
-      creator:
-        type: string
-        description: User ID who created this list item
       notes:
         type: string
         description: Additional notes
@@ -1352,9 +1414,28 @@ definitions:
         format: int16
         description: Sorting order for item in the list
         default: 0
-      list:
+      done:
+        type: boolean
+        description: Shows whether user finished with this item or not
+        default: false
+  ListItemInput:
+    type: object
+    properties:
+      title:
         type: string
-        description: Parent list ID
+        description: List item title
+      notes:
+        type: string
+        description: Additional notes
+      order:
+        type: integer
+        format: int16
+        description: Sorting order for item in the list
+        default: 0
+      done:
+        type: boolean
+        description: Shows whether user finished with this item or not
+        default: false
   NotificationPreference:
     type: object
     properties:

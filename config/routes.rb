@@ -17,22 +17,21 @@ Rails.application.routes.draw do
       get 'calendars/:id/events', to: 'calendars#show_items'
 
       resources :events, except: [:edit, :new] do
-        resources :documents, only: [:index, :create]
+        resources :documents, only: [:index]
         resources :notifications_prefs, only: [:index, :create], path: 'notifications'
         resources :event_cancellations, only: [:create], path: 'cancellations'
       end
       post 'events/:id/documents/:document_id', to: 'events#attach_document'
-      get 'events/:id/documents', to: 'events#show_documents'
-      resources :event_cancellations, only: [:update, :destroy]
+      delete 'events/:id/documents/:document_id', to: 'events#detach_document'
 
+      resources :event_cancellations, only: [:update, :destroy]
       resources :notifications_prefs, only: [:update, :destroy]
-      resources :documents, except: [:new, :edit, :index, :create]
+      resources :documents, except: [:new, :edit, :index]
       resources :calendars_groups, except: [:edit, :new]
       resources :lists, except: [:edit, :new] do
         resources :list_items, only: [:index, :create], path: 'items'
       end
       resources :list_items, except: [:new, :edit, :index, :create]
-      resources :documents, except: [:edit, :new]
       resources :files, only: [:create]
 
       resources :sharings, only: [:create, :destroy]
