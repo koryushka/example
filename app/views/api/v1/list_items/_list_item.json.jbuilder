@@ -1,1 +1,1 @@
-json.extract! list_item, :id, :title, :notes, :order
+json.extract! list_item, :id, :title, :notes, :done, :order
