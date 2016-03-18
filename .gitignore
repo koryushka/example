@@ -15,4 +15,3 @@
 /*.iml
 config/database.yml
 db/schema.rb
-/coverage

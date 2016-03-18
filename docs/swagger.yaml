@@ -3,7 +3,6 @@ info:
   title: Curago API
   description: API documentation for Curago
   version: 1.0.3
-host: staging.curagolife.com
 schemes:
   - http
 basePath: /api/v1
@@ -905,6 +904,9 @@ paths:
             description: Unexpected error
             schema:
               $ref: '#/definitions/Error'
+      tags:
+        - List Items
+        - Lists
     put:
       summary: Update list item
       description: Updates list item information by list ID and item ID
@@ -1328,7 +1330,9 @@ definitions:
         items:
           $ref: '#/definitions/EventReccurenceInput'
       event_cancellation_attributes:
-        $ref: '#/definitions/EventCancellationInput'
+        type: array
+        items:
+          $ref: '#/definitions/EventCancellationInput'
   EventReccurenceInput:
     type: object
     properties:

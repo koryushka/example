@@ -1,9 +1,7 @@
 class Api::V1::EventsController < ApiController
   before_filter :find_entity, except: [:index, :create]
-  before_filter only: [:attach_document, :detach_document] do
-    find_entity type: :document, id_param: :document_id
-  end
-  after_filter :something_updated, except: [:index, :show]
+  before_filter :find_document, only: [:attach_document, :detach_document]
+  after_filter :something_updated, except: [:index, :show, :show_documents]
   #authorize_resource
   #check_authorization
 
@@ -65,5 +63,14 @@ private
                   :timezone_name, :frequency,
                   event_recurrences_attributes: [:day, :week, :month],
                   event_cancelation_attributes: [:date])
+  end
+
+  def find_document
+    document_id = params[:document_id]
+    @document = Document.find_by(id: document_id)
+
+    if @document.nil?
+      render nothing: true, status: :not_found
+    end
   end
 end
