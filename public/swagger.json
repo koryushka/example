@@ -1934,7 +1934,7 @@
                         "$ref": "#/definitions/EventReccurenceInput"
                     }
                 },
-                "event_cancelation_attributes": {
+                "event_cancellation_attributes": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/EventCancellationInput"
