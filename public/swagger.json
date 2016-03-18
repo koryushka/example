@@ -572,7 +572,7 @@
                 },
                 "tags": [
                     "Events",
-                    "Calendar"
+                    "Calendars"
                 ]
             }
         },
@@ -584,7 +584,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ArrayOfCalendarItems"
+                            "$ref": "#/definitions/ArrayOfEvents"
                         }
                     },
                     "default": {
@@ -1298,7 +1298,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/ListItemInput"
+                            "$ref": "#/definitions/ListItem"
                         }
                     },
                     "default": {
@@ -1415,6 +1415,74 @@
                 ]
             }
         },
+        "/lists/:id/items/:item_id": {
+            "put": {
+                "summary": "Update list item",
+                "description": "Updates list item information by list ID and item ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "item_id",
+                        "description": "List item ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Updated",
+                        "schema": {
+                            "$ref": "#/definitions/ListItem"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "List Items",
+                    "Lists"
+                ]
+            },
+            "delete": {
+                "summary": "Delete list item",
+                "description": "Deletes list item by list ID and item ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "List Items",
+                    "Lists"
+                ]
+            }
+        },
         "/notification_prefs/:id": {
             "put": {
                 "summary": "Update notification preference",
@@ -1454,7 +1522,7 @@
                 },
                 "tags": [
                     "Notifications",
-                    "Calendar Items"
+                    "Events"
                 ]
             }
         },
@@ -2228,7 +2296,7 @@
                 },
                 "subject_class": {
                     "type": "string",
-                    "description": "Type of sharing entity for example: Calendar, CalendarItem, etc.\n"
+                    "description": "Type of sharing entity for example: Calendar, Event, etc.\n"
                 },
                 "subject_id": {
                     "type": "integer",
@@ -2245,7 +2313,7 @@
             "properties": {
                 "subject_class": {
                     "type": "string",
-                    "description": "Type of sharing entity for example: Calendar, CalendarItem, etc.\n"
+                    "description": "Type of sharing entity for example: Calendar, Event, etc.\n"
                 },
                 "subject_id": {
                     "type": "integer",
@@ -2268,7 +2336,7 @@
                 "$ref": "#/definitions/CalendarsGroup"
             }
         },
-        "ArrayOfCalendarItems": {
+        "ArrayOfEvents": {
             "type": "array",
             "items": {
                 "$ref": "#/definitions/Event"

@@ -375,7 +375,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Events
-        - Calendar
+        - Calendars
   /events:
     get:
       summary: Current user calendar items
@@ -384,7 +384,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/ArrayOfCalendarItems'
+            $ref: '#/definitions/ArrayOfEvents'
         default:
           description: Unexpected error
           schema:
@@ -877,7 +877,7 @@ paths:
         201:
           description: Created
           schema:
-            $ref: '#/definitions/ListItemInput'
+            $ref: '#/definitions/ListItem'
         default:
           description: Unexpected error
           schema:
@@ -953,6 +953,52 @@ paths:
       tags:
         - List Items
         - Lists
+  /lists/:id/items/:item_id:
+    put:
+      summary: Update list item
+      description: Updates list item information by list ID and item ID
+      parameters:
+        - name: id
+          description: List's ID
+          in: query
+          required: true
+          type: integer
+        - name: item_id
+          description: List item ID
+          in: query
+          required: true
+          type: integer
+      responses:
+        201:
+          description: Updated
+          schema:
+            $ref: '#/definitions/ListItem'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - List Items
+        - Lists
+    delete:
+      summary: Delete list item
+      description: Deletes list item by list ID and item ID
+      parameters:
+        - name: id
+          description: List's ID
+          in: query
+          required: true
+          type: integer
+      responses:
+        204:
+          description: Deleted
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - List Items
+        - Lists
   /notification_prefs/:id:
     put:
       summary: Update notification preference
@@ -981,7 +1027,7 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Notifications
-        - Calendar Items
+        - Events
   /calendar_items/:id/notifications:
     get:
       summary: Returns notifications preferences for calendar item
@@ -1440,6 +1486,27 @@ definitions:
         type: boolean
         description: Shows whether user finished with this item or not
         default: false
+  ListItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: List item ID
+      title:
+        type: string
+        description: List item title
+      notes:
+        type: string
+        description: Additional notes
+      order:
+        type: integer
+        format: int16
+        description: Sorting order for item in the list
+        default: 0
+      done:
+        type: boolean
+        description: Shows whether user finished with this item or not
+        default: false
   NotificationPreference:
     type: object
     properties:
@@ -1573,7 +1640,7 @@ definitions:
       subject_class:
         type: string
         description: >
-          Type of sharing entity for example: Calendar, CalendarItem, etc.
+          Type of sharing entity for example: Calendar, Event, etc.
       subject_id:
         type: integer
         description: ID of entity which should be shared
@@ -1586,7 +1653,7 @@ definitions:
       subject_class:
         type: string
         description: >
-          Type of sharing entity for example: Calendar, CalendarItem, etc.
+          Type of sharing entity for example: Calendar, Event, etc.
       subject_id:
         type: integer
         description: ID of entity which should be shared
@@ -1600,7 +1667,7 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/CalendarsGroup'
-  ArrayOfCalendarItems:
+  ArrayOfEvents:
     type: array
     items:
       $ref: '#/definitions/Event'
