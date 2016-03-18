@@ -5,7 +5,6 @@
         "description": "API documentation for Curago",
         "version": "1.0.3"
     },
-    "host": "staging.curagolife.com",
     "schemes": [
         "http"
     ],
@@ -746,7 +745,7 @@
                 },
                 "tags": [
                     "Events",
-                    "Event Cancelations"
+                    "Event Cancellations"
                 ]
             }
         },
@@ -1341,7 +1340,11 @@
                             "$ref": "#/definitions/Error"
                         }
                     }
-                }
+                },
+                "tags": [
+                    "List Items",
+                    "Lists"
+                ]
             },
             "put": {
                 "summary": "Update list item",
@@ -1864,7 +1867,10 @@
                     }
                 },
                 "event_cancelation_attributes": {
-                    "$ref": "#/definitions/EventCancellationInput"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/EventCancellationInput"
+                    }
                 }
             }
         },
