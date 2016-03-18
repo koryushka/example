@@ -1485,15 +1485,12 @@ definitions:
   ListItem:
     type: object
     properties:
-      identifier:
-        type: string
+      id:
+        type: integer
         description: List item ID
       title:
         type: string
         description: List item title
-      creator:
-        type: string
-        description: User ID who created this list item
       notes:
         type: string
         description: Additional notes
@@ -1502,9 +1499,10 @@ definitions:
         format: int16
         description: Sorting order for item in the list
         default: 0
-      list:
-        type: string
-        description: Parent list ID
+      done:
+        type: boolean
+        description: Shows whether user finished with this item or not
+        default: false
   NotificationPreference:
     type: object
     properties:

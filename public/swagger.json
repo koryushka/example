@@ -573,7 +573,7 @@
                 },
                 "tags": [
                     "Events",
-                    "Calendar"
+                    "Calendars"
                 ]
             }
         },
@@ -746,7 +746,7 @@
                 },
                 "tags": [
                     "Events",
-                    "Event Cancelations"
+                    "Event Cancellations"
                 ]
             }
         },
@@ -1299,7 +1299,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/ListItemInput"
+                            "$ref": "#/definitions/ListItem"
                         }
                     },
                     "default": {
@@ -1412,6 +1412,74 @@
                 ]
             }
         },
+        "/lists/:id/items/:item_id": {
+            "put": {
+                "summary": "Update list item",
+                "description": "Updates list item information by list ID and item ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "item_id",
+                        "description": "List item ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Updated",
+                        "schema": {
+                            "$ref": "#/definitions/ListItem"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "List Items",
+                    "Lists"
+                ]
+            },
+            "delete": {
+                "summary": "Delete list item",
+                "description": "Deletes list item by list ID and item ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "query",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "List Items",
+                    "Lists"
+                ]
+            }
+        },
         "/notification_prefs/:id": {
             "put": {
                 "summary": "Update notification preference",
@@ -1451,7 +1519,7 @@
                 },
                 "tags": [
                     "Notifications",
-                    "Calendar Items"
+                    "Events"
                 ]
             }
         },
@@ -1863,7 +1931,7 @@
                         "$ref": "#/definitions/EventReccurenceInput"
                     }
                 },
-                "event_cancelation_attributes": {
+                "event_cancellation_attributes": {
                     "$ref": "#/definitions/EventCancellationInput"
                 }
             }
