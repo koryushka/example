@@ -3,6 +3,7 @@ info:
   title: Curago API
   description: API documentation for Curago
   version: 1.0.3
+host: staging.curagolife.com
 schemes:
   - http
 basePath: /api/v1

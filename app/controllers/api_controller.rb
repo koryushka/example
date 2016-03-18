@@ -9,8 +9,8 @@ class ApiController < ActionController::Base
 private
 
   def current_user
-    #send "current_#{controller_scope}_user"
-    User.find(5)
+    send "current_#{controller_scope}_user"
+    #User.find(5)
   end
 
   def pubnub
@@ -22,7 +22,7 @@ private
 
   def publish(message)
     pubnub.publish(
-        channel: "curago_dev_#{tmp_user.id}",
+        channel: "curago_dev_#{current_user.id}",
         message: message
     ) do |envelope|
       puts envelope.parsed_response
