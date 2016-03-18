@@ -22,6 +22,8 @@ FactoryGirl.define do
     starts_at Date.yesterday
     ends_at Date.yesterday + 1.hour
     notes Faker::Lorem.sentence(4)
+    latitude Faker::Address.latitude
+    longitude Faker::Address.longitude
     frequency 'once'
   end
 end
