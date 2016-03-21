@@ -4,8 +4,8 @@ class Api::V1::EventsController < ApiController
     find_entity type: :document, id_param: :document_id
   end
   after_filter :something_updated, except: [:index, :show]
-  #authorize_resource
-  #check_authorization
+  authorize_resource
+  check_authorization
 
   def index
     @events = current_user.events

@@ -35,3 +35,11 @@ group :development do
   gem 'capistrano-rvm'
   gem 'capistrano3-nginx'
 end
+
+group :test do
+  gem 'minitest-rails'
+  gem 'minitest-reporters'
+  gem 'factory_girl_rails'
+  gem 'simplecov', require: false
+  gem 'faker'
+end

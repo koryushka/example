@@ -4,8 +4,8 @@ class Api::V1::DocumentsController < ApiController
     find_entity type: :event, id_param: :event_id
   end
   after_filter :something_updated, except: [:index, :show]
-  #authorize_resource
-  #check_authorization
+  authorize_resource
+  check_authorization
 
   def index
     @documents = @event.documents
@@ -51,14 +51,5 @@ class Api::V1::DocumentsController < ApiController
 private
   def document_params
     params.permit(:title, :uploaded_file_id, :notes, :tags)
-  end
-
-  def find_document
-    document_id = params[:id]
-    @document = Document.find_by(id: document_id)
-
-    if @document.nil?
-      render nothing: true, status: :not_found
-    end
   end
 end

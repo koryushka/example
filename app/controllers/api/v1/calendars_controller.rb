@@ -1,9 +1,11 @@
 class Api::V1::CalendarsController < ApiController
-  before_filter :find_calendar, except: [:index, :create]
-  before_filter :find_event, only: [:add_item, :remove_item]
+  before_filter :find_entity, except: [:index, :create]
+  before_filter only: [:add_item, :remove_item] do
+    find_entity type: :event, id_param: :item_id
+  end
   after_filter :something_updated, except: [:index, :show, :show_items]
-  #authorize_resource
-  #check_authorization
+  authorize_resource
+  check_authorization
 
   def index
     @calendars = current_user.calendars
@@ -63,23 +65,5 @@ class Api::V1::CalendarsController < ApiController
   private
   def calendar_params
     params.permit(:title, :hex_color, :main, :kind, :visible)
-  end
-
-  def find_calendar
-    calendar_id = params[:id]
-    @calendar = Calendar.find_by(id: calendar_id)
-
-    if @calendar.nil?
-      render nothing: true, status: :not_found
-    end
-  end
-
-  def find_event
-    event_id = params[:item_id]
-    @event = Event.find_by(id: event_id)
-
-    if @event.nil?
-      render nothing: true, status: :not_found
-    end
   end
 end
