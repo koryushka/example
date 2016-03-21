@@ -4,8 +4,8 @@ class Event < ActiveRecord::Base
   has_and_belongs_to_many :documents
   has_one :notifications_preference
   has_many :complex_events, foreign_key: 'id'
-  has_many :event_recurrences
-  has_one :event_cancellation
+  has_many :event_recurrences, dependent: :destroy
+  has_one :event_cancellation, dependent: :destroy
 
   accepts_nested_attributes_for :event_recurrences
   accepts_nested_attributes_for :event_cancellation
