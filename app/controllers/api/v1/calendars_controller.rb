@@ -1,7 +1,7 @@
 class Api::V1::CalendarsController < ApiController
   before_filter :find_entity, except: [:index, :create]
-  before_filter only: [:add_item, :remove_item] do
-    find_entity type: :event, id_param: :item_id
+  before_filter only: [:add_event, :remove_event] do
+    find_entity type: :event, id_param: :event_id
   end
   after_filter :something_updated, except: [:index, :show, :show_items]
   authorize_resource
@@ -48,12 +48,12 @@ class Api::V1::CalendarsController < ApiController
     render nothing: true, status: :no_content
   end
 
-  def add_item
+  def add_event
     @calendar.events << @event
     render nothing: true
   end
 
-  def remove_item
+  def remove_event
     @calendar.events.delete(@event)
     render nothing: true, status: :no_content
   end

@@ -73,7 +73,7 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
   test 'should add event to calendar' do
     calendar = FactoryGirl.create(:calendar, user: @user)
     event = FactoryGirl.create(:event, user: @user)
-    post :add_item, id: calendar.id, item_id: event.id
+    post :add_event, id: calendar.id, event_id: event.id
     assert_response :success
     assert assigns(:calendar).events.where(id: event.id).size() > 0
   end
@@ -82,7 +82,7 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
     calendar = FactoryGirl.create(:calendar, user: @user)
     event = FactoryGirl.create(:event, user: @user)
     calendar.events << event
-    delete :remove_item, id: calendar.id, item_id: event.id
+    delete :remove_event, id: calendar.id, event_id: event.id
     assert_response :success
     assert assigns(:calendar).events.where(id: event.id).size() == 0
   end

@@ -3,7 +3,6 @@ info:
   title: Curago API
   description: API documentation for Curago
   version: 1.0.3
-host: staging.curagolife.com
 schemes:
   - http
 basePath: /api/v1
@@ -174,14 +173,14 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendar Groups
-  /calendars_groups/:id:
+  /calendars_groups/{id}:
     put:
       summary: Update calendar group
       description: Updates calendar group information by ID
       parameters:
         - name: id
           description: Calendars group ID
-          in: query
+          in: path
           required: true
           type: integer
         - name: calendars_group
@@ -210,7 +209,7 @@ paths:
       parameters:
         - name: id
           description: Calendars group ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -261,14 +260,14 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Calendars
-  /calendars/:id:
+  /calendars/{id}:
     put:
       summary: Update calendar
       description: Updates calendar information by ID
       parameters:
         - name: id
           description: Calendar ID
-          in: query
+          in: path
           required: true
           type: integer
         - name: calendar
@@ -297,7 +296,7 @@ paths:
       parameters:
         - name: id
           description: Calendars ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -309,13 +308,13 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Calendars
-  /calendars/:id/events:
+  /calendars/{id}/events:
     get:
       summary: Returns items of specified calendar
       parameters:
         - name: id
           description: Calendars ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -330,18 +329,18 @@ paths:
       tags:
         - Events
         - Calendars
-  /calendars/:id/events/:item_id:
+  /calendars/{id}/events/{event_id}:
     post:
       summary: Add specified item to specified calendar
       parameters:
         - name: id
           description: Calendars ID
-          in: query
+          in: path
           required: true
           type: integer
-        - name: item_id
+        - name: event_id
           description: ID of item which should be added
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -359,12 +358,12 @@ paths:
       parameters:
         - name: id
           description: Calendars ID
-          in: query
+          in: path
           required: true
           type: integer
-        - name: item_id
+        - name: event_id
           description: ID of item which should be removed
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -427,11 +426,16 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Events
-  /events/:id:
+  /events/{id}:
     put:
       summary: Update calendar item
       description: Updates calendar item information by ID
       parameters:
+        - name: id
+          description: Calendar's ID
+          in: path
+          required: true
+          type: integer
         - name: event
           in: body
           required: true
@@ -458,7 +462,7 @@ paths:
       parameters:
         - name: id
           description: Calendar's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -470,13 +474,13 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Events
-  /events/:id/cancellations:
+  /events/{id}/cancellations:
     post:
       summary: Cancels event for a specific date
       parameters:
         - name: id
           description: Event ID
-          in: query
+          in: path
           required: true
           type: integer
         - name: data
@@ -501,13 +505,13 @@ paths:
       tags:
         - Events
         - Event Cancellations
-  /event_cancellations/:id:
+  /event_cancellations/{id}:
     put:
       summary: Updates event cancellation
       parameters:
         - name: id
           description: Event ID
-          in: query
+          in: path
           required: true
           type: integer
         - name: data
@@ -537,7 +541,7 @@ paths:
       parameters:
         - name: id
           description: Event ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -550,13 +554,13 @@ paths:
       tags:
         - Events
         - Event Cancellations
-  /events/:id/documents:
+  /events/{id}/documents:
     get:
       summary: Returns list of documents relate to this calendar item
       parameters:
         - name: id
           description: Event ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -571,19 +575,18 @@ paths:
       tags:
         - Events
         - Documents
-  /events/:id/documents/:document_id:
+  /events/{id}/documents/{document_id}:
     post:
       summary: Attaches document to calendar item
       parameters:
         - name: id
           description: Calendar item ID
-          in: query
+          in: path
           required: true
           type: integer
-      parameters:
         - name: document_id
           description: Document's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -601,13 +604,12 @@ paths:
       parameters:
         - name: id
           description: Calendar item ID
-          in: query
+          in: path
           required: true
           type: integer
-      parameters:
         - name: document_id
           description: Document's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -661,14 +663,14 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Documents
-  /documents/:id:
+  /documents/{id}:
     put:
       summary: Update document
       description: Updates document information by ID
       parameters:
         - name: id
           description: Document's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -688,7 +690,7 @@ paths:
       parameters:
         - name: id
           description: Document's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -723,13 +725,13 @@ paths:
       tags:
         - Files
         - Documents
-  /files/:id:
+  /files/{id}:
     get:
       summary: Returns information about file by its ID
       parameters:
         - name: id
           description: File's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -749,7 +751,7 @@ paths:
       parameters:
         - name: id
           description: File's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -798,14 +800,14 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Lists
-  /lists/:id:
+  /lists/{id}:
     put:
       summary: Update list
       description: Updates list information by ID
       parameters:
         - name: id
           description: List's ID
-          in: query
+          in: path
           required: true
           type: integer
         - name: list
@@ -831,7 +833,7 @@ paths:
       parameters:
         - name: id
           description: List's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -843,14 +845,14 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - Lists
-  /lists/:id/items:
+  /lists/{id}/items:
     get:
       summary: List items
       description: Returns all items in specific list by list ID
       parameters:
         - name: id
           description: List's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -871,7 +873,7 @@ paths:
       parameters:
         - name: id
           description: List's ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -886,14 +888,14 @@ paths:
       tags:
         - List Items
         - Lists
-  /lists_items/:id:
+  /lists_items/{id}:
     get:
       summary: Shows list item
       description: Returns single list item data
       parameters:
         - name: id
           description: List item ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -914,7 +916,7 @@ paths:
       parameters:
         - name: id
           description: List item ID
-          in: query
+          in: path
           required: true
           type: integer
         - name: list_item
@@ -941,7 +943,7 @@ paths:
       parameters:
         - name: id
           description: List item ID
-          in: query
+          in: path
           required: true
           type: integer
       responses:
@@ -954,56 +956,16 @@ paths:
       tags:
         - List Items
         - Lists
-  /lists/:id/items/:item_id:
-    put:
-      summary: Update list item
-      description: Updates list item information by list ID and item ID
-      parameters:
-        - name: id
-          description: List's ID
-          in: query
-          required: true
-          type: integer
-        - name: item_id
-          description: List item ID
-          in: query
-          required: true
-          type: integer
-      responses:
-        201:
-          description: Updated
-          schema:
-            $ref: '#/definitions/ListItem'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - List Items
-        - Lists
-    delete:
-      summary: Delete list item
-      description: Deletes list item by list ID and item ID
-      parameters:
-        - name: id
-          description: List's ID
-          in: query
-          required: true
-          type: integer
-      responses:
-        204:
-          description: Deleted
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - List Items
-        - Lists
-  /notification_prefs/:id:
+  /notification_prefs/{id}:
     put:
       summary: Update notification preference
       description: Updates notification preference by ID
+      parameters:
+        - name: id
+          description: Notifications preference ID
+          in: path
+          required: true
+          type: integer
       responses:
         201:
           description: Updated
@@ -1019,6 +981,12 @@ paths:
     delete:
       summary: Delete notification preference
       description: Deletes notification preference by ID
+      parameters:
+        - name: id
+          description: Notifications preference ID
+          in: path
+          required: true
+          type: integer
       responses:
         204:
           description: Deleted
@@ -1029,9 +997,15 @@ paths:
       tags:
         - Notifications
         - Events
-  /calendar_items/:id/notifications:
+  /events/{id}/notifications:
     get:
       summary: Returns notifications preferences for calendar item
+      parameters:
+        - name: id
+          description: Event ID
+          in: path
+          required: true
+          type: integer
       responses:
         200:
           description: OK
@@ -1047,6 +1021,12 @@ paths:
     post:
       summary: Create notification preference
       description: Creates new notification preference
+      parameters:
+        - name: id
+          description: Event ID
+          in: path
+          required: true
+          type: integer
       responses:
         201:
           description: Created

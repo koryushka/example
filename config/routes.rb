@@ -14,8 +14,8 @@ Rails.application.routes.draw do
       put 'users' => 'users#update'
 
       resources :calendars, except: [:edit, :new]
-      post 'calendars/:id/events/:item_id', to: 'calendars#add_item'
-      delete 'calendars/:id/events/:item_id', to: 'calendars#remove_item'
+      post 'calendars/:id/events/:event_id', to: 'calendars#add_event'
+      delete 'calendars/:id/events/:event_id', to: 'calendars#remove_event'
       get 'calendars/:id/events', to: 'calendars#show_items'
 
       resources :events, except: [:edit, :new] do
