@@ -17,13 +17,13 @@ FactoryGirl.define do
   location_name character varying,
   notes
 =end
-    title Faker::Lorem.word
-    user nil
-    starts_at Date.yesterday
-    ends_at Date.yesterday + 1.hour
-    notes Faker::Lorem.sentence(4)
-    latitude Faker::Address.latitude
-    longitude Faker::Address.longitude
+    title {Faker::Lorem.word}
+    user
+    starts_at {Date.yesterday}
+    ends_at {Date.yesterday + 1.hour}
+    notes {Faker::Lorem.sentence(4)}
+    latitude {Faker::Address.latitude}
+    longitude {Faker::Address.longitude}
     frequency 'once'
   end
 end
