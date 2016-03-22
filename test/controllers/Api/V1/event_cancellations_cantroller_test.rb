@@ -9,7 +9,7 @@ class Api::V1::EventCancellationsControllerTest < ActionController::TestCase
 
   #### event_cancellation creation group
   test 'should create new event_cancellation' do
-    post :create, {date: @event.starts_at + 1.week}.to_json, event_id: @event.id, format: 'json'
+    post :create, event_id: @event.id, date: @event.starts_at + 1.week
 
     assert_response :success
     assert_not_nil assigns(:event_cancellation).id

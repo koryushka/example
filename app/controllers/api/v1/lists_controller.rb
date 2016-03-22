@@ -1,11 +1,11 @@
 class Api::V1::ListsController < ApiController
-  before_filter :find_list, except: [:index, :create]
+  before_filter :find_entity, except: [:index, :create]
   after_filter :something_updated, except: [:index, :show]
-  #authorize_resource
-  #check_authorization
+  authorize_resource
+  check_authorization
 
   def index
-    @lists = tmp_user.lists
+    @lists = current_user.lists
   end
 
   def show
@@ -14,7 +14,7 @@ class Api::V1::ListsController < ApiController
 
   def create
     @list = List.new(list_params)
-    @list.user = tmp_user
+    @list.user = current_user
     if @list.valid?
       unless @list.save!
         return render nothing: true, status: :internal_server_error
@@ -48,14 +48,5 @@ class Api::V1::ListsController < ApiController
 private
   def list_params
     params.permit(:title, :notes, :kind)
-  end
-
-  def find_list
-    list_id = params[:id]
-    @list = List.find_by(id: list_id)
-
-    if @list.nil?
-      render nothing: true, status: :not_found
-    end
   end
 end

@@ -25,5 +25,12 @@ FactoryGirl.define do
     latitude {Faker::Address.latitude}
     longitude {Faker::Address.longitude}
     frequency 'once'
+
+    factory :repeating_event_with_cancellation do
+      after(:create) do |event|
+        create_list(:event_cancellation, 1, event: event)
+        create_list(:event_recurrence, 2, event: event)
+      end
+    end
   end
 end

@@ -6,6 +6,10 @@ SimpleCov.start 'rails'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'minitest/rails'
+
+require 'minitest/reporters'
+MiniTest::Reporters.use!
+
 Dir[Rails.root.join('test/support/**/*.rb')].each { |f| require f }
 
 # To add Capybara feature tests add `gem "minitest-rails-capybara"`

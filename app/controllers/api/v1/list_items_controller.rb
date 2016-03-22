@@ -1,12 +1,11 @@
 class Api::V1::ListItemsController < ApiController
   before_filter :find_entity, except: [:index, :create]
-  #before_filter :find_list, only: [:index, :create]
   before_filter only: [:index, :create] do
     find_entity type: :list, id_param: :list_id
   end
   after_filter :something_updated, except: [:index, :show]
-  #authorize_resource
-  #check_authorization
+  authorize_resource
+  check_authorization
 
   def index
     @list_items = @list.items
@@ -53,22 +52,4 @@ private
   def list_item_params
     params.permit(:title, :notes, :done, :order)
   end
-
-  # def find_list_item
-  #   list_item_id = params[:id]
-  #   @list_item = List.find_by(id: list_item_id)
-  #
-  #   if @list_item.nil?
-  #     render nothing: true, status: :not_found
-  #   end
-  # end
-  #
-  # def find_list
-  #   list_id = params[:list_id]
-  #   @list = List.find_by(id: list_id)
-  #
-  #   if @list.nil?
-  #     render nothing: 'List not found', status: :not_found
-  #   end
-  # end
 end

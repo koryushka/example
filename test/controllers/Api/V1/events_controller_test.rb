@@ -61,6 +61,15 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     end
   end
 
+  test 'should destroy existing event with cancellations and recurrencies' do
+    event = FactoryGirl.create(:repeating_event_with_cancellation, user: @user)
+    delete :destroy, id: event.id
+    assert_response :no_content
+    assert_raises ActiveRecord::RecordNotFound do
+      Event.find(event.id)
+    end
+  end
+
   #### Document attaching group
   test 'should attach existing document to existing event' do
     event = FactoryGirl.create(:event, user: @user)
