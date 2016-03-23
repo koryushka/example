@@ -25,6 +25,7 @@ FactoryGirl.define do
     latitude {Faker::Address.latitude}
     longitude {Faker::Address.longitude}
     frequency 'once'
+    updated_at Time.now
 
     factory :repeating_event_with_cancellation do
       after(:create) do |event|

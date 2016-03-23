@@ -38,7 +38,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
   #### Event update group
   test 'should upadte existing event' do
     event = FactoryGirl.create(:event, user: @user)
-    new_title = Faker::Lorem.word
+    new_title = Faker::Lorem.sentence(3)
     put :update, id: event.id, title: new_title
     assert_response :success
     assert_equal assigns(:event).title, new_title

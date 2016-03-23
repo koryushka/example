@@ -59,11 +59,17 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def show_items
+    @complex_events = query_params[:since].nil? ? @calendar.complex_events : @calendar.complex_events.where('"complex_events".updated_at > ?', query_params[:since])
+    @shared_events = query_params[:since].nil? ? @calendar.shared_events : @calendar.shared_events.where('"complex_events".updated_at > ?', query_params[:since])
     render 'items'
   end
 
-  private
+private
   def calendar_params
     params.permit(:title, :hex_color, :main, :kind, :visible)
+  end
+
+  def query_params
+    params.permit(:since)
   end
 end
