@@ -5,10 +5,10 @@ class Event < ActiveRecord::Base
   has_one :notifications_preference
   has_many :complex_events, foreign_key: 'id'
   has_many :event_recurrences, dependent: :destroy
-  has_one :event_cancellation, dependent: :destroy
+  has_many :event_cancellations, dependent: :destroy
 
   accepts_nested_attributes_for :event_recurrences
-  accepts_nested_attributes_for :event_cancellation
+  accepts_nested_attributes_for :event_cancellations
 
   validates :title, length: {maximum: 128}, presence: true
   validates :starts_at, date: true, presence: true

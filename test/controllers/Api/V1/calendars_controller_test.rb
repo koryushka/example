@@ -39,9 +39,9 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
 
     get :show_items, id: calendar.id, since: Date.today - 3.days
     assert_response :success
-    assert_not_nil assigns(:complex_events)
+    assert_not_nil assigns(:events)
     assert_not_nil assigns(:shared_events)
-    count = assigns(:complex_events).size() + assigns(:shared_events).size()
+    count = assigns(:events).size() + assigns(:shared_events).size()
     assert count == 2, "Expected 2 updated events, #{count} given"
   end
 

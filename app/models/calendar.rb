@@ -26,9 +26,9 @@ class Calendar < ActiveRecord::Base
                                                  .and(sharings[:subject_class].eq(Event.name))
                                                  .and(sharings[:user_id].eq(self.user_id)))
                          .project(complex_events[Arel.star])
-      return ComplexEvent.find_by_sql(shared_items_from_calendars.union(shared_items).to_sql)
+      return Event.find_by_sql(shared_items_from_calendars.union(shared_items).to_sql)
     end
 
-    ComplexEvent.where(id: nil)
+    Event.where(id: nil)
   end
 end

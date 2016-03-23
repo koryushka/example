@@ -1,1 +1,1 @@
-json.array! @groups, partial: 'group', as: :calendars_group
+json.array! @groups, partial: 'group', as: :group

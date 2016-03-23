@@ -64,6 +64,6 @@ private
                   :longitude, :location_name, :separation, :count, :until,
                   :timezone_name, :frequency,
                   event_recurrences_attributes: [:day, :week, :month],
-                  event_cancelation_attributes: [:date])
+                  event_cancelations_attributes: [:date])
   end
 end

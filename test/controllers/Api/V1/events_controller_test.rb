@@ -4,9 +4,13 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
   test 'should get index' do
+    amount = 5
+    FactoryGirl.create_list(:event, amount, user: @user)
     get :index
     assert_response :success
     assert_not_nil assigns(:events)
+    count = assigns(:events).size()
+    assert count == 5, "Expected #{amount} updated events, #{count} given"
   end
 
   test 'should get show' do

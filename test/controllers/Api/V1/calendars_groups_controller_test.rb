@@ -4,9 +4,13 @@ class Api::V1::CalendarsGroupsControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
   test 'should get index' do
+    amount = 5
+    FactoryGirl.create_list(:calendars_group, amount, user: @user)
     get :index
     assert_response :success
     assert_not_nil assigns(:groups)
+    count = assigns(:groups).size()
+    assert count == 5, "Expected #{amount} updated events, #{count} given"
   end
 
   test 'should get show' do
@@ -31,7 +35,7 @@ class Api::V1::CalendarsGroupsControllerTest < ActionController::TestCase
   #### Event update group
   test 'should upadte existing calendars_group' do
     calendars_group = FactoryGirl.create(:calendars_group, user: @user)
-    new_title = Faker::Lorem.word
+    new_title = Faker::Lorem.sentence(3)
     put :update, id: calendars_group.id, title: new_title
     assert_response :success
     assert_equal assigns(:calendars_group).title, new_title

@@ -59,8 +59,8 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def show_items
-    @complex_events = query_params[:since].nil? ? @calendar.complex_events : @calendar.complex_events.where('"complex_events".updated_at > ?', query_params[:since])
-    @shared_events = query_params[:since].nil? ? @calendar.shared_events : @calendar.shared_events.where('"complex_events".updated_at > ?', query_params[:since])
+    @events = query_params[:since].nil? ? @calendar.events : @calendar.events.where('events.updated_at > ?', query_params[:since])
+    @shared_events = query_params[:since].nil? ? @calendar.shared_events : @calendar.shared_events.where('events.updated_at > ?', query_params[:since])
     render 'items'
   end
 
