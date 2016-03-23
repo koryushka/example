@@ -40,4 +40,6 @@ Rails.application.routes.draw do
       get 'sharings/resources' => 'sharings#resources'
     end
   end
+
+  resources :api_docs, only: [:index]
 end
