@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+  include DeviseTokenAuth::Concerns::User
 
   validates :email, length: {maximum: 128}, presence: true,
             email_format: {:message => "doesn't look like an email address."},

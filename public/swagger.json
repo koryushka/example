@@ -3,7 +3,7 @@
     "info": {
         "title": "Curago API",
         "description": "API documentation for Curago",
-        "version": "1.0.3"
+        "version": "1.1.0"
     },
     "schemes": [
         "http"
@@ -13,16 +13,16 @@
         "application/json"
     ],
     "paths": {
-        "/auth": {
+        "/users": {
             "post": {
                 "summary": "Registers user",
                 "description": "Email registration. Requires email, password, and password_confirmation params. A verification email will be sent to the email address provided.",
                 "parameters": [
                     {
-                        "name": "registration_data",
+                        "name": "data",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/RegistrationData"
+                            "$ref": "#/definitions/RegistrationInput"
                         }
                     }
                 ],
@@ -35,47 +35,14 @@
                     }
                 },
                 "tags": [
-                    "Auth"
-                ]
-            },
-            "put": {
-                "summary": "Updates user",
-                "description": "This method will update an existing user's account settings.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "403": {
-                        "description": "Account update errors"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            },
-            "delete": {
-                "summary": "Removes user account",
-                "description": "This method will destroy users identified by their uid and auth_token headers.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                },
-                "tags": [
-                    "Auth"
+                    "Users"
                 ]
             }
         },
-        "/auth/sign_in": {
+        "/oauth/token": {
             "post": {
                 "summary": "Authenticates user",
-                "description": "Email authentication. Requires email and password as params. This method will return a JSON representation of the User model on successful login along with the access-token and client in the header of the response.",
+                "description": "Authenticates user and returns authorization token",
                 "parameters": [
                     {
                         "name": "credentials",
@@ -87,124 +54,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Authentication error"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            }
-        },
-        "/auth/sign_out": {
-            "delete": {
-                "summary": "Destroys users sessions",
-                "description": "This method will invalidate the user's authentication token.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "404": {
-                        "description": "Session not found"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            }
-        },
-        "/auth/password": {
-            "post": {
-                "summary": "Resets user's password",
-                "description": "Use this method for sending a password reset confirmation email to users that registered by email. Accepts email and redirect_url as params. The user matching the email param will be sent instructions on how to reset their password. redirect_url is the url to which the user will be redirected after visiting the link contained in the email.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Missing email or redirect_url"
-                    },
-                    "403": {
-                        "description": "Redirect to %{redirect_url} not allowed."
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            },
-            "put": {
-                "summary": "Updates user's password",
-                "description": "Use this method to change users' passwords. Requires password and password_confirmation as params. This method is only valid for users that registered by email.",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Authorization required"
-                    },
-                    "422": {
-                        "description": "Missing password, or you tries putting password for oauth, or other errors"
-                    }
-                },
-                "tags": [
-                    "Auth"
-                ]
-            }
-        },
-        "/users": {
-            "put": {
-                "summary": "Updates user data",
-                "parameters": [
-                    {
-                        "name": "user_data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/UserInput"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
+                            "$ref": "#/definitions/SignInResponse"
                         }
                     }
                 },
                 "tags": [
-                    "Users"
-                ]
-            }
-        },
-        "/users/me": {
-            "get": {
-                "summary": "Current user",
-                "description": "Returns current user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                },
-                "tags": [
-                    "Users"
+                    "Auth"
                 ]
             }
         },
@@ -1680,7 +1537,7 @@
         }
     },
     "definitions": {
-        "RegistrationData": {
+        "RegistrationInput": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1689,22 +1546,73 @@
                 },
                 "password": {
                     "type": "string"
-                },
-                "password_confirmation": {
-                    "type": "string",
-                    "description": "Must be the same as password"
                 }
             }
         },
         "SignInCredentials": {
             "type": "object",
+            "required": [
+                "grant_type",
+                "username",
+                "password"
+            ],
             "properties": {
-                "email": {
+                "grant_type": {
                     "type": "string",
-                    "description": "Email of registered user"
+                    "description": "grant type, can be *password* or *refresh_token*\n"
+                },
+                "username": {
+                    "type": "string",
+                    "description": "User's email. Required if grant_type is password"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "User's password. Required if grant_type is password"
+                },
+                "scope": {
+                    "type": "string",
+                    "description": "Authorisation scope. Can be sent if grant_type is password. = ['user' or 'admin']"
+                },
+                "refresh_token": {
+                    "type": "string",
+                    "description": "User's refresh token. Required if grant_type is refresh_token"
+                }
+            }
+        },
+        "SignInResponse": {
+            "type": "object",
+            "required": [
+                "access_token",
+                "token_type",
+                "expires_in",
+                "refresh_token",
+                "scope",
+                "created_at"
+            ],
+            "properties": {
+                "access_token": {
+                    "type": "string",
+                    "description": "Uniq access_token"
+                },
+                "scope": {
+                    "type": "string",
+                    "description": "Authorisation scope"
+                },
+                "refresh_token": {
+                    "type": "string",
+                    "description": "Uniq refresh_token, can be used when access_token expires"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "token_type": {
+                    "type": "string",
+                    "description": "Token type, Default - bearer"
+                },
+                "expires_in": {
+                    "type": "integer",
+                    "description": "Access_token expiration in seconds"
                 }
             }
         },
@@ -2224,36 +2132,6 @@
                             "description": "Optional list ID to be shared"
                         }
                     }
-                }
-            }
-        },
-        "UserInput": {
-            "type": "object",
-            "properties": {
-                "user_name": {
-                    "type": "string",
-                    "description": "User full name"
-                },
-                "email": {
-                    "type": "string",
-                    "description": "User email"
-                }
-            }
-        },
-        "User": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "description": "User ID"
-                },
-                "user_name": {
-                    "type": "string",
-                    "description": "User full name"
-                },
-                "email": {
-                    "type": "string",
-                    "description": "User email"
                 }
             }
         },

@@ -1,4 +1,4 @@
-class DeviseOverrides::RegistrationsController < Devise::RegistrationsController
+class DeviseOverrides::RegistrationsController < DeviseTokenAuth::RegistrationsController
 protected
 
   def render_create_success
@@ -13,7 +13,7 @@ protected
 
   def render_create_error_email_already_exists
     render json: {
-        errors: [{code: 1, message: I18n.t('devise_token_auth.registrations.email_already_exists')}]
+        errors: [{code: 1, message: I18n.t('devise_token_auth.registrations.email_already_exists', email: @resource.email)}]
     }, status: :bad_request
   end
 

@@ -6,17 +6,16 @@ Rails.application.routes.draw do
   end
 
   namespace :api, defaults: { format: 'json' } do
-    use_doorkeeper do
-      controllers tokens: 'tokens'
-      skip_controllers :authorizations, :applications, :authorized_applications
-    end
-
     namespace :v1 do
-      # mount_devise_token_auth_for 'User', at: 'auth', controllers: {
-      #     registrations: 'devise_overrides/registrations'
-      # }
-      get 'users/me' => 'users#me'
-      put 'users' => 'users#update'
+      use_doorkeeper do
+        controllers tokens: 'tokens'
+        skip_controllers :authorizations, :applications, :authorized_applications
+      end
+      mount_devise_token_auth_for 'User', at: 'users', controllers: {
+          registrations: 'devise_overrides/registrations'
+      }
+      #get 'users/me' => 'users#me'
+      #put 'users' => 'users#update'
 
       resources :calendars, except: [:edit, :new]
       post 'calendars/:id/events/:event_id', to: 'calendars#add_event'

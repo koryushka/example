@@ -110,16 +110,14 @@
         loginButton.prop('disabled', true);
         $.ajax({
           type: 'POST',
-          url: '/api/v1/auth/sign_in',
-          data: {email: $('#email').val(), password: $('#password').val()},
+          url: '/api/v1/oauth/token',
+          data: {username: $('#email').val(), password: $('#password').val(), grant_type: 'password'},
           dataType: 'json'
-        }).done(function(data, status, xhr){
-          ['Access-Token', 'Client', 'Uid'].forEach(function(header_name) {
-            var header = xhr.getResponseHeader(header_name);
-            var key = new SwaggerClient.ApiKeyAuthorization(header_name, header, 'header');
-            window.swaggerUi.api.clientAuthorizations.add(header_name, key);
-            console.log(header_name, header);
-          });
+        }).done(function(data){
+          if(data.access_token) {
+            var key = new SwaggerClient.ApiKeyAuthorization('Authorization', 'Bearer ' + data.access_token, 'header');
+            window.swaggerUi.api.clientAuthorizations.add('Authorization', key);
+          }
           $('#login_form').hide();
         }).fail(function(xhr, status, errorText){
           alert(errorText + ': ' + xhr.responseText);
