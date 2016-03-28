@@ -13,7 +13,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'bcrypt'
 
 gem 'devise'
-gem 'devise_token_auth', '0.1.37.beta4'
+gem 'doorkeeper'
 
 gem 'validates_email_format_of'
 gem 'date_validator'

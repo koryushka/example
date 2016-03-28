@@ -5,9 +5,11 @@ module AuthenticatedUser
     super
 
     @user = FactoryGirl.create :user
-    auth_headers = @user.create_new_auth_token
-    sign_in @user
-    @request.headers.merge!(auth_headers)
+    token = Doorkeeper::AccessToken.new(resource_owner_id: @user.id)
+    token.save
+    @request.headers['Authorization'] = "Bearer #{token.token}"
+    #@controller.instance_variable_set('@_doorkeeper_token', token)
+    #@controller.instance_variable_set('@doorkeeper_token', token)
     @request.headers['Accept'] = Mime::JSON
     @request.headers['Content-Type'] = Mime::JSON.to_s
   end

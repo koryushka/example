@@ -1,4 +1,4 @@
-class DeviseOverrides::RegistrationsController < DeviseTokenAuth::RegistrationsController
+class DeviseOverrides::RegistrationsController < Devise::RegistrationsController
 protected
 
   def render_create_success

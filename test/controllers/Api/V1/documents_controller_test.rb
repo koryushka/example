@@ -41,7 +41,7 @@ class Api::V1::DocumentsControllerTest < ActionController::TestCase
   #### Document update group
   test 'should upadte existing document' do
     document = FactoryGirl.create(:document, user: @user)
-    new_title = Faker::Lorem.word
+    new_title = Faker::Lorem.sentence(3)
     put :update, id: document.id, title: new_title
     assert_response :success
     assert_equal assigns(:document).title, new_title

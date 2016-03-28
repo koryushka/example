@@ -1,15 +1,20 @@
 Rails.application.routes.draw do
 
   namespace :admin do
-    mount_devise_token_auth_for 'Admin', at: 'auth'
+    #mount_devise_token_auth_for 'Admin', at: 'auth'
     root to: 'home#index'
   end
 
   namespace :api, defaults: { format: 'json' } do
+    use_doorkeeper do
+      controllers tokens: 'tokens'
+      skip_controllers :authorizations, :applications, :authorized_applications
+    end
+
     namespace :v1 do
-      mount_devise_token_auth_for 'User', at: 'auth', controllers: {
-          registrations: 'devise_overrides/registrations'
-      }
+      # mount_devise_token_auth_for 'User', at: 'auth', controllers: {
+      #     registrations: 'devise_overrides/registrations'
+      # }
       get 'users/me' => 'users#me'
       put 'users' => 'users#update'
 

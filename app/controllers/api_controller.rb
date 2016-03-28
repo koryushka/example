@@ -1,16 +1,19 @@
 class ApiController < ActionController::Base
-  include DeviseTokenAuth::Concerns::SetUserByToken
-  before_filter :authenticate_api_user!
+  include Doorkeeper::Helpers::Controller
+  before_action :doorkeeper_authorize!
 
   rescue_from CanCan::AccessDenied do
     render :text => '401. Unauthorized. You are not permited for this resourse.', :status => :unauthorized
   end
 
+  rescue_from ValidationException do |exception|
+    render json: { validation_errors: exception.model.errors.messages }, status: :bad_request
+  end
+
 private
 
   def current_user
-    send "current_#{controller_scope}_user"
-    #User.find(5)
+    @current_user ||= server.resource_owner
   end
 
   def pubnub

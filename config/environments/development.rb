@@ -28,10 +28,6 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options   = {host: 'localhost', port: 3000}
 
-  DeviseTokenAuth.setup do |config|
-    config.change_headers_on_each_request = false
-  end
-
   S3Upload.configuration do |config|
     config.fog_params = {
         provider:   'Local',

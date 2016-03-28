@@ -8,7 +8,7 @@ class Api::V1::EventsController < ApiController
   check_authorization
 
   def index
-    @events = current_user.events
+    @events = current_user.events.includes(:event_cancellations, :event_recurrences)
   end
 
   def show
@@ -18,12 +18,9 @@ class Api::V1::EventsController < ApiController
   def create
     @event = Event.new(event_params)
     @event.user = current_user
-    if @event.valid?
-      unless @event.save
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @event.errors.messages }, status: :bad_request
+
+    unless @event.save
+      return render nothing: true, status: :internal_server_error
     end
 
     render partial: 'event', locals: {event: @event }, status: :created
@@ -32,12 +29,8 @@ class Api::V1::EventsController < ApiController
   def update
     @event.assign_attributes(event_params)
 
-    if @event.valid?
-      unless @event.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @event.errors.messages }, status: :bad_request
+    unless @event.save
+      return render nothing: true, status: :internal_server_error
     end
 
     render partial: 'event', locals: {event: @event }
