@@ -15,7 +15,7 @@ Doorkeeper.configure do
   end
 
   resource_owner_from_credentials do |_routes|
-    if _routes.instance_of? Api::TokensController
+    if _routes.instance_of? Api::V1::TokensController
       user = User.find_for_database_authentication(email: params[:username])
       user if user && user.valid_password?(params[:password])
     else

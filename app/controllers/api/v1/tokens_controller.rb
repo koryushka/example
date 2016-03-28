@@ -1,4 +1,4 @@
-class Api::TokensController < Doorkeeper::TokensController
+class Api::V1::TokensController < Doorkeeper::TokensController
   include ActionController::StrongParameters
 
   def create
