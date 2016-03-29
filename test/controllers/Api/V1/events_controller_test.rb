@@ -74,6 +74,13 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     end
   end
 
+  test 'should not destroy event of other user' do
+    other_user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:repeating_event_with_cancellation, user: other_user)
+    delete :destroy, id: event.id
+    assert_response :forbidden
+  end
+
   #### Document attaching group
   test 'should attach existing document to existing event' do
     event = FactoryGirl.create(:event, user: @user)

@@ -2,7 +2,7 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    can :manage, :all
+    can :manage, :all, user_id: user.id
     #Define abilities for the passed in user here. For example:
     # if user
     #   user.roles.includes(:permissions).each do |role|
