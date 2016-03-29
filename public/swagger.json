@@ -1753,7 +1753,7 @@
                     "description": "Enumeration specifies the type of calendar item",
                     "default": 0
                 },
-                "lattitude": {
+                "latitude": {
                     "type": "number",
                     "format": "double",
                     "description": "Location lattitude"

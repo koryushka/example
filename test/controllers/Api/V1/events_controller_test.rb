@@ -27,7 +27,9 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
         starts_at: Date.yesterday,
         ends_at: Date.yesterday + 1.hour,
         notes: Faker::Lorem.sentence(4),
-        frequency: 'once'
+        frequency: 'once',
+        latitude: Faker::Address.latitude,
+        longitude: Faker::Address.longitude
     }
 
     assert_response :success
