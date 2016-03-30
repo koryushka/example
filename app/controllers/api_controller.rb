@@ -36,18 +36,6 @@ private
     publish('updated')
   end
 
-  def tmp_user
-    @tmp_user ||= User.find(5)
-  end
-
-  def controller_scope
-    self.class.parent_name.split('::').join('_').downcase
-  end
-
-  def authenticate_api_user!
-    send "authenticate_#{controller_scope}_user!"
-  end
-
   # Tries to find entity related to controller and adds appropriate class variable to controller
   #
   # +Params+:
