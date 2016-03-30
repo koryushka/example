@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :lists
   has_many :documents
   has_many :sharing_permissions
+  has_many :list_items
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

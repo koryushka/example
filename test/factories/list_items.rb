@@ -5,10 +5,12 @@ FactoryGirl.define do
   notes character varying(2048) NOT NULL DEFAULT ''::character varying,
   "order" integer NOT NULL DEFAULT 0,
   list_id integer NOT NULL,
+  user_id integer NOT NULL,
   done boolean NOT NULL DEFAULT false
 =end
     title {Faker::Lorem.word}
     list
+    user nil
     notes {Faker::Lorem.paragraphs(1)}
   end
 end

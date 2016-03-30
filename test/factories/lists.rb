@@ -13,7 +13,7 @@ FactoryGirl.define do
 
     factory :list_with_items do
       after(:create) do |list|
-        create_list(:list_item, 5, list: list)
+        create_list(:list_item, 5, list: list, user: list.user)
       end
     end
   end

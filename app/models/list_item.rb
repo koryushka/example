@@ -1,5 +1,6 @@
 class ListItem < ActiveRecord::Base
   belongs_to :list
+  belongs_to :user
 
   validates :title, length: {maximum: 128}, presence: true
   validates :notes, length: {maximum: 2048}

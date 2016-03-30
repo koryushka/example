@@ -18,6 +18,7 @@ class Api::V1::ListItemsController < ApiController
   def create
     @list_item = ListItem.new(list_item_params)
     @list_item.list = @list
+    @list_item.user = current_user
     if @list_item.valid?
       unless @list_item.save!
         return render nothing: true, status: :internal_server_error
