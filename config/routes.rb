@@ -14,7 +14,7 @@ Rails.application.routes.draw do
       mount_devise_token_auth_for 'User', at: 'users', controllers: {
           registrations: 'devise_overrides/registrations'
       }
-      #get 'users/me' => 'users#me'
+      get 'users/me' => 'users#me'
       #put 'users' => 'users#update'
 
       resources :calendars, except: [:edit, :new]

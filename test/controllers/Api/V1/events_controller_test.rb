@@ -27,7 +27,9 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
         starts_at: Date.yesterday,
         ends_at: Date.yesterday + 1.hour,
         notes: Faker::Lorem.sentence(4),
-        frequency: 'once'
+        frequency: 'once',
+        latitude: Faker::Address.latitude,
+        longitude: Faker::Address.longitude
     }
 
     assert_response :success
@@ -72,6 +74,13 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_raises ActiveRecord::RecordNotFound do
       Event.find(event.id)
     end
+  end
+
+  test 'should not destroy event of other user' do
+    other_user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:repeating_event_with_cancellation, user: other_user)
+    delete :destroy, id: event.id
+    assert_response :forbidden
   end
 
   #### Document attaching group

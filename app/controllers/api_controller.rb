@@ -3,7 +3,7 @@ class ApiController < ActionController::Base
   before_action :doorkeeper_authorize!
 
   rescue_from CanCan::AccessDenied do
-    render :text => '401. Unauthorized. You are not permited for this resourse.', :status => :unauthorized
+    render :text => '403. Unauthorized. You are not permited for this resourse.', :status => :forbidden
   end
 
   rescue_from ValidationException do |exception|

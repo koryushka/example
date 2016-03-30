@@ -1187,7 +1187,7 @@ definitions:
         format: int16
         description: Enumeration specifies the type of calendar item
         default: 0
-      lattitude:
+      latitude:
         type: number
         format: double
         description: Location lattitude
@@ -1231,7 +1231,7 @@ definitions:
         format: int16
         description: Enumeration specifies the type of event
         default: 0
-      lattitude:
+      latitude:
         type: number
         format: double
         description: Location lattitude
