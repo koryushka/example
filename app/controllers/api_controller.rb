@@ -17,10 +17,17 @@ private
   end
 
   def pubnub
-    @pubnub ||= Pubnub.new(
-        subscribe_key: 'sub-c-b30e1dac-d56c-11e5-b684-02ee2ddab7fe',
-        publish_key: 'pub-c-dc0c88cf-f1dd-468d-88a4-160c26eb981d'
-    )
+    if @pubnub.nil?
+      logger = Logger.new(STDOUT)
+      logger = Logger.new('/dev/null') if Rails.env.test?
+      @pubnub = Pubnub.new(
+          subscribe_key: 'sub-c-b30e1dac-d56c-11e5-b684-02ee2ddab7fe',
+          publish_key: 'pub-c-dc0c88cf-f1dd-468d-88a4-160c26eb981d',
+          logger: logger
+      )
+
+    end
+    @pubnub
   end
 
   def publish(message)
