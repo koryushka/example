@@ -3,7 +3,7 @@
     "info": {
         "title": "Curago API",
         "description": "API documentation for Curago",
-        "version": "1.1.0"
+        "version": "1.2.0"
     },
     "schemes": [
         "http"
@@ -1534,6 +1534,238 @@
                     "Sharings"
                 ]
             }
+        },
+        "/groups": {
+            "get": {
+                "summary": "List of croups created by user",
+                "description": "Returns a list of groups which were created by user earlier",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Group"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unxpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "User groups"
+                ]
+            },
+            "post": {
+                "summary": "Creates new group",
+                "parameters": [
+                    {
+                        "name": "group",
+                        "description": "Group object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/GroupInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/ValidationError"
+                        }
+                    },
+                    "default": {
+                        "description": "Unxpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "User groups"
+                ]
+            }
+        },
+        "/groups/{id}": {
+            "get": {
+                "summary": "Single group object",
+                "description": "Returns group object by specified group id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "default": {
+                        "description": "Unxpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "User groups"
+                ]
+            },
+            "put": {
+                "summary": "Updates existing group",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    },
+                    {
+                        "name": "group",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/GroupInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "Unxpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "User groups"
+                ]
+            },
+            "delete": {
+                "summary": "Removes existing group",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "Unxpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "User groups"
+                ]
+            }
+        },
+        "/groups/{group_id}/users": {
+            "get": {
+                "summary": "List of users in group",
+                "description": "Returns list of users which were added to specified (by group_id) group by current user",
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/User"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "User groups"
+                ]
+            }
+        },
+        "/groups/{group_id}/users/{user_id}": {
+            "post": {
+                "summary": "Adds user to group",
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "tags": [
+                    "User groups"
+                ]
+            },
+            "delete": {
+                "summary": "Adds user to group",
+                "parameters": [
+                    {
+                        "name": "group_id",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "OK"
+                    }
+                },
+                "tags": [
+                    "User groups"
+                ]
+            }
         }
     },
     "definitions": {
@@ -1613,6 +1845,14 @@
                 "expires_in": {
                     "type": "integer",
                     "description": "Access_token expiration in seconds"
+                }
+            }
+        },
+        "User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -2145,6 +2385,30 @@
                 "public_url": {
                     "type": "string",
                     "description": "URL of file. You can use it for file dwonloading"
+                }
+            }
+        },
+        "Group": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Group name"
+                }
+            }
+        },
+        "GroupInput": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "Group title"
                 }
             }
         },

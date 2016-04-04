@@ -1,5 +1,8 @@
 class Api::V1::UsersController < ApiController
-  #before_filter :authenticate_api_v1_user!, only: [:show, :me]
+  before_filter :find_entity, only: [:show, :add_to_group, :remove_from_group]
+  before_filter only: [:group_index, :add_to_group, :remove_from_group] do
+    find_entity type: :group, id_param: :group_id
+  end
 
   def me
     render partial: 'user', locals: { user: current_user }, status: :created
@@ -26,13 +29,18 @@ class Api::V1::UsersController < ApiController
     render partial: 'user', locals: { user: current_user }, status: :created
   end
 
-  def check_email
-    user = User.find_by_email(params[:email])
-    render json: !user.nil?
+  # Group members
+  def group_index
+    @members = @group.members
   end
 
-  private
-  def user_params
-    params.permit(:user_name, :email)
+  def add_to_group
+    @group.members << @user
+    render nothing: true
+  end
+
+  def remove_from_group
+    @group.members.delete(@user)
+    render nothing: true, status: :no_content
   end
 end

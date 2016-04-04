@@ -42,6 +42,12 @@ Rails.application.routes.draw do
 
       resources :sharings, only: [:create, :destroy]
       get 'sharings/resources' => 'sharings#resources'
+
+      resources :groups, except: [:edit, :new] do
+        get 'users' => 'users#group_index'
+        post 'users/:id' => 'users#add_to_group'
+        delete 'users/:id' => 'users#remove_from_group'
+      end
     end
   end
 end
