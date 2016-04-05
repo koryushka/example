@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   namespace :admin do
     #mount_devise_token_auth_for 'Admin', at: 'auth'
     root to: 'home#index'
@@ -34,11 +33,12 @@ Rails.application.routes.draw do
       resources :notifications_prefs, only: [:update, :destroy]
       resources :documents, except: [:new, :edit, :index]
       resources :calendars_groups, except: [:edit, :new]
+      resources :files, only: [:create]
+
       resources :lists, except: [:edit, :new] do
         resources :list_items, only: [:index, :create], path: 'items'
       end
       resources :list_items, except: [:new, :edit, :index, :create]
-      resources :files, only: [:create]
 
       resources :sharings, only: [:create, :destroy]
       get 'sharings/resources' => 'sharings#resources'
@@ -48,6 +48,10 @@ Rails.application.routes.draw do
         post 'users/:id' => 'users#add_to_group'
         delete 'users/:id' => 'users#remove_from_group'
       end
+
+      resources :profiles, only: [:index, :create]
+      put 'profiles' => 'profiles#update'
+      get 'users/:user_id/profile' => 'profiles#show'
     end
   end
 end
