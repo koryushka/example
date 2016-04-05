@@ -39,6 +39,28 @@
                 ]
             }
         },
+        "/users/me": {
+            "get": {
+                "summary": "Current user with profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "default": {
+                        "description": "Unxpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Users"
+                ]
+            }
+        },
         "/oauth/token": {
             "post": {
                 "summary": "Authenticates user",
@@ -1768,26 +1790,6 @@
             }
         },
         "/profiles": {
-            "get": {
-                "summary": "Profile of current user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/Profile"
-                        }
-                    },
-                    "default": {
-                        "description": "Unxpected error",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorsContainer"
-                        }
-                    }
-                },
-                "tags": [
-                    "Profiles"
-                ]
-            },
             "post": {
                 "summary": "Creates user profile",
                 "parameters": [
@@ -1979,6 +1981,12 @@
             "properties": {
                 "id": {
                     "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "profile": {
+                    "$ref": "#/definitions/Profile"
                 }
             }
         },

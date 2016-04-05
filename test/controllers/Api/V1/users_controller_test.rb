@@ -3,6 +3,13 @@ require File.expand_path('../../../../test_helper', __FILE__)
 class Api::V1::UsersControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
+  test 'should user object with profile' do
+    FactoryGirl.create(:profile, user: @user)
+    get :me
+    assert_response :success
+    assert_not_nil assigns(:current_user).profile
+  end
+
   # Users groups management
   test 'should show users from specified group' do
     members_count = 5

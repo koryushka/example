@@ -8,10 +8,6 @@ class Api::V1::ProfilesController < ApiController
   authorize_resource
   check_authorization
 
-  def index
-    render partial: 'profile', locals: {profile: @profile}
-  end
-
   def show
     @profile = @user.profile
     render partial: 'profile', locals: {profile: @profile}

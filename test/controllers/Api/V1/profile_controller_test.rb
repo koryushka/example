@@ -3,14 +3,6 @@ require File.expand_path('../../../../test_helper', __FILE__)
 class Api::V1::ProfilesControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
-  test 'should get index' do
-    FactoryGirl.create(:profile, user: @user)
-    get :index
-    assert_response :success
-    assert_not_nil assigns(:profile)
-    assert_equal assigns(:profile).user_id, @user.id
-  end
-
   test 'should get show' do
     user = FactoryGirl.create(:user_with_profile)
     get :show, user_id: user.id
