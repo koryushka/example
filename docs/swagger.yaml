@@ -716,10 +716,14 @@ paths:
           schema:
             $ref: '#/definitions/ListInput'
       responses:
-        '201':
+        201:
           description: Created
           schema:
             $ref: '#/definitions/List'
+        400:
+          description: Validation error
+          schema:
+            $ref: '#/definitions/ValidationError'
         default:
           description: Unexpected error
           schema:
@@ -727,6 +731,23 @@ paths:
       tags:
         - Lists
   /lists/{id}:
+    get:
+      summary: Returns list object
+      parameters:
+        - name: id
+          description: List's ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        201:
+          description: Updated
+          schema:
+            $ref: '#/definitions/List'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
     put:
       summary: Update list
       description: Updates list information by ID
@@ -747,6 +768,10 @@ paths:
           description: Updated
           schema:
             $ref: '#/definitions/List'
+        400:
+          description: Validation error
+          schema:
+            $ref: '#/definitions/ValidationError'
         default:
           description: Unexpected error
           schema:
@@ -1663,27 +1688,10 @@ definitions:
       kind:
         type: integer
         description: Specified type of list. Can be 1 - Grocery, 2 - ToDo
-  ListItem:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: List item ID
-      title:
-        type: string
-        description: List item title
-      notes:
-        type: string
-        description: Additional notes
-      order:
-        type: integer
-        format: int16
-        description: Sorting order for item in the list
-        default: 0
-      done:
-        type: boolean
-        description: Shows whether user finished with this item or not
-        default: false
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/ListItem'
   ListItemInput:
     type: object
     properties:
