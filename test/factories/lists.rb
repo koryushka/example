@@ -12,8 +12,11 @@ FactoryGirl.define do
     kind 1
 
     factory :list_with_items do
-      after(:create) do |list|
-        create_list(:list_item, 5, list: list, user: list.user)
+      transient do
+        items_count 1
+      end
+      after(:create) do |list, evaluator|
+        create_list(:list_item, evaluator.items_count, list: list, user: list.user)
       end
     end
   end

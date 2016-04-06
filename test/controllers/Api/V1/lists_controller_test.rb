@@ -3,15 +3,31 @@ require File.expand_path('../../../../test_helper', __FILE__)
 class Api::V1::ListsControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
-  test 'should get index' do
+  test 'should get index of lists' do
     amount = 5
     FactoryGirl.create_list(:list, amount, user: @user)
 
     get :index
     assert_response :success
     assert_not_nil assigns(:lists)
-    count = assigns(:lists).size()
-    assert count == 5, "Expected #˚{amount} updated events, #{count} given"
+    count = assigns(:lists).size
+    assert_equal count, amount
+  end
+
+  test 'should get index of lists with items within' do
+    items_count = 5
+    FactoryGirl.create(:list_with_items, items_count: items_count, user: @user)
+
+    get :index
+    assert_response :success
+    assert_not_nil response.body
+
+    lists = JSON.parse(response.body)
+    items = lists.first['items']
+    assert_not_nil items
+
+    count = items.size
+    assert_equal count, items_count
   end
 
   test 'should get show' do
