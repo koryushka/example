@@ -4,6 +4,6 @@ class List < ActiveRecord::Base
   LIST_KINDS = [Grocery = 1, ToDo = 2]
 
   validates :title, length: {maximum: 128}, presence: true
-  validates :notes, length: {maximum: 2048}
+  validates :notes, length: {maximum: 2048}, exclusion: { in: [nil] }
   validates :kind, numericality: {only_integer: true}, inclusion: {in: LIST_KINDS}
 end
