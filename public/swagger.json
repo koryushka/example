@@ -1147,7 +1147,10 @@
                             "$ref": "#/definitions/Error"
                         }
                     }
-                }
+                },
+                "tags": [
+                    "Lists"
+                ]
             },
             "put": {
                 "summary": "Update list",

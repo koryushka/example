@@ -1,5 +1,7 @@
 json.extract! group, :id, :title
-json.array! group.members do |user|
-  json.extract! user, :id, :email
+json.members do
+  json.array! group.members do |user|
+    json.extract! user, :id, :email
+  end
 end
 
