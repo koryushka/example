@@ -523,9 +523,37 @@
             }
         },
         "/events/{id}": {
+            "get": {
+                "summary": "Returns event",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Calendar's ID",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Event"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Events"
+                ]
+            },
             "put": {
-                "summary": "Update calendar item",
-                "description": "Updates calendar item information by ID",
+                "summary": "Updates event",
                 "parameters": [
                     {
                         "name": "id",
@@ -568,8 +596,7 @@
                 ]
             },
             "delete": {
-                "summary": "Delete calendar item",
-                "description": "Deletes calendar item by ID",
+                "summary": "Deletes event",
                 "parameters": [
                     {
                         "name": "id",
