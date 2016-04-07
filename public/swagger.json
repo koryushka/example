@@ -1274,7 +1274,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ListInput"
+                            "$ref": "#/definitions/ListItemInput"
                         }
                     }
                 ],
