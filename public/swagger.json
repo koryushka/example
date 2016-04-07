@@ -394,7 +394,7 @@
         },
         "/calendars/{id}/events/{event_id}": {
             "post": {
-                "summary": "Add specified item to specified calendar",
+                "summary": "Add specified event to specified calendar",
                 "parameters": [
                     {
                         "name": "id",
@@ -405,7 +405,7 @@
                     },
                     {
                         "name": "event_id",
-                        "description": "ID of item which should be added",
+                        "description": "ID of event which should be added",
                         "in": "path",
                         "required": true,
                         "type": "integer"
@@ -414,6 +414,12 @@
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "406": {
+                        "description": "Impossible to event to the same calendar twice",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
                     },
                     "default": {
                         "description": "Unexpected error",
@@ -428,7 +434,7 @@
                 ]
             },
             "delete": {
-                "summary": "Removed spcified item from specified calendar",
+                "summary": "Removed spcified event from specified calendar",
                 "parameters": [
                     {
                         "name": "id",
@@ -439,7 +445,7 @@
                     },
                     {
                         "name": "event_id",
-                        "description": "ID of item which should be removed",
+                        "description": "ID of event which should be removed",
                         "in": "path",
                         "required": true,
                         "type": "integer"
@@ -1912,6 +1918,12 @@
                         "description": "Validation error",
                         "schema": {
                             "$ref": "#/definitions/ValidationError"
+                        }
+                    },
+                    "406": {
+                        "description": "Impossible to create user profile twice",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
                         }
                     },
                     "default": {

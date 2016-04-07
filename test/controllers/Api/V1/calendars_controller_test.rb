@@ -93,7 +93,15 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
     event = FactoryGirl.create(:event, user: @user)
     post :add_event, id: calendar.id, event_id: event.id
     assert_response :success
-    assert assigns(:calendar).events.where(id: event.id).size() > 0
+    assert assigns(:calendar).events.where(id: event.id).size > 0
+  end
+
+  test 'should not add event to calendar twice' do
+    calendar = FactoryGirl.create(:calendar, user: @user)
+    event = FactoryGirl.create(:event, user: @user)
+    calendar.events << event
+    post :add_event, id: calendar.id, event_id: event.id
+    assert_response :not_acceptable
   end
 
   test 'should remove item from calendar' do
@@ -102,7 +110,7 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
     calendar.events << event
     delete :remove_event, id: calendar.id, event_id: event.id
     assert_response :success
-    assert assigns(:calendar).events.where(id: event.id).size() == 0
+    assert assigns(:calendar).events.where(id: event.id).size == 0
   end
 
 end

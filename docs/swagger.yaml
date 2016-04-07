@@ -257,7 +257,7 @@ paths:
         - Calendars
   /calendars/{id}/events/{event_id}:
     post:
-      summary: Add specified item to specified calendar
+      summary: Add specified event to specified calendar
       parameters:
         - name: id
           description: Calendars ID
@@ -265,13 +265,17 @@ paths:
           required: true
           type: integer
         - name: event_id
-          description: ID of item which should be added
+          description: ID of event which should be added
           in: path
           required: true
           type: integer
       responses:
         200:
           description: OK
+        406:
+          description: Impossible to event to the same calendar twice
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
         default:
           description: Unexpected error
           schema:
@@ -280,7 +284,7 @@ paths:
         - Events
         - Calendars
     delete:
-      summary: Removed spcified item from specified calendar
+      summary: Removed spcified event from specified calendar
       parameters:
         - name: id
           description: Calendars ID
@@ -288,7 +292,7 @@ paths:
           required: true
           type: integer
         - name: event_id
-          description: ID of item which should be removed
+          description: ID of event which should be removed
           in: path
           required: true
           type: integer
@@ -765,6 +769,8 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
+      tags:
+        - Lists
     put:
       summary: Update list
       description: Updates list information by ID
@@ -844,6 +850,12 @@ paths:
           in: path
           required: true
           type: integer
+        - name: list_item
+          description: Item object which should be added to list
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListItemInput'
       responses:
         201:
           description: Created
@@ -1262,6 +1274,10 @@ paths:
           description: Validation error
           schema:
             $ref: '#/definitions/ValidationError'
+        406:
+          description: Impossible to create user profile twice
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
         default:
           description: Unxpected error
           schema:
