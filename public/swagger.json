@@ -1259,11 +1259,18 @@
                 ]
             }
         },
-        "/lists_items/{id}": {
+        "/lists/{list_id}/items/{id}": {
             "get": {
                 "summary": "Shows list item",
                 "description": "Returns single list item data",
                 "parameters": [
+                    {
+                        "name": "list_id",
+                        "description": "List ID",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    },
                     {
                         "name": "id",
                         "description": "List item ID",
@@ -1295,6 +1302,13 @@
                 "summary": "Update list item",
                 "description": "Updates list item information by list ID and item ID",
                 "parameters": [
+                    {
+                        "name": "list_id",
+                        "description": "List ID",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    },
                     {
                         "name": "id",
                         "description": "List item ID",
@@ -1335,6 +1349,13 @@
                 "summary": "Delete list item",
                 "description": "Deletes list item by item ID",
                 "parameters": [
+                    {
+                        "name": "list_id",
+                        "description": "List ID",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    },
                     {
                         "name": "id",
                         "description": "List item ID",

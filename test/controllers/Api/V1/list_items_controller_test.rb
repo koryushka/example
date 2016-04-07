@@ -13,13 +13,13 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
 
   test 'should get show' do
     list = FactoryGirl.create(:list_with_items, user: @user)
-    get :show, id: list.items.first.id
+    get :show, id: list.list_items.first.id, list_id: list.id
     assert_response :success
     assert_not_nil assigns(:list_item)
   end
 
   #### list_item creation group
-  test 'should create new regular list_item' do
+  test 'should create new list_item' do
     list = FactoryGirl.create(:list, user: @user)
     post :create, {
         title: Faker::Lorem.word,
@@ -40,9 +40,9 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
   #### list_item update group
   test 'should upadte existing list_item' do
     list = FactoryGirl.create(:list_with_items, user: @user)
-    list_item = list.items.first
+    list_item = list.list_items.first
     new_title = Faker::Lorem.word
-    put :update, id: list_item.id, title: new_title
+    put :update, id: list_item.id, list_id: list.id, title: new_title
     assert_response :success
     assert_equal assigns(:list_item).title, new_title
     assert_not_equal assigns(:list_item).title, list_item.title
@@ -50,16 +50,16 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
 
   test 'should fail list_item update with invalid data' do
     list = FactoryGirl.create(:list_with_items, user: @user)
-    list_item = list.items.first
-    put :update, id: list_item.id, title: nil
+    list_item = list.list_items.first
+    put :update, id: list_item.id, list_id: list.id, title: nil
     assert_response :bad_request
   end
 
   #### list_item destroying group
   test 'should destroy existing list_item' do
     list = FactoryGirl.create(:list_with_items, user: @user)
-    list_item = list.items.first
-    delete :destroy, id: list_item.id
+    list_item = list.list_items.first
+    delete :destroy, id: list_item.id, list_id: list.id
     assert_response :no_content
     assert_raises ActiveRecord::RecordNotFound do
       ListItem.find(list_item.id)

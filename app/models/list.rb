@@ -1,6 +1,6 @@
 class List < ActiveRecord::Base
   belongs_to :user
-  has_many :items, class_name: 'ListItem'
+  has_many :list_items
   LIST_KINDS = [Grocery = 1, ToDo = 2]
 
   validates :title, length: {maximum: 128}, presence: true

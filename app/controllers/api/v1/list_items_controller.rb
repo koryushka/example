@@ -1,6 +1,6 @@
 class Api::V1::ListItemsController < ApiController
   before_filter :find_entity, except: [:index, :create]
-  before_filter only: [:index, :create] do
+  before_filter do
     find_entity type: :list, id_param: :list_id
   end
   after_filter :something_updated, except: [:index, :show]
@@ -8,7 +8,7 @@ class Api::V1::ListItemsController < ApiController
   check_authorization
 
   def index
-    @list_items = @list.items
+    @list_items = @list.list_items
   end
 
   def show

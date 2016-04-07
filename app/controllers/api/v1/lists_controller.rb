@@ -5,7 +5,7 @@ class Api::V1::ListsController < ApiController
   check_authorization
 
   def index
-    @lists = current_user.lists.includes(:items)
+    @lists = current_user.lists.includes(:list_items)
   end
 
   def show
