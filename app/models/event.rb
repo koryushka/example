@@ -16,7 +16,7 @@ class Event < AbstractModel
   validates :separation, numericality: { only_integer: true }, allow_blank: true
   validates :count, numericality: { only_integer: true }, allow_blank: true
   validates :until, date: true, allow_blank: true
-  validates :notes, length: {maximum: 2048}
+  validates :notes, length: {maximum: 2048}, exclusion: { in: [nil] }
   validates :kind, allow_blank: true, numericality: {only_integer: true}
   validates :longitude, numericality: {only_integer: false}, allow_blank: true
   validates :latitude, numericality: {only_integer: false}, allow_blank: true
