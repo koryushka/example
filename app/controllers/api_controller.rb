@@ -3,11 +3,21 @@ class ApiController < ActionController::Base
   before_action :doorkeeper_authorize!
 
   rescue_from CanCan::AccessDenied do
-    render :text => '403. Unauthorized. You are not permited for this resourse.', :status => :forbidden
+    render json: {
+        code: 1,
+        message: 'You are not permited for this resourse'
+    }, status: :forbidden
   end
 
-  rescue_from ValidationException do |exception|
-    render json: { validation_errors: exception.model.errors.messages }, status: :bad_request
+  rescue_from ValidationException do |e|
+    render json: { validation_errors: e.model.errors.messages }, status: :bad_request
+  end
+
+  rescue_from ActiveRecord::RecordNotUnique do
+    render json: {
+        code: 1,
+        message: "Duplication for #{controller_name.classify} entity"
+    }, status: :not_acceptable
   end
 
 private

@@ -21,6 +21,12 @@ class Api::V1::ProfilesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:profile)
   end
 
+  test 'should not be able to create profile for user with profile' do
+    FactoryGirl.create(:profile, user: @user)
+    post :create, {}
+    assert_response :not_acceptable
+  end
+
   test 'should fail invalid profile creation' do
     post :create, {
         full_name: 'x' * 65,
