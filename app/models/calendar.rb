@@ -10,6 +10,9 @@ class Calendar < ActiveRecord::Base
   validates :kind, allow_blank: true, numericality: {only_integer: true}
   validates :visible, allow_blank: true, inclusion: {in: [true, false]}
 
+  default :kind, 0
+  default :visible, true
+
   def shared_events
     if self.main?
       cic = Arel::Table.new(:calendars_events)

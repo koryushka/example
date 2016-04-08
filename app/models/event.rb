@@ -16,11 +16,14 @@ class Event < AbstractModel
   validates :separation, numericality: { only_integer: true }, allow_blank: true
   validates :count, numericality: { only_integer: true }, allow_blank: true
   validates :until, date: true, allow_blank: true
-  validates :notes, length: {maximum: 2048}, exclusion: { in: [nil] }
+  validates :notes, length: {maximum: 2048}
   validates :kind, allow_blank: true, numericality: {only_integer: true}
   validates :longitude, numericality: {only_integer: false}, allow_blank: true
   validates :latitude, numericality: {only_integer: false}, allow_blank: true
   validates :frequency, inclusion: {in: %w(once daily weekly monthly yearly)}
+
+  default :separation, 1
+  default :notes, ''
 
 #  validate :weekly_recurency_check
 
