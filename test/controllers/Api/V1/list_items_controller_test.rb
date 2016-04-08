@@ -8,7 +8,7 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
     get :index, list_id: list.id
     assert_response :success
     assert_not_nil assigns(:list_items)
-    assert assigns(:list_items).size() > 0
+    assert assigns(:list_items).size > 0
   end
 
   test 'should get show' do
@@ -29,6 +29,18 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
 
     assert_response :success
     assert_not_nil assigns(:list_item).id
+  end
+
+  test 'should not be able to add item to list of other user' do
+    user = FactoryGirl.create(:user)
+    list = FactoryGirl.create(:list, user: user)
+    post :create, {
+        title: Faker::Lorem.word,
+        notes: Faker::Lorem.sentence(4),
+        list_id: list.id
+    }
+
+    assert_response :not_found
   end
 
   test 'should fail invalid list_item creation' do

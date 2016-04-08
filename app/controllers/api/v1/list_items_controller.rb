@@ -1,7 +1,7 @@
 class Api::V1::ListItemsController < ApiController
   before_filter :find_entity, except: [:index, :create]
   before_filter do
-    find_entity type: :list, id_param: :list_id
+    find_entity_of_current_user type: :list, id_param: :list_id
   end
   after_filter :something_updated, except: [:index, :show]
   authorize_resource

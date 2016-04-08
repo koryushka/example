@@ -1,4 +1,4 @@
-class Calendar < ActiveRecord::Base
+class Calendar < AbstractModel
   belongs_to :user
   has_and_belongs_to_many :events
   has_and_belongs_to_many :calendars_groups
