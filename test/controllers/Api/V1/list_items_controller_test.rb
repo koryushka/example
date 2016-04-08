@@ -67,6 +67,15 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  test 'should not update item of other user' do
+    user = FactoryGirl.create(:user)
+    list = FactoryGirl.create(:list_with_items, items_count: 1, user: user)
+    list_item = list.list_items.first
+    new_title = Faker::Lorem.word
+    put :update, id: list_item.id, list_id: list.id, title: new_title
+    assert_response :not_found
+  end
+
   #### list_item destroying group
   test 'should destroy existing list_item' do
     list = FactoryGirl.create(:list_with_items, user: @user)
