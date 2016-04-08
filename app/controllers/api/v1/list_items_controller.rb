@@ -19,28 +19,15 @@ class Api::V1::ListItemsController < ApiController
     @list_item = ListItem.new(list_item_params)
     @list_item.list = @list
     @list_item.user = current_user
-    if @list_item.valid?
-      unless @list_item.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @list_item.errors.messages }, status: :bad_request
-    end
 
+    return render nothing: true, status: :internal_server_error unless @list_item.save
     render partial: 'list_item', locals: { list_item: @list_item }, status: :created
   end
 
   def update
     @list_item.assign_attributes(list_item_params)
 
-    if @list_item.valid?
-      unless @list_item.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @list_item.errors.messages }, status: :bad_request
-    end
-
+    return render nothing: true, status: :internal_server_error unless @list_item.save
     render partial: 'list_item', locals: { list_item: @list_item }
   end
 
