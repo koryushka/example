@@ -13,7 +13,7 @@ class Event < AbstractModel
   validates :title, length: {maximum: 128}, presence: true
   validates :starts_at, date: true, presence: true
   validates :ends_at, date: true, presence: true
-  validates :separation, numericality: { only_integer: true }, allow_blank: true
+  validates :separation, numericality: { only_integer: true, greater_than: 0 }, allow_blank: true
   validates :count, numericality: { only_integer: true }, allow_blank: true
   validates :until, date: true, allow_blank: true
   validates :notes, length: {maximum: 2048}
