@@ -7,8 +7,8 @@ class Api::V1::ProfilesControllerTest < ActionController::TestCase
     user = FactoryGirl.create(:user_with_profile)
     get :show, user_id: user.id
     assert_response :success
-    assert_not_nil assigns(:profile)
-    assert_equal assigns(:profile).id, user.profile.id
+    assert_not_nil json_response
+    assert_equal json_response['id'], user.profile.id
   end
 
   test 'should check fail requesting not existing profile' do
@@ -24,7 +24,7 @@ class Api::V1::ProfilesControllerTest < ActionController::TestCase
         color: Faker::Color.hex_color[-6]
     }
     assert_response :success
-    assert_not_nil assigns(:profile)
+    assert_not_nil json_response
   end
 
   test 'should not be able to create profile for user with profile' do
@@ -47,6 +47,6 @@ class Api::V1::ProfilesControllerTest < ActionController::TestCase
     new_full_name = Faker::Name.name
     put :update, full_name: new_full_name
     assert_response :success
-    assert_equal assigns(:profile).full_name, new_full_name
+    assert_equal json_response['full_name'], new_full_name
   end
 end

@@ -9,15 +9,15 @@ class Api::V1::DocumentsControllerTest < ActionController::TestCase
     event.documents << document
     get :index, event_id: event.id
     assert_response :success
-    assert_not_nil assigns(:documents)
-    assert assigns(:documents).size() == 1
+    assert_not_nil json_response
+    assert json_response.size == 1
   end
 
   test 'should get show' do
     document = FactoryGirl.create(:document, user: @user)
     get :show, id: document.id
     assert_response :success
-    assert_not_nil assigns(:document)
+    assert_not_nil json_response
   end
 
   #### Document creation group
@@ -30,7 +30,7 @@ class Api::V1::DocumentsControllerTest < ActionController::TestCase
     }
 
     assert_response :success
-    assert_not_nil assigns(:document).id
+    assert_not_nil json_response['id']
   end
 
   test 'should fail invalid document creation' do
@@ -44,8 +44,8 @@ class Api::V1::DocumentsControllerTest < ActionController::TestCase
     new_title = Faker::Lorem.sentence(3)
     put :update, id: document.id, title: new_title
     assert_response :success
-    assert_equal assigns(:document).title, new_title
-    assert_not_equal assigns(:document).title, document.title
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], document.title
   end
 
   test 'should fail document update with invalid data' do

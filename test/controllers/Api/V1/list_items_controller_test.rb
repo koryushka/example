@@ -7,15 +7,15 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
     list = FactoryGirl.create(:list_with_items, user: @user)
     get :index, list_id: list.id
     assert_response :success
-    assert_not_nil assigns(:list_items)
-    assert assigns(:list_items).size > 0
+    assert_not_nil json_response
+    assert json_response.size > 0
   end
 
   test 'should get show' do
     list = FactoryGirl.create(:list_with_items, user: @user)
     get :show, id: list.list_items.first.id, list_id: list.id
     assert_response :success
-    assert_not_nil assigns(:list_item)
+    assert_not_nil json_response
   end
 
   #### list_item creation group
@@ -28,7 +28,7 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
     }
 
     assert_response :success
-    assert_not_nil assigns(:list_item).id
+    assert_not_nil json_response['id']
   end
 
   test 'should not be able to add item to list of other user' do
@@ -56,8 +56,8 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
     new_title = Faker::Lorem.word
     put :update, id: list_item.id, list_id: list.id, title: new_title
     assert_response :success
-    assert_equal assigns(:list_item).title, new_title
-    assert_not_equal assigns(:list_item).title, list_item.title
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], list_item.title
   end
 
   test 'should fail list_item update with invalid data' do

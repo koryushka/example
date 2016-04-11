@@ -9,7 +9,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     get :index
     assert_response :success
     assert_not_nil assigns(:events)
-    count = assigns(:events).size()
+    count = json_response.size
     assert count == 5, "Expected #{amount} updated events, #{count} given"
   end
 
@@ -17,7 +17,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     event = FactoryGirl.create(:event, user: @user)
     get :show, id: event.id
     assert_response :success
-    assert_not_nil assigns(:event)
+    assert_not_nil json_response
   end
 
   #### Event creation group
@@ -33,7 +33,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     }
 
     assert_response :success
-    assert_not_nil assigns(:event).id
+    assert_not_nil json_response['id']
   end
 
   test 'should fail invalid event creation' do
@@ -52,11 +52,10 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
         kind: nil
     }
 
-    event = assigns(:event)
     assert_response :success
-    assert_not_nil event.id
-    assert_not_nil event.separation
-    assert_not_nil event.kind
+    assert_not_nil json_response['id']
+    assert_not_nil json_response['separation']
+    assert_not_nil json_response['kind']
   end
 
   #### Event update group
@@ -65,8 +64,8 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     new_title = Faker::Lorem.sentence(3)
     put :update, id: event.id, title: new_title
     assert_response :success
-    assert_equal assigns(:event).title, new_title
-    assert_not_equal assigns(:event).title, event.title
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], event.title
   end
 
   test 'should fail event update with invalid data' do

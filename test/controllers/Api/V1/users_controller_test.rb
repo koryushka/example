@@ -7,7 +7,7 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
     FactoryGirl.create(:profile, user: @user)
     get :me
     assert_response :success
-    assert_not_nil assigns(:current_user).profile
+    assert_not_nil json_response['profile']
   end
 
   # Users groups management
@@ -16,16 +16,16 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
     group = FactoryGirl.create(:group_with_members, owner: @user, members_count: members_count)
     get  :group_index, group_id: group.id
     assert_response :success
-    assert_not_nil assigns(:members)
-    assert_equal assigns(:members).size, members_count
+    assert_not_nil json_response
+    assert_equal json_response.size, members_count
   end
 
   test 'should show empty group' do
     group = FactoryGirl.create(:group, owner: @user)
     get  :group_index, group_id: group.id
     assert_response :success
-    assert_not_nil assigns(:members)
-    assert_equal assigns(:members).size, 0
+    assert_not_nil json_response
+    assert_equal json_response.size, 0
   end
 
   test 'should add user to group' do

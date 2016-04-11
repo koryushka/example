@@ -8,15 +8,15 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
     FactoryGirl.create_list(:group, groups_count, owner: @user)
     get :index
     assert_response :success
-    assert_not_nil assigns(:groups)
-    assert assigns(:groups).size == groups_count
+    assert_not_nil json_response
+    assert json_response.size == groups_count
   end
 
   test 'should get show' do
     group = FactoryGirl.create(:group, owner: @user)
     get :show, id: group.id
     assert_response :success
-    assert_not_nil assigns(:group)
+    assert_not_nil json_response
   end
 
   #### group creation group
@@ -26,7 +26,7 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
     }
 
     assert_response :success
-    assert_not_nil assigns(:group).id
+    assert_not_nil json_response['id']
   end
 
   test 'should fail invalid group creation' do
@@ -42,8 +42,8 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
     new_title = Faker::Lorem.word
     put :update, id: group.id, title: new_title
     assert_response :success
-    assert_equal assigns(:group).title, new_title
-    assert_not_equal assigns(:group).title, group.title
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], group.title
   end
 
   test 'should fail group update with invalid data' do

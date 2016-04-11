@@ -7,14 +7,14 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
   test 'should get index' do
     get :index
     assert_response :success
-    assert_not_nil assigns(:calendars)
+    assert_not_nil json_response
   end
 
   test 'should get show' do
     calendar = FactoryGirl.create(:calendar, user: @user)
     get :show, id: calendar.id
     assert_response :success
-    assert_not_nil assigns(:calendar)
+    assert_not_nil json_response
   end
 
   test 'should get show_items' do
@@ -24,7 +24,7 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
 
     get :show_items, id: calendar.id
     assert_response :success
-    assert assigns(:calendar).events.size() > 0
+    assert json_response.size > 0
   end
 
   test 'should get last updates' do
@@ -39,9 +39,9 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
 
     get :show_items, id: calendar.id, since: Date.today - 3.days
     assert_response :success
-    assert_not_nil assigns(:events)
-    assert_not_nil assigns(:shared_events)
-    count = assigns(:events).size() + assigns(:shared_events).size()
+    assert_not_nil json_response['items']
+    assert_not_nil json_response['shared_items']
+    count = json_response['items'].size + json_response['shared_items'].size
     assert count == 2, "Expected 2 updated events, #{count} given"
   end
 
@@ -53,7 +53,7 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
       hex_color: Faker::Color.hex_color[1..-1]
     }
     assert_response :success
-    assert_not_nil assigns(:calendar).id
+    assert_not_nil json_response['id']
   end
 
   test 'should fail invalid calendar creation' do
@@ -67,8 +67,8 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
     new_title = Faker::Lorem.word
     put :update, id: calendar.id, title: new_title
     assert_response :success
-    assert_equal assigns(:calendar).title, new_title
-    assert_not_equal assigns(:calendar).title, calendar.title
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], calendar.title
   end
 
   test 'should fail calendar update with invalid data' do

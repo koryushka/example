@@ -8,8 +8,8 @@ class Api::V1::CalendarsGroupsControllerTest < ActionController::TestCase
     FactoryGirl.create_list(:calendars_group, amount, user: @user)
     get :index
     assert_response :success
-    assert_not_nil assigns(:groups)
-    count = assigns(:groups).size()
+    assert_not_nil json_response
+    count = json_response.size
     assert count == 5, "Expected #{amount} updated events, #{count} given"
   end
 
@@ -17,14 +17,14 @@ class Api::V1::CalendarsGroupsControllerTest < ActionController::TestCase
     calendars_group = FactoryGirl.create(:calendars_group, user: @user)
     get :show, id: calendars_group.id
     assert_response :success
-    assert_not_nil assigns(:calendars_group)
+    assert_not_nil json_response
   end
 
   #### Event creation group
   test 'should create new calendar group' do
     post :create, {title: Faker::Lorem.word}
     assert_response :success
-    assert_not_nil assigns(:calendars_group).id
+    assert_not_nil json_response['id']
   end
 
   test 'should fail invalid calendar group creation' do
@@ -38,8 +38,8 @@ class Api::V1::CalendarsGroupsControllerTest < ActionController::TestCase
     new_title = Faker::Lorem.sentence(3)
     put :update, id: calendars_group.id, title: new_title
     assert_response :success
-    assert_equal assigns(:calendars_group).title, new_title
-    assert_not_equal assigns(:calendars_group).title, calendars_group.title
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], calendars_group.title
   end
 
   test 'should fail event update with invalid data' do

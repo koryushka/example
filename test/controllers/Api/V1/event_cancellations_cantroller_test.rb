@@ -12,7 +12,7 @@ class Api::V1::EventCancellationsControllerTest < ActionController::TestCase
     post :create, event_id: @event.id, date: @event.starts_at + 1.week
 
     assert_response :success
-    assert_not_nil assigns(:event_cancellation).id
+    assert_not_nil json_response['id']
   end
 
   test 'should fail invalid event_cancellation creation' do
@@ -26,8 +26,8 @@ class Api::V1::EventCancellationsControllerTest < ActionController::TestCase
     new_date = event_cancellation.date + 1.day
     put :update, id: event_cancellation.id, date: new_date
     assert_response :success
-    assert_equal assigns(:event_cancellation).date, new_date
-    assert_not_equal assigns(:event_cancellation).date, event_cancellation.date
+    assert_equal json_response['date'], new_date.strftime('%F')
+    assert_not_equal json_response['date'], event_cancellation.date.strftime('%F')
   end
 
   test 'should fail event_cancellation update with invalid data' do

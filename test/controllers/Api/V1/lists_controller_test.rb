@@ -9,8 +9,8 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
 
     get :index
     assert_response :success
-    assert_not_nil assigns(:lists)
-    count = assigns(:lists).size
+    assert_not_nil json_response
+    count = json_response.size
     assert_equal count, amount
   end
 
@@ -20,7 +20,6 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
 
     get :index
     assert_response :success
-    assert_not_nil response.body
 
     lists = json_response
     items = lists.first['items']
@@ -34,7 +33,7 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
     list = FactoryGirl.create(:list, user: @user)
     get :show, id: list.id
     assert_response :success
-    assert_not_nil assigns(:list)
+    assert_not_nil json_response
   end
 
   #### list creation group
@@ -46,7 +45,7 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
     }
 
     assert_response :success
-    assert_not_nil assigns(:list).id
+    assert_not_nil json_response['id']
   end
 
   test 'should fail invalid list creation' do
@@ -60,8 +59,8 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
     new_title = Faker::Lorem.word
     put :update, id: list.id, title: new_title
     assert_response :success
-    assert_equal assigns(:list).title, new_title
-    assert_not_equal assigns(:list).title, list.title
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], list.title
   end
 
   test 'should fail list update with invalid data' do
