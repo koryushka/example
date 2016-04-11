@@ -89,7 +89,7 @@ private
   end
 
   # Tries to find entity related to controller and adds appropriate class variable to controller
-  # The main condition: current user should own the entity what should be found
+  # The main condition: current user should own the entity which should be found
   #
   # +Params+:
   # *type*:

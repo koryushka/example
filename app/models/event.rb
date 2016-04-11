@@ -24,6 +24,7 @@ class Event < AbstractModel
 
   default :separation, 1
   default :notes, ''
+  default :kind, 0
 
 #  validate :weekly_recurency_check
 

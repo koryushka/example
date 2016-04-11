@@ -41,6 +41,24 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  test 'should create with nulled attributes replaced by defaults' do
+    post :create, {
+        title: Faker::Lorem.word,
+        starts_at: Date.yesterday,
+        ends_at: Date.yesterday + 1.hour,
+        notes: Faker::Lorem.sentence(4),
+        frequency: 'once',
+        separetion: nil,
+        kind: nil
+    }
+
+    event = assigns(:event)
+    assert_response :success
+    assert_not_nil event.id
+    assert_not_nil event.separation
+    assert_not_nil event.kind
+  end
+
   #### Event update group
   test 'should upadte existing event' do
     event = FactoryGirl.create(:event, user: @user)
