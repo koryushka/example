@@ -1,15 +1,14 @@
 class Api::V1::ProfilesController < ApiController
-  before_filter only: [:show] do
-    find_entity type: :user, id_param: :user_id
-  end
-  before_filter only: [:index, :update] do
-    @profile = current_user.profile
+  before_filter only: [:show, :update] do
+    @user = current_user
+    find_entity type: :user, id_param: :user_id unless params[:user_id].blank?
+    render text: "Could not find profile for user id: '#{@user.id}'", status: :not_found if @user.profile.nil?
+    @profile = @user.profile
   end
   authorize_resource
   check_authorization
 
   def show
-    @profile = @user.profile
     render partial: 'profile', locals: {profile: @profile}
   end
 

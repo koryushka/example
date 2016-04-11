@@ -22,7 +22,7 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_nil response.body
 
-    lists = JSON.parse(response.body)
+    lists = json_response
     items = lists.first['items']
     assert_not_nil items
 

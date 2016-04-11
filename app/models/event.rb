@@ -49,6 +49,6 @@ private
 
   def dates_check
     errors.add(:ends_at, 'should not be equal to start date') if starts_at == ends_at
-    errors.add(:ends_at, 'should not more than start date') if starts_at > ends_at
+    errors.add(:ends_at, 'should not more than start date') unless ends_at.nil? || starts_at < ends_at
   end
 end

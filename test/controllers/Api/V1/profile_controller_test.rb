@@ -11,6 +11,12 @@ class Api::V1::ProfilesControllerTest < ActionController::TestCase
     assert_equal assigns(:profile).id, user.profile.id
   end
 
+  test 'should check fail requesting not existing profile' do
+    user = FactoryGirl.create(:user)
+    get :show, user_id: user.id
+    assert_response :not_found
+  end
+
   test 'should create new profile for current user' do
     post :create, {
         full_name: Faker::Name.name,
