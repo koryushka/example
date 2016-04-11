@@ -22,6 +22,8 @@ class Event < AbstractModel
   validates :latitude, numericality: {only_integer: false}, allow_blank: true
   validates :frequency, inclusion: {in: %w(once daily weekly monthly yearly)}
 
+  validate :dates_check
+
   default :separation, 1
   default :notes, ''
   default :kind, 0
@@ -44,4 +46,9 @@ private
   #     end
   #   end
   # end
+
+  def dates_check
+    errors.add(:ends_at, 'should not be equal to start date') if starts_at == ends_at
+    errors.add(:ends_at, 'should not more than start date') if starts_at > ends_at
+  end
 end
