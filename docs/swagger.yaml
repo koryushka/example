@@ -1480,15 +1480,23 @@ definitions:
         description: Calendar item title
       user_id:
         type: number
-        description: User ID who created this calendar item
+        description: User ID who created this event
       starts_at:
         type: string
         format: date-time
-        description: Start date and time for calendar item
+        description: Start date and time for event
       ends_at:
         type: string
         format: date-time
-        description: End date and time for calendar item
+        description: End date and time for event
+      starts_on:
+        type: string
+        format: date-time
+        description: Start date for multi-day event or date of all-day event (if ends_on is null)
+      ends_on:
+        type: string
+        format: date-time
+        description: End date for multi-day event
       notes:
         type: string
         description: Additional notes
@@ -1533,6 +1541,14 @@ definitions:
         type: string
         format: date-time
         description: End date and time for event
+      starts_on:
+        type: string
+        format: date-time
+        description: Start date for multi-day event or date of all-day event (if ends_on is null)
+      ends_on:
+        type: string
+        format: date-time
+        description: End date for multi-day event
       notes:
         type: string
         description: Additional notes
@@ -1749,6 +1765,7 @@ definitions:
       notes:
         type: string
         description: Additional notes
+        default: ''
       order:
         type: integer
         format: int16
