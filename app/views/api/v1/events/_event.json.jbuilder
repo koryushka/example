@@ -1,4 +1,4 @@
-json.extract! event, :id, :title, :user_id, :starts_at, :ends_at, :notes,
+json.extract! event, :id, :title, :user_id, :starts_at, :ends_at, :starts_on, :ends_on, :notes,
                      :timezone_name, :kind, :latitude, :longitude, :location_name,
                      :separation, :count, :until, :frequency, :updated_at
 json.event_recurrences_attributes do
