@@ -57,6 +57,6 @@ private
   def dates_check
     errors.add(:ends_at, I18n.t('events.start_date_not_end_date')) if starts_at == ends_at
     errors.add(:ends_at, I18n.t('events.start_date_more_than_end_date')) unless ends_at.nil? || starts_at < ends_at
-    errors.add(:starts_at, I18n.t('activerecord.errors.messages.blank')) if !all_day && starts_at.blank?
+    errors.add(:starts_at, I18n.t('activerecord.errors.messages.blank')) unless all_day && starts_at.present?
   end
 end

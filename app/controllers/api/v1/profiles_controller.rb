@@ -20,7 +20,7 @@ class Api::V1::ProfilesController < ApiController
       return render nothing: true, status: :internal_server_error
     end
 
-    render partial: 'profile', locals: {profile: @profile }, status: :created
+    render partial: 'profile', locals: {profile: @profile}, status: :created
   end
 
   def update
@@ -30,7 +30,7 @@ class Api::V1::ProfilesController < ApiController
       return render nothing: true, status: :internal_server_error
     end
 
-    render partial: 'profile', locals: {profile: @profile }
+    render partial: 'profile', locals: {profile: @profile}
   end
 
 private
