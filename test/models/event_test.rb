@@ -1,5 +1,6 @@
 require 'test_helper'
 
+
 class EventTest < ActiveSupport::TestCase
   test 'should check dates_check' do
     date1 = Date.today

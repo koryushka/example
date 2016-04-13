@@ -10,11 +10,12 @@ class Event < AbstractModel
   accepts_nested_attributes_for :event_recurrences
   accepts_nested_attributes_for :event_cancellations
 
+  attr_accessor :all_day
+
   validates :title, length: {maximum: 128}, presence: true
-  validates :starts_at, date: true, presence: true
-  validates :ends_at, date: true, presence: true
-  validates :starts_on, date: true, allow_blank: true
-  validates :ends_on, date: true, allow_blank: true
+  validates :starts_at, date: true, allow_blank: true
+  validates :ends_at, date: true, allow_blank: true
+  validates :all_day, allow_blank: true, inclusion: {in: [true, false], message: I18n.t('events.should_be_true_or_false')}
   validates :separation, numericality: { only_integer: true, greater_than: 0 }, allow_blank: true
   validates :count, numericality: { only_integer: true }, allow_blank: true
   validates :until, date: true, allow_blank: true
@@ -29,6 +30,10 @@ class Event < AbstractModel
   default :separation, 1
   default :notes, ''
   default :kind, 0
+
+  before_save do
+    set_attributes(starts_on: starts_at, ends_on: nil) if all_day
+  end
 
 #  validate :weekly_recurency_check
 
@@ -50,7 +55,8 @@ private
   # end
 
   def dates_check
-    errors.add(:ends_at, 'should not be equal to start date') if starts_at == ends_at
-    errors.add(:ends_at, 'should not more than start date') unless ends_at.nil? || starts_at < ends_at
+    errors.add(:ends_at, I18n.t('events.start_date_not_end_date')) if starts_at == ends_at
+    errors.add(:ends_at, I18n.t('events.start_date_more_than_end_date')) unless ends_at.nil? || starts_at < ends_at
+    errors.add(:starts_at, I18n.t('activerecord.errors.messages.blank')) if !all_day && starts_at.blank?
   end
 end

@@ -48,14 +48,28 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
         ends_at: Date.yesterday + 1.hour,
         notes: Faker::Lorem.sentence(4),
         frequency: 'once',
+        all_day: nil,
         separetion: nil,
         kind: nil
     }
 
     assert_response :success
     assert_not_nil json_response['id']
+    assert_not_nil json_response['all_day']
     assert_not_nil json_response['separation']
     assert_not_nil json_response['kind']
+  end
+
+  test 'should create all-day event' do
+    post :create, {
+        title: Faker::Lorem.word,
+        starts_at: Date.yesterday,
+        all_day: true,
+        notes: Faker::Lorem.sentence(4),
+        frequency: 'once'
+    }
+
+    assert_response :success
   end
 
   #### Event update group
@@ -106,7 +120,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     document = FactoryGirl.create(:document, user: @user)
     post :attach_document, id: event.id, document_id: document.id
     assert_response :success
-    assert assigns(:event).documents.where(id: document.id).size() > 0
+    assert assigns(:event).documents.where(id: document.id).size > 0
   end
 
   #### Document detaching group
@@ -116,6 +130,6 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     event.documents << document
     delete :detach_document, id: event.id, document_id: document.id
     assert_response :success
-    assert assigns(:event).documents.where(id: document.id).size() == 0
+    assert assigns(:event).documents.where(id: document.id).size == 0
   end
 end

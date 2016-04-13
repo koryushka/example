@@ -19,13 +19,14 @@ FactoryGirl.define do
 =end
     title {Faker::Lorem.word}
     user
-    starts_at {Date.yesterday}
-    ends_at {Date.yesterday + 1.hour}
+    starts_at {Date.today + 1.hour}
+    ends_at {Date.today + 2.hours}
     notes {Faker::Lorem.sentence(4)}
     latitude {Faker::Address.latitude}
     longitude {Faker::Address.longitude}
     frequency 'once'
     updated_at Time.now
+    all_day false
 
     factory :repeating_event_with_cancellation do
       after(:create) do |event|

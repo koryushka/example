@@ -2223,15 +2223,9 @@
                     "format": "date-time",
                     "description": "End date and time for event"
                 },
-                "starts_on": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Start date for multi-day event or date of all-day event (if ends_on is null)"
-                },
-                "ends_on": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "End date for multi-day event"
+                "all_day": {
+                    "type": "boolean",
+                    "description": "Specifies all-day event. If it's true so ends_at is being set to null"
                 },
                 "notes": {
                     "type": "string",
@@ -2292,15 +2286,9 @@
                     "format": "date-time",
                     "description": "End date and time for event"
                 },
-                "starts_on": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Start date for multi-day event or date of all-day event (if ends_on is null)"
-                },
-                "ends_on": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "End date for multi-day event"
+                "all_day": {
+                    "type": "boolean",
+                    "description": "Specifies all-day event. If it's true so ends_at is being set to null"
                 },
                 "notes": {
                     "type": "string",
