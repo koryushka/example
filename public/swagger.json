@@ -2225,7 +2225,8 @@
                 },
                 "all_day": {
                     "type": "boolean",
-                    "description": "Specifies all-day event. If it's true so ends_at is being set to null"
+                    "description": "Specifies all-day event. If it's true so ends_at is being set to null",
+                    "default": false
                 },
                 "notes": {
                     "type": "string",
@@ -2288,7 +2289,8 @@
                 },
                 "all_day": {
                     "type": "boolean",
-                    "description": "Specifies all-day event. If it's true so ends_at is being set to null"
+                    "description": "Specifies all-day event. If it's true so ends_at is being set to null",
+                    "default": false
                 },
                 "notes": {
                     "type": "string",
