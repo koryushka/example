@@ -15,28 +15,15 @@ class Api::V1::ListsController < ApiController
   def create
     @list = List.new(list_params)
     @list.user = current_user
-    if @list.valid?
-      unless @list.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @list.errors.messages }, status: :bad_request
-    end
 
+    return render nothing: true, status: :internal_server_error unless @list.save
     render partial: 'list', locals: { list: @list }, status: :created
   end
 
   def update
     @list.assign_attributes(list_params)
 
-    if @list.valid?
-      unless @list.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @list.errors.messages }, status: :bad_request
-    end
-
+    return render nothing: true, status: :internal_server_error unless @list.save
     render partial: 'list', locals: { list: @list }
   end
 

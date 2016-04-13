@@ -18,28 +18,15 @@ class Api::V1::CalendarsController < ApiController
   def create
     @calendar = Calendar.new(calendar_params)
     @calendar.user = current_user
-    if @calendar.valid?
-      unless @calendar.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @calendar.errors.messages }, status: :bad_request
-    end
 
+    return render nothing: true, status: :internal_server_error unless @calendar.save
     render partial: 'calendar', locals: { calendar: @calendar }, status: :created
   end
 
   def update
     @calendar.assign_attributes(calendar_params)
 
-    if @calendar.valid?
-      unless @calendar.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @calendar.errors.messages }, status: :bad_request
-    end
-
+    return render nothing: true, status: :internal_server_error unless @calendar.save
     render partial: 'calendar', locals: { calendar: @calendar }
   end
 

@@ -16,20 +16,14 @@ class Api::V1::ProfilesController < ApiController
     @profile = Profile.new(profile_params)
     @profile.user = current_user
 
-    unless @profile.save
-      return render nothing: true, status: :internal_server_error
-    end
-
+    return render nothing: true, status: :internal_server_error unless @profile.save
     render partial: 'profile', locals: {profile: @profile}, status: :created
   end
 
   def update
     @profile.assign_attributes(profile_params)
 
-    unless @profile.save
-      return render nothing: true, status: :internal_server_error
-    end
-
+    return render nothing: true, status: :internal_server_error unless @profile.save
     render partial: 'profile', locals: {profile: @profile}
   end
 

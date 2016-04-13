@@ -1,4 +1,4 @@
-class Document < ActiveRecord::Base
+class Document < AbstractModel
   belongs_to :user
   has_and_belongs_to_many :events
   belongs_to :uploaded_file

@@ -18,28 +18,15 @@ class Api::V1::DocumentsController < ApiController
   def create
     @document = Document.new(document_params)
     @document.user = current_user
-    if @document.valid?
-      unless @document.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @document.errors.messages }, status: :bad_request
-    end
 
+    return render nothing: true, status: :internal_server_error unless @document.save
     render partial: 'document', locals: { document: @document }, status: :created
   end
 
   def update
     @document.assign_attributes(document_params)
 
-    if @document.valid?
-      unless @document.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @document.errors.messages }, status: :bad_request
-    end
-
+    return render nothing: true, status: :internal_server_error unless @document.save
     render partial: 'document', locals: { document: @document }, status: :created
   end
 

@@ -7,28 +7,15 @@ class Api::V1::EventCancellationsController < ApiController
   def create
     @event_cancellation = EventCancellation.new(event_cancellation_params)
     @event_cancellation.event = @event
-    if @event_cancellation.valid?
-      unless @event_cancellation.save
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @event_cancellation.errors.messages }, status: :bad_request
-    end
 
+    return render nothing: true, status: :internal_server_error unless @event_cancellation.save
     render partial: 'event_cancellation', locals: {event_cancellation: @event_cancellation }, status: :created
   end
 
   def update
     @event_cancellation.assign_attributes(event_cancellation_params)
 
-    if @event_cancellation.valid?
-      unless @event_cancellation.save
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @event_cancellation.errors.messages }, status: :bad_request
-    end
-
+    return render nothing: true, status: :internal_server_error unless @event_cancellation.save
     render partial: 'event_cancellation', locals: {event_cancellation: @event_cancellation }
   end
 

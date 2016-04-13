@@ -15,28 +15,15 @@ class Api::V1::CalendarsGroupsController < ApiController
   def create
     @calendars_group = CalendarsGroup.new(calendars_group_params)
     @calendars_group.user = current_user
-    if @calendars_group.valid?
-      unless @calendars_group.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @calendars_group.errors.messages }, status: :bad_request
-    end
 
+    return render nothing: true, status: :internal_server_error unless @calendars_group.save
     render partial: 'group', locals: { group: @calendars_group }, status: :created
   end
 
   def update
     @calendars_group.assign_attributes(calendars_group_params)
 
-    if @calendars_group.valid?
-      unless @calendars_group.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: @calendars_group.errors.messages }, status: :bad_request
-    end
-
+    return render nothing: true, status: :internal_server_error unless @calendars_group.save
     render partial: 'group', locals: { group: @calendars_group }, status: :created
   end
 

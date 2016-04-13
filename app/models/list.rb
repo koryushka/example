@@ -1,4 +1,4 @@
-class List < ActiveRecord::Base
+class List < AbstractModel
   belongs_to :user
   has_many :list_items, dependent: :destroy
   LIST_KINDS = [Grocery = 1, ToDo = 2]
