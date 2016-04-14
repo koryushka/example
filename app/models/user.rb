@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User < AbstractModel
   has_many :calendars
   has_many :events
   has_many :calendars_groups

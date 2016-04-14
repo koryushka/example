@@ -19,20 +19,14 @@ class Api::V1::EventsController < ApiController
     @event = Event.new(event_params)
     @event.user = current_user
 
-    unless @event.save
-      return render nothing: true, status: :internal_server_error
-    end
-
+    raise InternalServerErrorException unless @event.save
     render partial: 'event', locals: {event: @event }, status: :created
   end
 
   def update
     @event.assign_attributes(event_params)
 
-    unless @event.save
-      return render nothing: true, status: :internal_server_error
-    end
-
+    raise InternalServerErrorException unless @event.save
     render partial: 'event', locals: {event: @event }
   end
 

@@ -1,4 +1,12 @@
 class DeviseOverrides::RegistrationsController < DeviseTokenAuth::RegistrationsController
+  rescue_from ValidationException do |e|
+    render json: {
+        code: 1,
+        messages: t('errors.messages.validation_error'),
+        validation_errors: e.model.errors.messages
+    }, status: :bad_request
+  end
+
 protected
 
   def render_create_success

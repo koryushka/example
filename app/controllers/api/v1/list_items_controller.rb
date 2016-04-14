@@ -20,14 +20,14 @@ class Api::V1::ListItemsController < ApiController
     @list_item.list = @list
     @list_item.user = current_user
 
-    return render nothing: true, status: :internal_server_error unless @list_item.save
+    raise InternalServerErrorException unless @list_item.save
     render partial: 'list_item', locals: { list_item: @list_item }, status: :created
   end
 
   def update
     @list_item.assign_attributes(list_item_params)
 
-    return render nothing: true, status: :internal_server_error unless @list_item.save
+    raise InternalServerErrorException unless @list_item.save
     render partial: 'list_item', locals: { list_item: @list_item }
   end
 

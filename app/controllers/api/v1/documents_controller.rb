@@ -19,14 +19,14 @@ class Api::V1::DocumentsController < ApiController
     @document = Document.new(document_params)
     @document.user = current_user
 
-    return render nothing: true, status: :internal_server_error unless @document.save
+    raise InternalServerErrorException unless @document.save
     render partial: 'document', locals: { document: @document }, status: :created
   end
 
   def update
     @document.assign_attributes(document_params)
 
-    return render nothing: true, status: :internal_server_error unless @document.save
+    raise InternalServerErrorException unless @document.save
     render partial: 'document', locals: { document: @document }, status: :created
   end
 
