@@ -22,11 +22,12 @@ class Event < AbstractModel
   validates :until, date: true, allow_blank: true
   validates :notes, length: {maximum: 2048}
   validates :kind, allow_blank: true, numericality: {only_integer: true}
-  validates :longitude, numericality: {only_integer: false}, allow_blank: true
-  validates :latitude, numericality: {only_integer: false}, allow_blank: true
+  validates :longitude, numericality: {only_integer: false, greater_than_or_equal_to: -180, less_than_or_equal_to: 180}, allow_blank: true
+  validates :latitude, numericality: {only_integer: false, greater_than_or_equal_to: -90, less_than_or_equal_to: 90}, allow_blank: true
   validates :frequency, inclusion: {in: %w(once daily weekly monthly yearly)}
 
   validate :dates_check
+  validate :recurrency_check
 
   default :separation, 1
   default :notes, ''
@@ -36,24 +37,26 @@ class Event < AbstractModel
     set_attributes(starts_on: starts_at, ends_on: nil) if all_day
   end
 
-#  validate :weekly_recurency_check
-
 private
-  # def weekly_recurency_check
-  #   return if frequency != 'weekly' && event_recurrences.empty?
-  #
-  #   event_recurrences.each do |er|
-  #     if er.week.nil? && er.month.nil?
-  #       if er.day.nil?
-  #         errors.add(:frequency, 'You must specify a day of week for every recurency if you want to repeat event weekly')
-  #         break
-  #       end
-  #     else
-  #       errors.add(:frequency, 'You cannot specify week or month for weekly event, day is allowed only')
-  #       break
-  #     end
-  #   end
-  # end
+  def recurrency_check
+    if frequency == 'once' && event_recurrences.size > 0
+      errors.add(:frequency, t('events.incorrect_once_event_reccurences'))
+    end
+
+    # if frequency != 'weekly' && event_recurrences.empty?
+    #   event_recurrences.each do |er|
+    #     if er.week.nil? && er.month.nil?
+    #       if er.day.nil?
+    #         errors.add(:frequency, 'You must specify a day of week for every recurency if you want to repeat event weekly')
+    #         break
+    #       end
+    #     else
+    #       errors.add(:frequency, 'You cannot specify week or month for weekly event, day is allowed only')
+    #       break
+    #     end
+    #   end
+    # end
+  end
 
   def dates_check
     errors.add(:ends_at, I18n.t('events.start_date_not_end_date')) if starts_at == ends_at

@@ -11,4 +11,14 @@ class EventTest < ActiveSupport::TestCase
     assert event1.invalid?
     assert event2.invalid?, 'Incorrect event dates validation. Event with ends_at < starts_at can be created'
   end
+
+  test 'should check incorrect lat and long validation' do
+    event = FactoryGirl.create(:event)
+    event.longitude = -200
+    assert event.invalid?
+
+    event = FactoryGirl.create(:event)
+    event.latitude = -100
+    assert event.invalid?
+  end
 end
