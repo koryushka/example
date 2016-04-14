@@ -40,7 +40,7 @@ class Event < AbstractModel
 private
   def recurrency_check
     if frequency == 'once' && event_recurrences.size > 0
-      errors.add(:frequency, t('events.incorrect_once_event_reccurences'))
+      errors.add(:frequency, I18n.t('events.incorrect_once_event_reccurences'))
     end
 
     # if frequency != 'weekly' && event_recurrences.empty?
