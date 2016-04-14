@@ -39,4 +39,12 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  S3Upload.configuration do |config|
+    config.fog_params = {
+        provider:   'Local',
+        local_root: "#{Rails.root}/tmp/tests",
+        endpoint:   'http://tests.local'
+    }
+  end
 end

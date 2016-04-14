@@ -1,1 +1,1 @@
-json.extract! file, :id, :public_url
+json.extract! file, :id, :public_url, :key

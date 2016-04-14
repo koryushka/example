@@ -33,7 +33,7 @@ Rails.application.routes.draw do
       resources :notifications_prefs, only: [:update, :destroy]
       resources :documents, except: [:new, :edit, :index]
       resources :calendars_groups, except: [:edit, :new]
-      resources :files, only: [:create]
+      resources :files, only: [:show, :create, :destroy]
 
       resources :lists, except: [:edit, :new] do
         resources :list_items, except: [:new, :edit], path: 'items'
