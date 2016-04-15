@@ -1,14 +1,19 @@
 class Api::V1::DocumentsController < ApiController
-  before_filter :find_entity, except: [:index, :create]
-  before_filter only: [:index] do
+  before_filter :find_entity, except: [:index, :event_index, :create]
+  before_filter only: [:event_index] do
     find_entity type: :event, id_param: :event_id
   end
-  after_filter :something_updated, except: [:index, :show]
+  after_filter :something_updated, except: [:index, :event_index, :show]
   authorize_resource
   check_authorization
 
   def index
+    @documents = current_user.documents
+  end
+
+  def event_index
     @documents = @event.documents
+    render :index
   end
 
   def show

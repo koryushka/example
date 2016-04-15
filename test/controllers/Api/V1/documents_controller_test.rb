@@ -3,11 +3,19 @@ require File.expand_path('../../../../test_helper', __FILE__)
 class Api::V1::DocumentsControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
-  test 'should get index' do
+  test 'should get user documents index' do
+    FactoryGirl.create(:document, user: @user)
+    get :index
+    assert_response :success
+    assert_not_nil json_response
+    assert json_response.size == 1
+  end
+
+  test 'should get event documents' do
     event = FactoryGirl.create(:event, user: @user)
     document = FactoryGirl.create(:document, user: @user)
     event.documents << document
-    get :index, event_id: event.id
+    get :event_index, event_id: event.id
     assert_response :success
     assert_not_nil json_response
     assert json_response.size == 1
