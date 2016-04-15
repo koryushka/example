@@ -7,4 +7,7 @@ class Document < AbstractModel
   validates :notes, length: {maximum: 2048}
   validates :tags, length: {maximum: 2048}
   validates_presence_of :uploaded_file
+
+  default :notes, ''
+  default :tags, ''
 end

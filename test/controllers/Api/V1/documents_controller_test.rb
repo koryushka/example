@@ -26,7 +26,17 @@ class Api::V1::DocumentsControllerTest < ActionController::TestCase
     post :create, {
         title: Faker::Lorem.word,
         notes: Faker::Lorem.sentence(4),
-        uploaded_file_id: uploaded_file.id
+        uploaded_file_id: uploaded_file.id,
+    }
+
+    assert_response :success
+    assert_not_nil json_response['id']
+
+    post :create, {
+        title: Faker::Lorem.word,
+        notes: nil,
+        tags: nil,
+        uploaded_file_id: uploaded_file.id,
     }
 
     assert_response :success
