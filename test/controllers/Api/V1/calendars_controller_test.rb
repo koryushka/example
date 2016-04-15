@@ -61,6 +61,16 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  test 'should get bad request creating second main calendar' do
+    FactoryGirl.create(:calendar, user: @user, main: true)
+    post :create, {
+        title: Faker::Lorem.word,
+        user: @user,
+        main: true
+    }
+    assert_response :not_acceptable
+  end
+
   #### Calendar update group
   test 'should upadte existing calendar' do
     calendar = FactoryGirl.create(:calendar, user: @user)

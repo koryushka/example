@@ -13,10 +13,11 @@ class ApiController < ActionController::Base
     render json: { validation_errors: e.model.errors.messages }, status: :bad_request
   end
 
-  rescue_from ActiveRecord::RecordNotUnique do
+  rescue_from ActiveRecord::RecordNotUnique do |e|
     render json: {
         code: 1,
-        message: "Duplication for #{controller_name.classify} entity"
+        message: "Duplication for #{controller_name.classify} entity",
+        error_data: e.message[/DETAIL:.+/]
     }, status: :not_acceptable
   end
 

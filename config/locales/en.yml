@@ -25,3 +25,5 @@ en:
     start_date_more_than_end_date: "should not more than start date"
     should_be_true_or_false: "should be true or false"
     incorrect_once_event_reccurences: "cannot be set \"once\" with event_recurrences which are not empty"
+  calendars:
+    main_duplication_error: "cannot be 'true' for more than 1 calendar"
