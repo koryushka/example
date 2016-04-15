@@ -21,4 +21,10 @@ class EventTest < ActiveSupport::TestCase
     event.latitude = -100
     assert event.invalid?
   end
+
+  test 'should check validation of incorrect recurrency' do
+    event = FactoryGirl.create(:event, frequency: 'once')
+    event.event_recurrences << EventRecurrence.new
+    assert event.invalid?
+  end
 end
