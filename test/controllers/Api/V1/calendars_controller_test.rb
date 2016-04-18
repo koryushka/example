@@ -127,7 +127,7 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
     calendar.events << event
     delete :remove_event, id: calendar.id, event_id: event.id
     assert_response :success
-    assert assigns(:calendar).events.where(id: event.id).size == 0
+    assert_equal assigns(:calendar).events.where(id: event.id).size, 0
   end
 
 end

@@ -1894,6 +1894,37 @@
             }
         },
         "/profiles": {
+            "get": {
+                "summary": "Tries to find user by full name",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "description": "Search request",
+                        "in": "query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Profile"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unxpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Profiles"
+                ]
+            },
             "post": {
                 "summary": "Creates user profile",
                 "parameters": [
@@ -2677,6 +2708,9 @@
             "type": "object",
             "properties": {
                 "id": {
+                    "type": "integer"
+                },
+                "user_id": {
                     "type": "integer"
                 },
                 "full_name": {

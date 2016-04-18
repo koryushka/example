@@ -8,6 +8,11 @@ class Api::V1::ProfilesController < ApiController
   authorize_resource
   check_authorization
 
+  def index
+    query = params[:query].blank? ? nil : "%#{params[:query]}%"
+    @profiles = Profile.where('full_name ILIKE ?', query)
+  end
+
   def show
     render partial: 'profile', locals: {profile: @profile}
   end

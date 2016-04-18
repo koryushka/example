@@ -17,6 +17,25 @@ class Api::V1::ProfilesControllerTest < ActionController::TestCase
     assert_response :not_found
   end
 
+  test 'should find profile by full name of user' do
+    user1 = FactoryGirl.create(:user)
+    FactoryGirl.create(:profile, user: user1, full_name: 'Test User')
+    user2 = FactoryGirl.create(:user)
+    FactoryGirl.create(:profile, user: user2, full_name: 'user for test')
+    user3 = FactoryGirl.create(:user)
+    FactoryGirl.create(:profile, user: user3, full_name: 'Should not be found')
+
+    get :index, query: 'Test'
+    assert_response :success
+    assert_not_nil json_response
+    assert_equal 2, json_response.size
+
+    get :index
+    assert_response :success
+    assert_equal 0, json_response.size
+  end
+
+  #### Profile creation group
   test 'should create new profile for current user' do
     post :create, {
         full_name: Faker::Name.name,
@@ -42,6 +61,7 @@ class Api::V1::ProfilesControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  #### Profile update group
   test 'should update profile of current user' do
     FactoryGirl.create(:profile, user: @user)
     new_full_name = Faker::Name.name
