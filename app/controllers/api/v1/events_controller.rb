@@ -53,7 +53,7 @@ class Api::V1::EventsController < ApiController
 
 private
   def event_params
-    params.permit(:title, :starts_at, :ends_at, :starts_on, :ends_on, :notes,
+    params.permit(:title, :starts_at, :ends_at, :all_day, :notes,
                   :kind, :latitude, :longitude, :location_name, :separation,
                   :count, :until, :timezone_name, :frequency,
                   event_recurrences_attributes: [:day, :week, :month],

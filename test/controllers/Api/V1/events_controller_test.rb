@@ -82,6 +82,13 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_not_equal json_response['title'], event.title
   end
 
+  test 'should update all_day attribute' do
+    event = FactoryGirl.create(:event, user: @user)
+    put :update, id: event.id, all_day: true
+    assert_response :success
+    assert json_response['all_day']
+  end
+
   test 'should fail event update with invalid data' do
     event = FactoryGirl.create(:event, user: @user)
     put :update, id: event.id, title: nil

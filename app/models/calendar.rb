@@ -6,12 +6,13 @@ class Calendar < AbstractModel
 
   validates :title, length: {maximum: 128}, presence: true
   validates :hex_color, length: {maximum: 6}
-  validates :main, inclusion: {in: [true, false]}
+  validates :main, inclusion: {in: [true, false]}, allow_blank: true
   validates :kind, allow_blank: true, numericality: {only_integer: true}
   validates :visible, allow_blank: true, inclusion: {in: [true, false]}
 
   default :kind, 0
   default :visible, true
+  default :main, false
 
   def shared_events
     if self.main?
