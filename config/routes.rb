@@ -16,10 +16,11 @@ Rails.application.routes.draw do
       get 'users/me' => 'users#me'
       #put 'users' => 'users#update'
 
-      resources :calendars, except: [:edit, :new]
-      post 'calendars/:id/events/:event_id', to: 'calendars#add_event'
-      delete 'calendars/:id/events/:event_id', to: 'calendars#remove_event'
-      get 'calendars/:id/events', to: 'calendars#show_items'
+      resources :calendars, except: [:edit, :new] do
+        post 'events/:id', to: 'events#add_to_calendar'
+        delete 'events/:id', to: 'events#remove_from_calendar'
+        get 'events', to: 'events#index_of_calendar'
+      end
 
       resources :events, except: [:edit, :new] do
         get 'documents' => 'documents#event_index'

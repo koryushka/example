@@ -1,9 +1,12 @@
 class Api::V1::EventsController < ApiController
-  before_filter :find_entity, except: [:index, :create]
+  before_filter :find_entity, except: [:index, :create, :index_of_calendar]
   before_filter only: [:attach_document, :detach_document] do
     find_entity type: :document, id_param: :document_id
   end
-  after_filter :something_updated, except: [:index, :show]
+  before_filter only: [:add_to_calendar, :remove_from_calendar, :index_of_calendar] do
+    find_entity_of_current_user type: :calendar, id_param: :calendar_id
+  end
+  after_filter :something_updated, except: [:index, :show, :index_of_calendar]
   authorize_resource
   check_authorization
 
@@ -41,6 +44,22 @@ class Api::V1::EventsController < ApiController
     render nothing: true, status: :no_content
   end
 
+  def add_to_calendar
+    @calendar.events << @event
+    render nothing: true
+  end
+
+  def remove_from_calendar
+    @calendar.events.delete(@event)
+    render nothing: true, status: :no_content
+  end
+
+  def index_of_calendar
+    @events = query_params[:since].nil? ? @calendar.events : @calendar.events.where('events.updated_at > ?', query_params[:since])
+    #@shared_events = query_params[:since].nil? ? @calendar.shared_events : @calendar.shared_events.where('events.updated_at > ?', query_params[:since])
+    @shared_events = []
+  end
+
   def attach_document
     @event.documents << @document
     render partial: 'event', locals: {event: @event }
@@ -58,5 +77,9 @@ private
                   :count, :until, :timezone_name, :frequency,
                   event_recurrences_attributes: [:day, :week, :month],
                   event_cancelations_attributes: [:date])
+  end
+
+  def query_params
+    params.permit(:since)
   end
 end

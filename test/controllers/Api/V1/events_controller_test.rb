@@ -121,6 +121,60 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_response :forbidden
   end
 
+  #### Calendar and events manipulation group
+  test 'should add event to calendar' do
+    calendar = FactoryGirl.create(:calendar, user: @user)
+    event = FactoryGirl.create(:event, user: @user)
+    post :add_to_calendar, calendar_id: calendar.id, id: event.id
+    assert_response :success
+    assert assigns(:calendar).events.where(id: event.id).size > 0
+  end
+
+  test 'should not add event to calendar twice' do
+    calendar = FactoryGirl.create(:calendar, user: @user)
+    event = FactoryGirl.create(:event, user: @user)
+    calendar.events << event
+    post :add_to_calendar, calendar_id: calendar.id, id: event.id
+    assert_response :not_acceptable
+  end
+
+  test 'should remove item from calendar' do
+    calendar = FactoryGirl.create(:calendar, user: @user)
+    event = FactoryGirl.create(:event, user: @user)
+    calendar.events << event
+    delete :remove_from_calendar, calendar_id: calendar.id, id: event.id
+    assert_response :success
+    assert_equal assigns(:calendar).events.where(id: event.id).size, 0
+  end
+
+  test 'should get show_items' do
+    calendar = FactoryGirl.create(:calendar, user: @user)
+    event = FactoryGirl.create(:event, user: @user)
+    calendar.events << event
+
+    get :index_of_calendar, calendar_id: calendar.id
+    assert_response :success
+    assert json_response.size > 0
+  end
+
+  test 'should get last updates' do
+    calendar = FactoryGirl.create(:calendar, user: @user)
+    (1..5).each do |n|
+      calendar.events << FactoryGirl.create(:event, user: @user, title: "Event #{n}", updated_at: Time.now - 1.week)
+    end
+    calendar.events[3].title = 'Event 4 - updated'
+    calendar.events[3].save
+    calendar.events[4].title = 'Event 5 - updated'
+    calendar.events[4].save
+
+    get :index_of_calendar, calendar_id: calendar.id, since: Date.today - 3.days
+    assert_response :success
+    assert_not_nil json_response['items']
+    assert_not_nil json_response['shared_items']
+    count = json_response['items'].size + json_response['shared_items'].size
+    assert count == 2, "Expected 2 updated events, #{count} given"
+  end
+
   #### Document attaching group
   test 'should attach existing document to existing event' do
     event = FactoryGirl.create(:event, user: @user)
