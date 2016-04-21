@@ -2155,11 +2155,6 @@
                     "description": "Specifies is it default Curago calendar for user or not",
                     "default": false
                 },
-                "read_only": {
-                    "type": "boolean",
-                    "description": "Specifies if calendar read only or not",
-                    "default": false
-                },
                 "kind": {
                     "type": "integer",
                     "format": "int16",
@@ -2187,11 +2182,6 @@
                 "main": {
                     "type": "boolean",
                     "description": "Specifies is it default Curago calendar for user or not",
-                    "default": false
-                },
-                "read_only": {
-                    "type": "boolean",
-                    "description": "Specifies if calendar read only or not",
                     "default": false
                 },
                 "kind": {
