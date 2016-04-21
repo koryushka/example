@@ -780,8 +780,7 @@
                     }
                 },
                 "tags": [
-                    "Files",
-                    "Documents"
+                    "Files"
                 ]
             }
         },
@@ -812,8 +811,7 @@
                     }
                 },
                 "tags": [
-                    "Files",
-                    "Documents"
+                    "Files"
                 ]
             },
             "delete": {
@@ -839,8 +837,7 @@
                     }
                 },
                 "tags": [
-                    "Files",
-                    "Documents"
+                    "Files"
                 ]
             }
         },
