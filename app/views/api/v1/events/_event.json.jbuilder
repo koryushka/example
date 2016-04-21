@@ -7,7 +7,7 @@ json.event_recurrences_attributes do
     json.extract! er, :id, :day, :week, :month
   end
 end
-json.event_cancellation_attributes do
+json.event_cancellations_attributes do
   json.array! event.event_cancellations do |ec|
     json.extract! ec, :id, :date
   end
