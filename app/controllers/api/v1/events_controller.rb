@@ -1,8 +1,5 @@
 class Api::V1::EventsController < ApiController
   before_filter :find_entity, except: [:index, :create, :index_of_calendar]
-  before_filter only: [:attach_document, :detach_document] do
-    find_entity type: :document, id_param: :document_id
-  end
   before_filter only: [:add_to_calendar, :remove_from_calendar, :index_of_calendar] do
     find_entity_of_current_user type: :calendar, id_param: :calendar_id
   end
@@ -58,16 +55,6 @@ class Api::V1::EventsController < ApiController
     @events = query_params[:since].nil? ? @calendar.events : @calendar.events.where('events.updated_at > ?', query_params[:since])
     #@shared_events = query_params[:since].nil? ? @calendar.shared_events : @calendar.shared_events.where('events.updated_at > ?', query_params[:since])
     @shared_events = []
-  end
-
-  def attach_document
-    @event.documents << @document
-    render partial: 'event', locals: {event: @event }
-  end
-
-  def detach_document
-    @event.documents.delete(@document)
-    render nothing: true, status: :no_content
   end
 
 private

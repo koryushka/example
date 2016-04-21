@@ -174,23 +174,4 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     count = json_response['items'].size + json_response['shared_items'].size
     assert count == 2, "Expected 2 updated events, #{count} given"
   end
-
-  #### Document attaching group
-  test 'should attach existing document to existing event' do
-    event = FactoryGirl.create(:event, user: @user)
-    document = FactoryGirl.create(:document, user: @user)
-    post :attach_document, id: event.id, document_id: document.id
-    assert_response :success
-    assert assigns(:event).documents.where(id: document.id).size > 0
-  end
-
-  #### Document detaching group
-  test 'should detach document attached earlier from event' do
-    event = FactoryGirl.create(:event, user: @user)
-    document = FactoryGirl.create(:document, user: @user)
-    event.documents << document
-    delete :detach_document, id: event.id, document_id: document.id
-    assert_response :success
-    assert assigns(:event).documents.where(id: document.id).size == 0
-  end
 end
