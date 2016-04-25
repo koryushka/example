@@ -45,8 +45,8 @@ Rails.application.routes.draw do
         delete 'users/:id' => 'users#remove_from_group'
       end
 
-      resources :profiles, only: [:index, :create]
-      put 'profiles' => 'profiles#update'
+      put 'users/me/profile' => 'profiles#update'
+      get 'users/me/profile' => 'profiles#my_profile'
       get 'users/:user_id/profile' => 'profiles#show'
     end
   end

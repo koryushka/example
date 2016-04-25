@@ -39,6 +39,63 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Users
+  /users/me/profile:
+    get:
+      summary: Returns profile of current user
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Unxpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Users
+    put:
+      summary: Updates current user profile
+      parameters:
+        - name: profile
+          description: Profile object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ProfileInput'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/Profile'
+        400:
+          description: Validation error
+          schema:
+            $ref: '#/definitions/ValidationError'
+        default:
+          description: Unxpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Users
+  /users/{user_id}/profile:
+    get:
+      summary: Profile of specified user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Unxpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Users
   /oauth/token:
     post:
       summary: Authenticates user
@@ -1104,98 +1161,6 @@ paths:
           description: OK
       tags:
         - User groups
-  /profiles:
-    get:
-      summary: Tries to find user by full name
-      parameters:
-        - name: query
-          description: Search request
-          in: query
-          type: string
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Profile'
-        default:
-          description: Unxpected error
-          schema:
-            $ref: '#/definitions/ErrorsContainer'
-      tags:
-        - Profiles
-    post:
-      summary: Creates user profile
-      parameters:
-        - name: profile
-          description: Profile object
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ProfileInput'
-      responses:
-        201:
-          description: OK
-          schema:
-            $ref: '#/definitions/Profile'
-        400:
-          description: Validation error
-          schema:
-            $ref: '#/definitions/ValidationError'
-        406:
-          description: Impossible to create user profile twice
-          schema:
-            $ref: '#/definitions/ErrorsContainer'
-        default:
-          description: Unxpected error
-          schema:
-            $ref: '#/definitions/ErrorsContainer'
-      tags:
-        - Profiles
-    put:
-      summary: Updates user profile
-      parameters:
-        - name: profile
-          description: Profile object
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ProfileInput'
-      responses:
-        201:
-          description: OK
-          schema:
-            $ref: '#/definitions/Profile'
-        400:
-          description: Validation error
-          schema:
-            $ref: '#/definitions/ValidationError'
-        default:
-          description: Unxpected error
-          schema:
-            $ref: '#/definitions/ErrorsContainer'
-      tags:
-        - Profiles
-  /users/{user_id}/profile:
-    get:
-      summary: Profile of specified user
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          type: integer
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: '#/definitions/Profile'
-        default:
-          description: Unxpected error
-          schema:
-            $ref: '#/definitions/ErrorsContainer'
-      tags:
-        - Profiles
 definitions:
   RegistrationInput:
     type: object

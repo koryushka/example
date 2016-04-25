@@ -4,6 +4,7 @@ class Api::V1::CalendarsController < ApiController
   authorize_resource
   check_authorization
 
+
   def index
     @calendars = current_user.calendars
   end

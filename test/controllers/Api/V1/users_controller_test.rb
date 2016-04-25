@@ -4,7 +4,6 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
   test 'should user object with profile' do
-    FactoryGirl.create(:profile, user: @user)
     get :me
     assert_response :success
     assert_not_nil json_response['profile']

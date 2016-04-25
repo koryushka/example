@@ -8,21 +8,12 @@ class Api::V1::ProfilesController < ApiController
   authorize_resource
   check_authorization
 
-  def index
-    query = params[:query].blank? ? nil : "%#{params[:query]}%"
-    @profiles = Profile.where('full_name ILIKE ?', query)
-  end
-
   def show
     render partial: 'profile', locals: {profile: @profile}
   end
 
-  def create
-    @profile = Profile.new(profile_params)
-    @profile.user = current_user
-
-    return render nothing: true, status: :internal_server_error unless @profile.save
-    render partial: 'profile', locals: {profile: @profile}, status: :created
+  def my_profile
+    render partial: 'profile', locals: {profile: current_user.profile}
   end
 
   def update
