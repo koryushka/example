@@ -6,6 +6,7 @@ class Event < AbstractModel
   has_many :complex_events, foreign_key: 'id'
   has_many :event_recurrences, dependent: :destroy
   has_many :event_cancellations, dependent: :destroy
+  belongs_to :list
 
   accepts_nested_attributes_for :event_recurrences
   accepts_nested_attributes_for :event_cancellations
