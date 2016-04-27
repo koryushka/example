@@ -1,9 +1,12 @@
 class Api::V1::EventsController < ApiController
-  before_filter :find_entity, except: [:index, :create, :index_of_calendar]
+  before_filter :find_entity, except: [:index, :create, :index_of_calendar, :index_of_list]
   before_filter only: [:add_to_calendar, :remove_from_calendar, :index_of_calendar] do
     find_entity_of_current_user type: :calendar, id_param: :calendar_id
   end
-  after_filter :something_updated, except: [:index, :show, :index_of_calendar]
+  before_filter only: [:add_list, :remove_list, :index_of_list] do
+    find_entity_of_current_user type: :list, id_param: :list_id
+  end
+  after_filter :something_updated, except: [:index, :show, :index_of_calendar, :index_of_list]
   authorize_resource
   check_authorization
 
@@ -57,6 +60,23 @@ class Api::V1::EventsController < ApiController
     @events = query_params[:since].nil? ? @calendar.events : @calendar.events.where('events.updated_at > ?', query_params[:since])
     #@shared_events = query_params[:since].nil? ? @calendar.shared_events : @calendar.shared_events.where('events.updated_at > ?', query_params[:since])
     @shared_events = []
+  end
+
+  def add_list
+    @event.list = @list
+    @event.save
+    render nothing: true
+  end
+
+  def remove_list
+    @event.list = nil
+    @event.save
+    render nothing: true, status: :no_content
+  end
+
+  def index_of_list
+    @events = @list.events
+    render 'index'
   end
 
 private
