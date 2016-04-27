@@ -28,6 +28,8 @@ Rails.application.routes.draw do
       end
       post 'events/:id/lists/:list_id', to: 'events#add_list'
       delete 'events/:id/lists/:list_id', to: 'events#remove_list'
+      post 'events/:id/mute', to: 'events#mute'
+      delete 'events/:id/unmute', to: 'events#unmute'
 
       resources :event_cancellations, only: [:update, :destroy]
       resources :notifications_prefs, only: [:update, :destroy]

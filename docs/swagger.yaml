@@ -1009,6 +1009,44 @@ paths:
       tags:
         - Notifications
         - Events
+  /events/{id}/mute:
+    post:
+      summary: Stops sending notifications for specified event
+      parameters:
+        - name: id
+          description: Event ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Notifications
+        - Events
+  /events/{id}/unmute:
+    delete:
+      summary: Re-starts sending notifications for specified event
+      parameters:
+        - name: id
+          description: Event ID
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - Notifications
+        - Events
   /participations:
     get:
       summary: Current user participations

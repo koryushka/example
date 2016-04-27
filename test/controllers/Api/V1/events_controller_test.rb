@@ -175,7 +175,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert count == 2, "Expected 2 updated events, #{count} given"
   end
 
-  #lists group
+  #### lists group
   test 'should assign list to event' do
     event = FactoryGirl.create(:event, user: @user)
     list = FactoryGirl.create(:list, user: @user)
@@ -206,5 +206,25 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     get :index_of_list, list_id: list.id
     assert_response :success
     assert_equal amount, json_response.size
+  end
+
+  #### mute/unmute group
+  test 'should mute event notifications' do
+    event = FactoryGirl.create(:event, user: @user)
+
+    post :mute, id: event.id
+    assert_response :success
+    assert event.muted_events.exists?(muted_events: {user_id: @user.id, muted: true})
+  end
+
+  test 'should unmute event notifications' do
+    event = FactoryGirl.create(:event, user: @user)
+    me = MutedEvent.create(user: @user, event: event, muted: true)
+
+    delete :unmute, id: event.id
+    assert_response :success
+
+    me.reload
+    assert !me.muted?
   end
 end

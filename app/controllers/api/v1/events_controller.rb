@@ -80,6 +80,28 @@ class Api::V1::EventsController < ApiController
     render 'index'
   end
 
+  def mute
+    me = @event.muted_events.where(muted_events: {user_id: current_user.id}).first
+    if me.present? && !me.muted?
+      me.muted = true
+      me.save
+    else
+      MutedEvent.create(event: @event, user: current_user, muted: true)
+    end
+
+    render nothing: true
+  end
+
+  def unmute
+    me = @event.muted_events.where(muted_events: {user_id: current_user.id}).first
+    if me.present? && me.muted?
+      me.muted = false
+      me.save
+    end
+
+    render nothing: true
+  end
+
 private
   def event_params
     params.permit(:title, :starts_at, :ends_at, :all_day, :notes,
