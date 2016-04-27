@@ -1,0 +1,2 @@
+class MutedEvent < AbstractModel
+end

@@ -23,6 +23,7 @@ class Api::V1::EventsController < ApiController
       return render nothing: true, status: :internal_server_error
     end
 
+    MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
     render partial: 'event', locals: {event: @event }, status: :created
   end
 
@@ -33,6 +34,7 @@ class Api::V1::EventsController < ApiController
       return render nothing: true, status: :internal_server_error
     end
 
+    MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
     render partial: 'event', locals: {event: @event }
   end
 

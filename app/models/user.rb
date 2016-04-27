@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   has_many :list_items
   has_many :groups
   has_one :profile
+  has_many :muted_events
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
