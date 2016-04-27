@@ -27,6 +27,7 @@ gem 'fog'
 gem 'fog-aws'
 gem 'cancancan', '~> 1.10'
 gem 'pubnub'
+gem 'swagger-blocks'
 
 # Use Capistrano for deployment
 group :development do
