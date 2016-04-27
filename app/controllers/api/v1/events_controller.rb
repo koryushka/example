@@ -11,7 +11,7 @@ class Api::V1::EventsController < ApiController
   check_authorization
 
   def index
-    @events = current_user.events.includes(:event_cancellations, :event_recurrences)
+    @events = current_user.events.with_muted(current_user.id).includes(:event_cancellations, :event_recurrences)
   end
 
   def show
@@ -57,7 +57,8 @@ class Api::V1::EventsController < ApiController
   end
 
   def index_of_calendar
-    @events = query_params[:since].nil? ? @calendar.events : @calendar.events.where('events.updated_at > ?', query_params[:since])
+    @events = @calendar.events.with_muted(current_user.id)
+    @events = @events.where('events.updated_at > ?', query_params[:since]) if query_params[:since].present?
     #@shared_events = query_params[:since].nil? ? @calendar.shared_events : @calendar.shared_events.where('events.updated_at > ?', query_params[:since])
     @shared_events = []
   end
@@ -75,7 +76,7 @@ class Api::V1::EventsController < ApiController
   end
 
   def index_of_list
-    @events = @list.events
+    @events = @list.events.with_muted(current_user.id)
     render 'index'
   end
 

@@ -7,6 +7,11 @@ class Event < AbstractModel
   has_many :event_recurrences, dependent: :destroy
   has_many :event_cancellations, dependent: :destroy
   belongs_to :list
+  has_many :muted_events
+
+  scope :with_muted, -> (user_id){includes(:muted_events)
+                                      .references(:muted_events)
+                                      .where('"muted_events"."user_id" IS NULL OR "muted_events"."user_id" = :user_id', user_id: user_id)}
 
   accepts_nested_attributes_for :event_recurrences
   accepts_nested_attributes_for :event_cancellations
@@ -36,6 +41,11 @@ class Event < AbstractModel
 
   before_save do
     assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
+  end
+
+  def muted
+    me = muted_events.first
+    me.present? && me.muted?
   end
 
 private

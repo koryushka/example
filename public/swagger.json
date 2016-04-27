@@ -2101,6 +2101,10 @@
                     "type": "string",
                     "description": "Location name. It might be city name, neighborhood name or anything else"
                 },
+                "muted": {
+                    "type": "boolean",
+                    "description": "Shows whether user receives notifications related to this event"
+                },
                 "event_recurrences_attributes": {
                     "type": "array",
                     "items": {
