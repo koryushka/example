@@ -49,8 +49,10 @@ Rails.application.routes.draw do
       get 'users/me/profile' => 'profiles#my_profile'
       get 'users/:user_id/profile' => 'profiles#show'
 
+      resources :apidocs, only: [:index]
+
     end
   end
-  resources :apidocs, only: [:index]
+
 
 end
