@@ -50,10 +50,9 @@ Rails.application.routes.draw do
         delete 'users/:id' => 'users#remove_from_group'
       end
 
-      [:lists, :events].each do |res|
-        resources res do
-          resources :participations, only: [:index, :create]
-          delete 'participations/:user_id' => 'participations#destroy'
+      [:lists, :events].each do |resource|
+        resources resource do
+          resources :participations, only: [:index, :create, :destroy]
         end
       end
 

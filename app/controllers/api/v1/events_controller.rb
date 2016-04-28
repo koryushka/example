@@ -11,7 +11,13 @@ class Api::V1::EventsController < ApiController
   check_authorization
 
   def index
-    @events = current_user.events.with_muted(current_user.id).includes(:event_cancellations, :event_recurrences)
+    @events = current_user.events.with_muted(current_user.id)
+                  .includes(:event_cancellations,
+                            :event_recurrences,
+                            participations: {
+                                user: :profile,
+                                sender: :profile
+                            })
   end
 
   def show

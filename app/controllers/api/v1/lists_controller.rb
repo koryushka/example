@@ -5,7 +5,12 @@ class Api::V1::ListsController < ApiController
   check_authorization
 
   def index
-    @lists = current_user.lists.includes(:list_items)
+    @lists = current_user.lists
+                 .includes(:list_items,
+                           participations: {
+                               user: :profile,
+                               sender: :profile
+                           })
   end
 
   def show

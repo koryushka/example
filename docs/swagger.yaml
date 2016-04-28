@@ -967,48 +967,6 @@ paths:
       tags:
         - Notifications
         - Events
-  /events/{id}/notifications:
-    get:
-      summary: Returns notifications preferences for calendar item
-      parameters:
-        - name: id
-          description: Event ID
-          in: path
-          required: true
-          type: integer
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: '#/definitions/NotificationPreference'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Notifications
-        - Events
-    post:
-      summary: Create notification preference
-      description: Creates new notification preference
-      parameters:
-        - name: id
-          description: Event ID
-          in: path
-          required: true
-          type: integer
-      responses:
-        201:
-          description: Created
-          schema:
-            $ref: '#/definitions/NotificationPreference'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Notifications
-        - Events
   /events/{id}/mute:
     post:
       summary: Stops sending notifications for specified event
@@ -1047,78 +1005,6 @@ paths:
       tags:
         - Notifications
         - Events
-  /participations:
-    get:
-      summary: Current user participations
-      description: 'Returns all shareable items (calendar group, calendar, calendar item, document or list) shared BY current user'
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/ArrayOfParticipations'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Participations
-    post:
-      summary: Create participation
-      description: 'Share some shareable item (calendar group, calendar, calendar item, document or list) with friend'
-      responses:
-        '201':
-          description: Created
-          schema:
-            $ref: '#/definitions/Participation'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Participations
-  /participations/:id:
-    put:
-      summary: Update participation
-      description: Updates participation information by ID
-      responses:
-        '201':
-          description: Updated
-          schema:
-            $ref: '#/definitions/Participation'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Participations
-    delete:
-      summary: Delete participation
-      description: Deletes participation by ID
-      responses:
-        '204':
-          description: Deleted
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - Participations
-  /sharings:
-    post:
-      summary: Shares some entity with some user
-      parameters:
-        - name: sharing_data
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/SharingInput'
-      responses:
-        201:
-          description: Created
-          schema:
-            $ref: '#/definitions/SharingItem'
-      tags:
-        - Sharings
   /groups:
     get:
       summary: List of croups created by user
@@ -1268,6 +1154,89 @@ paths:
           description: OK
       tags:
         - User groups
+  /{resource}/{resource_id}/participations:
+    get:
+      summary: Shows list of participations for specified resource
+      parameters:
+        - name: resource
+          description: Can be 'lists' or 'events'
+          in: path
+          type: string
+          required: true
+        - name: resource_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Participation'
+        default:
+          description: Unxpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Participations
+    post:
+      summary: Adds participants to resource
+      parameters:
+        - name: resource
+          description: Can be 'lists' or 'events'
+          in: path
+          type: string
+          required: true
+        - name: resource_id
+          in: path
+          type: integer
+          required: true
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ParticipationInput'
+      responses:
+        200:
+          description: OK
+        400:
+          description: Validation error
+          schema:
+            $ref: '#/definitions/ValidationError'
+        default:
+          description: Unxpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Participations
+  /{resource}/{resource_id}/participations/{id}:
+    delete:
+      description: Deletes participation from resource
+      parameters:
+        - name: resource
+          description: Can be 'lists' or 'events'
+          in: path
+          type: string
+          required: true
+        - name: resource_id
+          in: path
+          type: integer
+          required: true
+        - name: id
+          description: Participation id
+          in: path
+          type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+        default:
+          description: Unxpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Participations
 definitions:
   RegistrationInput:
     type: object
@@ -1461,6 +1430,10 @@ definitions:
           $ref: '#/definitions/EventCancellation'
       list:
         $ref: '#/definitions/List'
+      participations:
+        type: array
+        items:
+          $ref: '#/definitions/Participation'
   EventInput:
     type: object
     properties:
@@ -1654,6 +1627,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ListItem'
+      participations:
+        type: array
+        items:
+          $ref: '#/definitions/Participation'
   ListItemInput:
     type: object
     properties:
@@ -1709,49 +1686,6 @@ definitions:
         type: boolean
         description: Preference for getting sms notification
         default: false
-  Participation:
-    type: object
-    properties:
-      identifier:
-        type: string
-        description: Calendar item ID
-      participant:
-        type: string
-        description: User ID with whom to share
-      sharedBy:
-        type: string
-        description: User ID who shares
-      startDate:
-        type: string
-        format: date-time
-        description: Optional start date and time for share
-      endDate:
-        type: string
-        format: date-time
-        description: Optional end date and time for share
-      readOnly:
-        type: boolean
-        description: Specifies if this is read only share
-        default: true
-      sharedItem:
-        type: object
-        description: 'Item to be shared. It should be only one item - calendar, calendar group, calendar item, document or list'
-        properties:
-          calendar:
-            type: string
-            description: Optional calendar ID to be shared
-          calendarGroup:
-            type: string
-            description: Optional calendar group ID to be shared
-          calendarItem:
-            type: string
-            description: Optional calendar item ID to be shared
-          document:
-            type: string
-            description: Optional document ID to be shared
-          list:
-            type: string
-            description: Optional list ID to be shared
   File:
     type: object
     properties:
@@ -1803,6 +1737,44 @@ definitions:
       color:
         type: string
         description: Hex string representation of color
+  ParticipationInput:
+    type: object
+    properties:
+      user_ids:
+        description: Array of users ids which should participate events or lists
+        type: array
+        items:
+          type: integer
+      emails:
+        description: Array of people emails which should participate events or lists
+        type: array
+        items:
+          type: string
+          format: email
+      message:
+        description: Is not being used
+        type: string
+  Participation:
+    type: object
+    properties:
+      id:
+        type: integer
+      email:
+        description: Person's email which should participate events or lists
+        type: string
+        format: email
+      status:
+        description: 'Can be: PENDING = 1, ACCEPTED = 2, DECLINED = 3'
+        type: integer
+      message:
+        description: Is not being used
+        type: string
+      user:
+        description: Invited user
+        $ref: '#/definitions/User'
+      sender:
+        description: User sent invitation
+        $ref: '#/definitions/User'
   Error:
     type: object
     properties:
@@ -1840,33 +1812,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ValidationError'
-  SharingItem:
-    type: object
-    properties:
-      id:
-        type: integer
-      subject_class:
-        type: string
-        description: >
-          Type of sharing entity for example: Calendar, Event, etc.
-      subject_id:
-        type: integer
-        description: ID of entity which should be shared
-      user_id:
-        type: integer
-        description: ID of user you're going to share with
-  SharingInput:
-    type: object
-    properties:
-      subject_class:
-        type: string
-        description: >
-          Type of sharing entity for example: Calendar, Event, etc.
-      subject_id:
-        type: integer
-        description: ID of entity which should be shared
-      user_id:
-        type: integer
   ArrayOfCalendars:
     type: array
     items:
@@ -1900,7 +1845,3 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/ListItem'
-  ArrayOfParticipations:
-    type: array
-    items:
-      $ref: '#/definitions/Participation'
