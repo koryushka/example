@@ -8,6 +8,7 @@ class Event < AbstractModel
   has_many :event_cancellations, dependent: :destroy
   belongs_to :list
   has_many :muted_events
+  has_many :participants, as: :participantable
 
   scope :with_muted, -> (user_id){includes(:muted_events)
                                       .references(:muted_events)

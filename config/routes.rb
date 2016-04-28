@@ -50,6 +50,13 @@ Rails.application.routes.draw do
         delete 'users/:id' => 'users#remove_from_group'
       end
 
+      [:lists, :events].each do |res|
+        resources res do
+          resources :participants, only: [:index, :create]
+          delete 'participants/:user_id' => 'participants#destroy'
+        end
+      end
+
       put 'users/me/profile' => 'profiles#update'
       get 'users/me/profile' => 'profiles#my_profile'
       get 'users/:user_id/profile' => 'profiles#show'
