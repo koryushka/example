@@ -52,8 +52,8 @@ Rails.application.routes.draw do
 
       [:lists, :events].each do |res|
         resources res do
-          resources :participants, only: [:index, :create]
-          delete 'participants/:user_id' => 'participants#destroy'
+          resources :participations, only: [:index, :create]
+          delete 'participations/:user_id' => 'participations#destroy'
         end
       end
 

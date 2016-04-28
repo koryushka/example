@@ -1,4 +1,4 @@
-class Api::V1::ParticipantsController < ApiController
+class Api::V1::ParticipationsController < ApiController
   before_filter except: [:index] do
     find_entity type: :user, id_param: :user_id
   end
@@ -11,7 +11,16 @@ class Api::V1::ParticipantsController < ApiController
   end
 
   def create
-    Participant.create(user: @user, participantable: find_participantable)
+    participantable = find_participantable
+
+    invitation_params[:emails].each do |email|
+      Participation.create(email: email, participantable: participantable, sender: current_user)
+    end if participant_params[:emails]
+
+    invitation_params[:user_ids].each do |user_id|
+      Participation.create(user: User.find(user_id), participantable: participantable, sender: current_user)
+    end if participant_params[:user_ids]
+
     render nothing: true
   end
 
