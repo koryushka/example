@@ -55,18 +55,18 @@ private
         schema do
           key :'$ref', '#/definitions/ArrayOfCalendars'
         end
-      end
+      end # end response OK
       # Response Default
       response :default do
         key :description, 'Unexpected error'
         schema do
           key :'$ref', '#/definitions/ErrorsContainer'
         end
-      end
+      end # end response Default
       # Path name Calendars
       key :tags, ['Calendars']
     end
-  end
+  end # end swagger_path '/calendars'
 
   # Definition ErrorsContainer
   swagger_schema :ErrorsContainer do

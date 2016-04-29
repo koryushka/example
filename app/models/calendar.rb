@@ -1,4 +1,6 @@
 class Calendar < AbstractModel
+  include Swagger::Blocks
+
   belongs_to :user
   has_and_belongs_to_many :events
   has_and_belongs_to_many :calendars_groups
@@ -39,9 +41,8 @@ class Calendar < AbstractModel
   # ================================================================================
   # Swagger::Blocks
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Model Calendar
+  # SWAGGER SCHEMA: Model Calendar
   # ================================================================================
-  include Swagger::Blocks
 
   # Definition calendar
   swagger_schema :Calendar do

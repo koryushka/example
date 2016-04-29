@@ -9,16 +9,24 @@ class Api::V1::ApidocsController < ActionController::Base
       key :description, 'API documentation for Curago'
     end
 
-    key :schemes, 'http'
+    key :schemes, ['http']
     key :basePath, '/api/v1'
     key :produces, ['application/json']
   end
 
   # A list of all classes that have swagger_* declarations.
   SWAGGERED_CLASSES = [
-      Api::V1::CalendarsController,
-      Calendar,
-      ErrorModel,
+      TokensController,
+      CalendarsGroupsController,
+      CalendarsGroup,
+      # ValidationError,
+      # ValidationErrorsContainer,
+      # ValidationError,
+
+      # Api::V1::CalendarsController,
+      # Calendar,
+      # ErrorModel,
+      # TokensController,
       # ErrorsContainer,
       # Error,
       self,
