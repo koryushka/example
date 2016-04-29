@@ -18,7 +18,7 @@ class Api::V1::ApidocsController < ActionController::Base
   SWAGGERED_CLASSES = [
       Api::V1::CalendarsController,
       Calendar,
-      # ErrorModel,
+      ErrorModel,
       # ErrorsContainer,
       # Error,
       self,

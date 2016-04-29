@@ -74,20 +74,9 @@ private
     property :errors do
       key :type, :array
       items do
-        key :'$ref', '#/definitions/Error'
+        key :'$ref', '#/definitions/ErrorModel'
       end
     end
   end # end swagger_schema :ErrorsContainer
 
-  # Definition Error
-  swagger_schema :Error do
-    key :type, :object
-    property :code do
-      key :type, :integer
-      key :format, :int32
-    end
-    property :message do
-      key :type, :string
-    end
-  end # end swagger_schema :Error
 end
