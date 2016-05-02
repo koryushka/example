@@ -91,13 +91,79 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', '#/definitions/Error'
         end
       end # end response Default
       key :tags, ['Calendar Groups']
     end # end operation :post
   end # end swagger_path '/calendars_groups'
+  # swagger_path '/calendars_groups/{id}'
+  swagger_path '/calendars_groups/{id}' do
+    operation :put do
+      key :summary, 'Update calendar group'
+      key :description, 'Updates calendar group information by ID'
+      parameter do
+        key :name, 'id'
+        key :description, 'Calendars group ID'
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      parameter do
+        key :name, 'calendars_group'
+        key :in, 'body'
+        key :required, true
+        schema do
+          key :'$ref', '#/definitions/CalendarsGroupInput'
+        end
+      end
+      # responses
+      response 201 do
+        key :description, 'Updated'
+        schema do
+          key :'$ref', '#/definitions/CalendarsGroup'
+        end
+      end # end response 201
+      response 400 do
+        key :description, 'Validation errors'
+        schema do
+          key :'$ref', '#/definitions/ValidationErrorsContainer'
+        end
+      end # end response 400
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', '#/definitions/Error'
+        end
+      end # end response Default
+      key :tags, ['Calendar Groups']
+    end # end operation :put
 
+    operation :delete do
+      key :summary, 'Delete calendar group'
+      key :description, 'Deletes calendar group by ID'
+      parameter do
+        key :name, 'id'
+        key :description, 'Calendars group ID'
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      # responses
+      response 204 do
+        key :description, 'Deleted'
+      end # end response 204
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', '#/definitions/ErrorsContainer'
+        end
+      end # end response Default
+      key :tags, ['Calendar Groups']
+    end # end operation :delete
+  end # end swagger_path '/calendars_groups/{id}'
+
+  # defenition :ValidationErrorsContainer
   swagger_schema :ValidationErrorsContainer do
     key :type, :object
     property :validation_errors do
@@ -106,7 +172,8 @@ private
         key :'$ref', '#/definitions/ValidationError'
       end
     end
-  end
+  end # end # defenition :ValidationErrorsContainer
+  # defenition :ValidationError
   swagger_schema :ValidationError do
     key :type, :object
     key :description, 'Name of this field will be the same as the name of model field which has validation errors.
@@ -122,7 +189,5 @@ private
         key :type, :string
       end
     end
-  end
-
-
+  end # defenition :ValidationError
 end
