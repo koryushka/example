@@ -138,7 +138,7 @@ private
       end # end response Default
       key :tags, ['Calendar Groups']
     end # end operation :put
-
+    # operation :delete
     operation :delete do
       key :summary, 'Delete calendar group'
       key :description, 'Deletes calendar group by ID'

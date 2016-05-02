@@ -88,4 +88,33 @@ class Calendar < AbstractModel
       key :'$ref', '#/definitions/Calendar'
     end
   end # end swagger_schema :ArrayOfCalendars
+
+  # defenition :CalendarInput
+  swagger_schema :CalendarInput do
+    key :type, :object
+    property :title do
+      key :type, :string
+      key :description, 'Calendar title'
+    end
+    property :hex_color do
+      key :type, :string
+      key :description, 'Calendar color in hex string'
+    end
+    property :main do
+      key :type, :boolean
+      key :description, 'Specifies is it default Curago calendar for user or not'
+      key :default, false
+    end
+    property :kind do
+      key :type, :integer
+      key :format, :int16
+      key :description, 'Enumeration specifies the type of calendar'
+      key :default, 0
+    end
+    property :visible do
+      key :type, :boolean
+      key :description, 'Specifies if calendar visible in UI'
+      key :default, true
+    end
+  end
 end

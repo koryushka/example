@@ -19,6 +19,8 @@ class Api::V1::ApidocsController < ActionController::Base
       TokensController,
       CalendarsGroupsController,
       CalendarsGroup,
+      CalendarsController,
+      Calendar,
       # ValidationError,
       # ValidationErrorsContainer,
       # ValidationError,
