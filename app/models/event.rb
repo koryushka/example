@@ -1,4 +1,6 @@
 class Event < AbstractModel
+  include Swagger::Blocks
+
   belongs_to :user
   has_and_belongs_to_many :calendars
   has_and_belongs_to_many :documents
@@ -62,4 +64,13 @@ private
     errors.add(:ends_at, I18n.t('events.start_date_not_end_date')) if starts_at == ends_at
     errors.add(:ends_at, I18n.t('events.start_date_more_than_end_date')) if ends_at.present? && starts_at.present? && (starts_at > ends_at)
   end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER PATH: model Event
+  # ================================================================================
+
+
+
 end
