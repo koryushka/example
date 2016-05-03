@@ -16,6 +16,8 @@ gem 'devise'
 gem 'devise_token_auth'
 gem 'doorkeeper'
 
+gem 'google-api-client', '~> 0.9', require: 'google/apis/calendar_v3'
+
 gem 'validates_email_format_of'
 gem 'date_validator'
 

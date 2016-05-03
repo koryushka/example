@@ -15,7 +15,11 @@ Rails.application.routes.draw do
       }
       get 'users/me' => 'users#me'
       #put 'users' => 'users#update'
-
+      get 'google_auth', to: 'google_calendars#auth'
+      get 'oauth2callback', to: 'google_calendars#oauth2callback'
+      get 'google_calendars', to: 'google_calendars#index'
+      get 'import_calendars_from_google_calendar', to: 'google_calendars#import_calendars'
+      get 'google_calendars/:calendar_id', to: 'google_calendars#show', param: :calendar_id, constraints: { calendar_id: /[^\/]+/ }
       resources :calendars, except: [:edit, :new] do
         post 'events/:id', to: 'events#add_to_calendar'
         delete 'events/:id', to: 'events#remove_from_calendar'
