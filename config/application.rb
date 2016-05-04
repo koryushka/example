@@ -24,5 +24,16 @@ module CuragoBackend
     config.active_record.raise_in_transactional_callbacks = true
 
     config.autoload_paths << Rails.root.join('lib')
+
+    config.generators do |g|
+      g.orm             :active_record
+      g.template_engine nil
+      g.jbuilder        true
+      g.test_framework  :test_unit, fixture: false
+      g.assets          false
+      g.helper          false
+      g.stylesheets     false
+      g.javascripts     false
+    end
   end
 end

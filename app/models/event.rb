@@ -9,6 +9,7 @@ class Event < AbstractModel
   belongs_to :list
   has_many :muted_events
   has_many :participations, as: :participationable
+  has_many :activities, as: :notificationable
 
   scope :with_muted, -> (user_id){includes(:muted_events)
                                       .references(:muted_events)
@@ -42,6 +43,13 @@ class Event < AbstractModel
 
   before_save do
     assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
+  end
+
+  ACTIVITY_TYPES = [UPDATED = 1]
+  after_update do
+    participations.where(status: Participation::ACCEPTED).each do |p|
+      Activity.create(notificationable: self, user: p.user, activity_type: UPDATED)
+    end
   end
 
   def muted

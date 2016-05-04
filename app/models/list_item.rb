@@ -1,6 +1,7 @@
 class ListItem < AbstractModel
   belongs_to :list
   belongs_to :user
+  has_many :activities, as: :notificationable
 
   validates :title, length: {maximum: 128}, presence: true
   validates :notes, length: {maximum: 2048}

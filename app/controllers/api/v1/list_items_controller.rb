@@ -3,6 +3,9 @@ class Api::V1::ListItemsController < ApiController
   before_filter do
     find_entity_of_current_user type: :list, id_param: :list_id
   end
+  before_filter only: [:assign, :unassign] do
+    find_entity type: :user
+  end
   after_filter :something_updated, except: [:index, :show]
   authorize_resource
   check_authorization
@@ -34,6 +37,14 @@ class Api::V1::ListItemsController < ApiController
   def destroy
     @list_item.destroy
     render nothing: true, status: :no_content
+  end
+
+  def assign
+
+  end
+
+  def unassign
+
   end
 
 private

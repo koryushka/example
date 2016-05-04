@@ -59,6 +59,8 @@ Rails.application.routes.draw do
       put 'users/me/profile' => 'profiles#update'
       get 'users/me/profile' => 'profiles#my_profile'
       get 'users/:user_id/profile' => 'profiles#show'
+
+      resources :activities, only: [:index]
     end
   end
 end

@@ -37,12 +37,7 @@ class Api::V1::EventsController < ApiController
   end
 
   def update
-    @event.assign_attributes(event_params)
-
-    unless @event.save
-      return render nothing: true, status: :internal_server_error
-    end
-
+    @event.update(event_params)
     MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
     render partial: 'event', locals: {event: @event }
   end

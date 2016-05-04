@@ -3,7 +3,9 @@ class List < AbstractModel
   has_many :list_items, dependent: :destroy
   has_many :events
   has_many :participations, as: :participationable
-  LIST_KINDS = [Grocery = 1, ToDo = 2]
+  has_many :activities, as: :notificationable
+
+  LIST_KINDS = [GROCERY = 1, TODO = 2]
 
   validates :title, length: {maximum: 128}, presence: true
   validates :notes, length: {maximum: 2048}, exclusion: { in: [nil] }

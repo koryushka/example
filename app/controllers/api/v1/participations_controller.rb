@@ -1,5 +1,5 @@
 class Api::V1::ParticipationsController < ApiController
-  before_filter :find_entity, only: [:destroy]
+  before_filter :find_entity, only: [:destroy, :accept, :decline]
   authorize_resource
   check_authorization
 
@@ -30,13 +30,23 @@ class Api::V1::ParticipationsController < ApiController
     render nothing: true
   end
 
+  def accept
+    @participation.change_status_to(Participation::ACCEPTED)
+    render nothing: true
+  end
+
+  def decline
+    @participation.change_status_to(Participation::DECLINED)
+    render nothing: true
+  end
+
 protected
   def participation_params
     params.permit(:messaage, emails: [], user_ids: [])
   end
 
   def find_participationable
-    klass = [Event, List].detect {|c| params["#{c.name.underscore}_id"]}
+    klass = [Event, List].detect { |c| params["#{c.name.underscore}_id"] }
     klass.find(params["#{klass.name.underscore}_id"])
   end
 end
