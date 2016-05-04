@@ -101,7 +101,7 @@ class Api::V1::FilesController < ApiController
       #responses
       response 204 do
         key :description, 'Detached'
-      end # end response 200
+      end # end response 204
       response :default do
         key :description, 'Unexpected error'
         schema do
