@@ -33,7 +33,12 @@ class Api::V1::GroupsController < ApiController
     render nothing: true, status: :no_content
   end
 
-  private
+  def leave
+    @group.members.delete(current_user)
+    render nothing: true
+  end
+
+private
   def group_params
     params.permit(:title)
   end

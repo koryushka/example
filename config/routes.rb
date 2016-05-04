@@ -49,6 +49,7 @@ Rails.application.routes.draw do
         post 'users/:id' => 'users#add_to_group'
         delete 'users/:id' => 'users#remove_from_group'
       end
+      delete 'groups/:id/leave' => 'groups#leave'
 
       [:lists, :events].each do |resource|
         resources resource do

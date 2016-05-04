@@ -61,4 +61,14 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
       ListItem.find(group.id)
     end
   end
+
+  test 'should remove current user from group' do
+    user = FactoryGirl.create(:user)
+    group = FactoryGirl.create(:group, owner: user)
+    group.members << @user
+
+    delete :leave, id: group.id
+    assert_response :success
+    assert_not group.members.exists?(users: {id: @user.id})
+  end
 end

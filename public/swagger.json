@@ -1692,6 +1692,34 @@
                 ]
             }
         },
+        "/groups/{id}/leave": {
+            "delete": {
+                "summary": "Removes current user from group",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Group ID",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "Unxpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "User groups"
+                ]
+            }
+        },
         "/groups/{group_id}/users/{user_id}": {
             "post": {
                 "summary": "Adds user to group",
@@ -1741,6 +1769,31 @@
                 },
                 "tags": [
                     "User groups"
+                ]
+            }
+        },
+        "/participations": {
+            "get": {
+                "summary": "Returns recently sent invitations",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Participation"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unxpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Participations"
                 ]
             }
         },
@@ -2521,6 +2574,10 @@
                 "status": {
                     "description": "Can be: PENDING = 1, ACCEPTED = 2, DECLINED = 3",
                     "type": "integer"
+                },
+                "kind": {
+                    "description": "Type of participation: Event, List",
+                    "type": "string"
                 },
                 "message": {
                     "description": "Is not being used",
