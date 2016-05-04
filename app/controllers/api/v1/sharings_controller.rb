@@ -49,7 +49,7 @@ private
   # ================================================================================
   # Swagger::Blocks
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Sharings
+  # SWAGGER PATH: Controller Sharings (& /participations)
   # ================================================================================
   # swagger_path /sharings
   swagger_path '/sharings' do
@@ -72,5 +72,82 @@ private
       key :tags, ['Sharings']
     end # end operation :post
   end # end swagger_path /sharings
+  # swagger_path /participations
+  swagger_path '/participations' do
+    operation :get do
+      key :summary, 'Current user participations'
+      key :description, 'Returns all shareable items (calendar group, calendar, calendar item, document or list)
+shared BY current user'
+      # responses
+      response 200 do
+        key :description, 'OK'
+        schema do
+          key :'$ref', '#/definitions/ArrayOfParticipations'
+        end
+      end # end response 200
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', '#/definitions/Error'
+        end
+      end # end response :default
+      key :tags, ['Participations']
+    end # end operation :get
+    operation :post do
+      key :summary, 'Create participation'
+      key :description, 'Share some shareable item (calendar group, calendar, calendar item, document or list)
+ with friend'
+      # responses
+      response 201 do
+        key :description, 'Created'
+        schema do
+          key :'$ref', '#/definitions/Participation'
+        end
+      end # end response 201
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', '#/definitions/Error'
+        end
+      end # end response :default
+      key :tags, ['Participations']
+    end # end operation :post
+  end # end swagger_path /participations
+  # swagger_path /participations/:id
+  swagger_path '/participations/:id' do
+    operation :put do
+      key :summary, 'Update participation'
+      key :description, 'Updates participation information by ID'
+      # responses
+      response 201 do
+        key :description, 'Updated'
+        schema do
+          key :'$ref', '#/definitions/Participation'
+        end
+      end # end response 201
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', '#/definitions/Error'
+        end
+      end # end response :default
+      key :tags, ['Participations']
+    end # end operation :put
+    operation :delete do
+      key :summary, 'Delete participation'
+      key :description, 'Deletes participation by ID'
+      # responses
+      response 204 do
+        key :description, 'Deleted'
+      end # end response 204
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', '#/definitions/Error'
+        end
+      end # end response :default
+      key :tags, ['Participations']
+    end # end operation :delete
+  end # end swagger_path /participations/:id
 
 end
