@@ -186,5 +186,36 @@ private
       key :tags, ['Lists']
     end # end operation :delete
   end # end /lists/{id}
+  # swagger_path /lists/{id}/events
+  swagger_path '/lists/{id}/events' do
+    operation :get do
+      key :summary, 'Show events'
+      key :description, 'Returns all events which have list specified by id'
+      parameter do
+        key :name, 'id'
+        key :description, "List's ID"
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      # responses
+      response 200 do
+        key :description, 'OK'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', '#/definitions/Event'
+          end
+        end
+      end # end response 200
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', '#/definitions/Errors'
+        end
+      end # end response :default
+      key :tags, ['Lists', 'Events']
+    end # end operation :get
+  end # end swagger_path /lists/{id}/events
 
 end

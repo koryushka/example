@@ -391,87 +391,7 @@ private
       key :tags, ['Events']
     end # end operation :delete
   end # end swagger_path /events/{event_id}/lists/{list_id}
-  # swagger_path /lists/{id}/events
-  swagger_path '/lists/{id}/events' do
-    operation :get do
-      key :summary, 'Show events'
-      key :description, 'Returns all events which have list specified by id'
-      parameter do
-        key :name, 'id'
-        key :description, "List's ID"
-        key :in, 'path'
-        key :required, true
-        key :type, :integer
-      end
-      # responses
-      response 200 do
-        key :description, 'OK'
-        schema do
-          key :type, :array
-          items do
-            key :'$ref', '#/definitions/Event'
-          end
-        end
-      end # end response 200
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', '#/definitions/Errors'
-        end
-      end # end response :default
-      key :tags, ['Lists', 'Events']
-    end # end operation :get
-  end # end swagger_path /lists/{id}/events
-  # swagger_path /notification_prefs/{id}
-  swagger_path '/notification_prefs/{id}' do
-    operation :put do
-      key :summary, 'Update notification preference'
-      key :description, 'Updates notification preference by ID'
-      parameter do
-        key :name, 'id'
-        key :description, 'Notifications preference ID'
-        key :in, 'path'
-        key :required, true
-        key :type, :integer
-      end
-      # responses
-      response 201 do
-        key :description, 'Updated'
-        schema do
-          key :'$ref', '#/definitions/NotificationPreference'
-        end
-      end # end response 201
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', '#/definitions/Error'
-        end
-      end # end response :default
-      key :tags, ['Notifications', 'Events']
-    end # end operation :put
-    operation :delete do
-      key :summary, 'Delete notification preference'
-      key :description, 'Deletes notification preference by ID'
-      parameter do
-        key :name, 'id'
-        key :description, 'Notifications preference ID'
-        key :in, 'path'
-        key :required, true
-        key :type, :integer
-      end
-      # responses
-      response 204 do
-        key :description, 'Deleted'
-      end # end response 204
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', '#/definitions/Error'
-        end
-      end # end response :default
-      key :tags, ['Notifications', 'Events']
-    end # end operation :delete
-  end # end swagger_path '/notification_prefs/{id}'
+
   # swagger_path /events/{id}/notifications
   swagger_path '/events/{id}/notifications' do
     operation :get do
@@ -572,8 +492,5 @@ private
       key :tags, ['Notifications', 'Events']
     end # end operation :delete
   end # end swagger_path /events/{id}/unmute
-
-
-
 end
 

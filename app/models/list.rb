@@ -9,6 +9,13 @@ class List < AbstractModel
   validates :notes, length: {maximum: 2048}, exclusion: { in: [nil] }
   validates :kind, numericality: {only_integer: true}, inclusion: {in: LIST_KINDS}
 
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER SCHEMA: Model List
+  # ================================================================================
+
+  #swagger_schema :List
   swagger_schema :List do
     key :type, :object
     property :id do

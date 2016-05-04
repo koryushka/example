@@ -1,4 +1,6 @@
 class Api::V1::SharingsController < ApiController
+  include Swagger::Blocks
+
   before_filter only:[:destroy] do
     find_entity :sharing_permision
   end
@@ -43,4 +45,32 @@ private
   def sharing_params
     params.permit(:subject_class, :subject_id, :user_id, :action)
   end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER PATH: Controller Sharings
+  # ================================================================================
+  # swagger_path /sharings
+  swagger_path '/sharings' do
+    operation :post do
+      key :summary, 'Shares some entity with some user'
+      parameter do
+        key :name, 'sharing_data'
+        key :required, true
+        schema do
+          key :'$ref', '#/definitions/SharingInput'
+        end
+      end
+      # responses
+      response 201 do
+        key :description, 'Created'
+        schema do
+          key :'$ref', '#/definitions/SharingItem'
+        end
+      end # end response 201
+      key :tags, ['Sharings']
+    end # end operation :post
+  end # end swagger_path /sharings
+
 end
