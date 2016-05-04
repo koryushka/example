@@ -25,6 +25,6 @@ class Api::V1::ProfilesController < ApiController
 
 private
   def profile_params
-    params.permit(:full_name, :image_url, :color)
+    params.permit(:first_name, :last_name, :image_url, :color)
   end
 end
