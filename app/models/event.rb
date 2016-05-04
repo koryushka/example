@@ -71,6 +71,87 @@ private
   # SWAGGER PATH: model Event
   # ================================================================================
 
+  swagger_schema :Event do
+    key :type, :object
+    property :id do
+      key :type, :integer
+      key :description, 'Calendar item ID'
+    end
+    property :title do
+      key :type, :string
+      key :description, 'Calendar item title'
+    end
+    property :user_id do
+      key :type, :number
+      key :description, 'User ID who created this event'
+    end
+    property :starts_at do
+      key :type, :string
+      key :format, 'date-time'
+      key :description, 'Start date and time for event'
+    end
+    property :ends_at do
+      key :type, :string
+      key :format, 'date-time'
+      key :description, 'End date and time for event'
+    end
+    property :all_day do
+      key :type, :boolean
+      key :description, "Specifies all-day event. If it's true so ends_at is being set to null"
+      key :default, false
+    end
+    property :notes do
+      key :type, :string
+      key :description, 'Additional notes'
+    end
+    property :timezone_name do
+      key :type, :string
+      key :description, 'Optional time zone to apply to starting and ending dates.
+For reminders time zone usually does not matter'
+    end
+    property :kind do
+      key :type, :integer
+      key :format, :int16
+      key :description, 'Enumeration specifies the type of calendar item'
+      key :default, 0
+    end
+    property :latitude do
+      key :type, :number
+      key :format, :double
+      key :description, 'Location lattitude'
+    end
+    property :longitude do
+      key :type, :number
+      key :format, :double
+      key :description, 'Location longitude'
+    end
+    property :location_name do
+      key :type, :string
+      key :description, 'Location name. It might be city name, neighborhood name or anything else'
+    end
+    property :muted do
+      key :type, :boolean
+      key :description, 'Shows whether user receives notifications related to this event'
+    end
+    property :event_recurrences_attributes do
+      key :type, :array
+      items do
+        key :'$ref', '#/definitions/EventReccurence'
+      end
+    end
+    property :event_cancellations_attributes do
+      key :type, :array
+      items do
+        key :'$ref', '#/definitions/EventCancellation'
+      end
+    end
+    property :list do
+      key :'$ref', '#/definitions/List'
+    end
 
+
+
+
+  end # end swagger_schema :Event
 
 end
