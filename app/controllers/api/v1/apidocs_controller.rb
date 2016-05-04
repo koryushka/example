@@ -16,6 +16,7 @@ class Api::V1::ApidocsController < ActionController::Base
 
   # A list of all classes that have swagger_* declarations.
   SWAGGERED_CLASSES = [
+      SwaggerSchema,
       TokensController,
       CalendarsGroupsController,
       CalendarsGroup,
@@ -23,9 +24,12 @@ class Api::V1::ApidocsController < ActionController::Base
       Calendar,
       EventsController,
       Event,
+      EventCancellation,
+      EventRecurrence,
       NotificationsPrefsController,
+      NotificationsPreference,
       FilesController,
-      File,
+      UploadedFile,
       ListItemsController,
       ListItem,
       ListsController,

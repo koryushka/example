@@ -1,10 +1,11 @@
 class Api::V1::CalendarsController < ApiController
+  include Swagger::Blocks
+
   before_filter :find_entity, except: [:index, :create]
   after_filter :something_updated, except: [:index, :show]
   authorize_resource
   check_authorization
 
-  include Swagger::Blocks
 
   def index
     @calendars = current_user.calendars
@@ -43,25 +44,25 @@ private
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
   # SWAGGER PATH: Controller Calendars
   # ================================================================================
+  # swagger_path /calendars
   swagger_path '/calendars' do
-    # operation :get
     operation :get do
       key :summary, 'Current user calendars'
       key :description, 'Returns all calendars created by current user or shared with him'
-      # response OK
+      # responses
       response 200 do
         key :description, 'OK'
         schema do
           key :'$ref', '#/definitions/ArrayOfCalendars'
         end
-      end # end response OK
-      # response Default
+      end # end response 200
+      # response :default
       response :default do
         key :description, 'Unexpected error'
         schema do
           key :'$ref', '#/definitions/ErrorsContainer'
         end
-      end # end response Default
+      end # end response :default
       key :tags, ['Calendars']
     end # end operation :get
     # operation :post
@@ -82,23 +83,23 @@ private
         schema do
           key :'$ref', '#/definitions/Calendar'
         end
-      end # end response OK
+      end # end response 201
       response 400 do
         key :description, 'Validation errors'
         schema do
           key :'$ref', '#/definitions/ValidationErrorsContainer'
         end
-      end
-      # response Default
+      end # end response 400
       response :default do
         key :description, 'Unexpected error'
         schema do
           key :'$ref', '#/definitions/ErrorsContainer'
         end
-      end # end response Default
+      end # end response :default
       key :tags, ['Calendars']
-    end # end oeration :post
+    end # end operation :post
   end # end swagger_path '/calendars'
+
   # swagger_path :/calendars/{id}
   swagger_path '/calendars/{id}' do
     operation :put do
@@ -136,7 +137,7 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', '#/definitions/Error'
         end
       end # end response Default
       key :tags, ['Calendars']
@@ -163,6 +164,7 @@ private
       key :tags, ['Calendars']
     end # end operation :delete
   end # end swagger_path ':/calendars/{id}'
+
   # swagger_path /calendars/{id}/events
   swagger_path '/calendars/{id}/events' do
     operation :get do
@@ -179,7 +181,7 @@ private
         key :description, 'Date and time which is bein used for abtaining updates'
         key :in, 'query'
         key :type, :string
-        key :format, 'data-time'
+        key :format, 'date-time'
       end
       response 200 do
         key :description, 'OK'
@@ -196,6 +198,7 @@ private
       key :tags, ['Events', 'Calendars']
     end # end operation :get
   end # end swagger_path /calendars/{id}/events
+
   # swagger_path /calendars/{id}/events/{event_id}
   swagger_path '/calendars/{id}/events/{event_id}' do
     operation :post do
@@ -231,7 +234,7 @@ private
         end
       end # end response default
       key :tags, ['Events', 'Calendars']
-    end # end opeartion :post
+    end # end operation :post
     operation :delete do
       key :summary, 'Removed specified event from specified calendar'
       parameter do
@@ -254,22 +257,11 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorModel'
+          key :'$ref', '#/definitions/Error'
         end
       end # end response default
       key :tags, ['Events', 'Calendars']
     end # end operation :delete
   end # end swagger_path :/calendars/{id}/events/{event_id}
-
-  # Definition ErrorsContainer
-  swagger_schema :ErrorsContainer do
-    key :type, :object
-    property :errors do
-      key :type, :array
-      items do
-        key :'$ref', '#/definitions/ErrorModel'
-      end
-    end
-  end # end swagger_schema :ErrorsContainer
 
 end

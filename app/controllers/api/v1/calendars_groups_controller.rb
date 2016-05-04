@@ -44,6 +44,7 @@ private
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
   # SWAGGER PATH: Controller Calendar Group
   # ================================================================================
+  # swagger_path '/calendars_groups'
   swagger_path '/calendars_groups' do
     operation :get do
       key :summary, 'Current user calendar groups'
@@ -59,7 +60,7 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorModel'
+          key :'$ref', '#/definitions/Error'
         end
       end # end response Default
       key :tags, ['Calendar Groups']
@@ -97,6 +98,7 @@ private
       key :tags, ['Calendar Groups']
     end # end operation :post
   end # end swagger_path '/calendars_groups'
+
   # swagger_path '/calendars_groups/{id}'
   swagger_path '/calendars_groups/{id}' do
     operation :put do
@@ -133,7 +135,7 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Error'
+          key :'$ref', '#/definitions/ErrorsContainer'
         end
       end # end response Default
       key :tags, ['Calendar Groups']
@@ -163,31 +165,4 @@ private
     end # end operation :delete
   end # end swagger_path '/calendars_groups/{id}'
 
-  # defenition :ValidationErrorsContainer
-  swagger_schema :ValidationErrorsContainer do
-    key :type, :object
-    property :validation_errors do
-      key :type, :array
-      items do
-        key :'$ref', '#/definitions/ValidationError'
-      end
-    end
-  end # end # defenition :ValidationErrorsContainer
-  # defenition :ValidationError
-  swagger_schema :ValidationError do
-    key :type, :object
-    key :description, 'Name of this field will be the same as the name of model field which has validation errors.
-            For example, we have model with invalid email field. In this case we have following error object:
-            "validation_errors": {
-              "email": [
-              "Email address is invalid"
-              ]
-            }'
-    property :error_field_name do
-      key :type, :array
-      items do
-        key :type, :string
-      end
-    end
-  end # defenition :ValidationError
 end

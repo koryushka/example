@@ -45,4 +45,30 @@ class List < AbstractModel
       end
     end
   end # end swagger_schema :List
+
+  # swagger_schema :ArrayOfLists
+  swagger_schema :ArrayOfLists do
+    key :type, :array
+    items do
+      key :'$ref', '#/definitions/List'
+    end
+  end # end swagger_schema :ArrayOfLists
+
+  # swagger_schema :ListInput
+  swagger_schema :ListInput do
+    key :type, :object
+    property :title do
+      key :type, :string
+      key :description, 'List title'
+    end
+    property :notes do
+      key :type, :string
+      key :description, 'Additional notes'
+    end
+    property :kind do
+      key :type, :integer
+      key :description, 'Specified type of list. Can be 1 - Grocery, 2 - ToDo'
+    end
+  end # end swagger_schema :ListInput
+
 end

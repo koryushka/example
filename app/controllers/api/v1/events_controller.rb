@@ -100,17 +100,18 @@ private
     end # end operation :get
     operation :post do
       key :summary, 'Create calendar item'
-      key :description, 'Creates new calendar item.
+      key :description, "Creates new calendar item.
 
-        Examples:
+Examples:
 
-        **E.B. choir practice weekdays at 5:30pm:**
+**E.B. choir practice weekdays at 5:30pm:**
 
-        *Event object properties:*
-        - **title**: E.B. choir practice
-        - **starts_at:** 5:30pm with date
-        - **event_recurrences_attributes**: array of EventReccurenceInput objects
-          with following day property values: 1, 2, 3, 4, 5'
+*Event object properties:*
+
+- **title**: E.B. choir practice
+- **starts_at:** 5:30pm with date
+- **event_recurrences_attributes**: array of EventReccurenceInput objects
+  with following day property values: 1, 2, 3, 4, 5"
       parameter do
         key :name, 'event'
         key :in, 'body'
@@ -385,7 +386,7 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Errors'
+          key :'$ref', '#/definitions/Error'
         end
       end # end response :default
       key :tags, ['Events']
@@ -457,7 +458,7 @@ private
       end
       # responses
       response 200 do
-        key :description, 'Created'
+        key :description, 'OK'
       end # end response 200
       response :default do
         key :description, 'Unexpected error'

@@ -1,6 +1,7 @@
 class Api::V1::TokensController < Doorkeeper::TokensController
-  include ActionController::StrongParameters
   include Swagger::Blocks
+
+  include ActionController::StrongParameters
 
   def create
     @login_data = LoginData.new(auth_params)
@@ -25,32 +26,28 @@ private
   # SWAGGER PATH: Controller Tokens
   # ================================================================================
   swagger_path '/oauth/token' do
-    # Operation: POST
-    # Authenticates user and returns authorization token
     operation :post do
       key :summary, 'Authenticates user'
       key :description, 'Authenticates user and returns authorization token'
-      # token parameters
       parameter do
         key :name, 'credentials'
         key :in, 'body'
         schema do
           key :'$ref', '#/definitions/SignInCredentials'
         end
-      end # end token parameters
-      # Response OK
+      end
+      # responses
       response 200 do
         key :description, 'OK'
         schema do
           key :'$ref', '#/definitions/SignInResponse'
         end
-      end # end Response OK
-      # Path name Auth
+      end # end response 200
       key :tags, ['Auth']
-    end # end operation :post do
+    end # end operation :post
   end
 
-  # Definition :SignInCredentials
+  # definition :SignInCredentials
   swagger_schema :SignInCredentials do
     key :type, :object
     key :required, [:grant_type, :username, :password]
@@ -74,9 +71,9 @@ private
       key :type, :string
       key :description, "User's refresh token. Required if grant_type is refresh_token"
     end
-  end # end Definition :SignInCredentials
+  end # end definition :SignInCredentials
 
-  # Definition SignInResponse
+  # definition SignInResponse
   swagger_schema :SignInResponse do
     key :type, :object
     key :required, [:access_token, :token_type, :expires_in, :refresh_token, :scope, :created_at]
@@ -94,7 +91,7 @@ private
     end
     property :created_at do
       key :type, :string
-      key :description, 'date-time'
+      key :format, 'date-time'
     end
     property :token_type do
       key :type, :string

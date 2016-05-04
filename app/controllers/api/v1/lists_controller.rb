@@ -211,7 +211,7 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Errors'
+          key :'$ref', '#/definitions/Error'
         end
       end # end response :default
       key :tags, ['Lists', 'Events']

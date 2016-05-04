@@ -46,5 +46,36 @@ class ListItem < AbstractModel
     end
   end # end swagger_schema :ListItem
 
+  # swagger_schema :ArrayOfListItems
+  swagger_schema :ArrayOfListItems do
+    key :type, :array
+    items do
+      key :'$ref', '#/definitions/ListItem'
+    end
+  end # swagger_schema :ArrayOfListItems
+
+  # swagger_schema :ListItemInput
+  swagger_schema :ListItemInput do
+    key :type, :object
+    property :title do
+      key :type, :string
+      key :description, 'List item title'
+    end
+    property :notes do
+      key :type, :string
+      key :description, 'Additional notes'
+    end
+    property :order do
+      key :type, :integer
+      key :format, :int16
+      key :description, 'Sorting order for item in the list'
+      key :default, 0
+    end
+    property :done do
+      key :type, :boolean
+      key :description, 'Shows whether user finished with this item or not'
+      key :default, false
+    end
+  end # end :ListItemInput
 
 end

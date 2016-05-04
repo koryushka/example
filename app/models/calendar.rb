@@ -44,7 +44,7 @@ class Calendar < AbstractModel
   # SWAGGER SCHEMA: Model Calendar
   # ================================================================================
 
-  # Definition calendar
+  # swagger_schema calendar
   swagger_schema :Calendar do
     key :type, :object
     property :id do
@@ -79,9 +79,9 @@ class Calendar < AbstractModel
       key :description, 'Specifies if calendar visible in UI'
       key :default, true
     end
-  end # end definition Calendar
+  end # end swagger_schema Calendar
 
-  # Definition ArrayOfCalendars
+  # swagger_schema ArrayOfCalendars
   swagger_schema :ArrayOfCalendars do
     key :type, :array
     items do
@@ -89,7 +89,7 @@ class Calendar < AbstractModel
     end
   end # end swagger_schema :ArrayOfCalendars
 
-  # defenition :CalendarInput
+  # swagger_schema :CalendarInput
   swagger_schema :CalendarInput do
     key :type, :object
     property :title do
@@ -116,5 +116,6 @@ class Calendar < AbstractModel
       key :description, 'Specifies if calendar visible in UI'
       key :default, true
     end
-  end
+  end # end swagger_schema :CalendarInput
+
 end

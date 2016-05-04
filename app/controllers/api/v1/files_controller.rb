@@ -72,7 +72,7 @@ class Api::V1::FilesController < ApiController
         key :description, "File's ID"
         key :in, 'path'
         key :required, true
-        key :type, :file
+        key :type, :integer
       end
       #responses
       response 200 do
@@ -96,7 +96,7 @@ class Api::V1::FilesController < ApiController
         key :description, "File's ID"
         key :in, 'path'
         key :required, true
-        key :type, :file
+        key :type, :integer
       end
       #responses
       response 204 do
