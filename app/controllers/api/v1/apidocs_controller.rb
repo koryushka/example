@@ -34,6 +34,8 @@ class Api::V1::ApidocsController < ActionController::Base
       UsersController,
       User,
       Profile,
+      GroupsController,
+      Group,
       # ValidationError,
       # ValidationErrorsContainer,
       # ValidationError,
