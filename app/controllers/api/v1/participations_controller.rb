@@ -5,6 +5,16 @@ class Api::V1::ParticipationsController < ApiController
 
   def index
     @participations = find_participationable.participations
+                          .includes(sender: :profile, user: :profile)
+  end
+
+  def index_recent
+    @participations = current_user.sent_paticipations
+                          .includes(sender: :profile, user: :profile)
+                          .references(sender: :profile, user: :profile)
+                          .select('DISTINCT ON (participations.user_id) participations.id')
+
+    render 'index'
   end
 
   def create

@@ -55,6 +55,7 @@ Rails.application.routes.draw do
           resources :participations, only: [:index, :create, :destroy]
         end
       end
+      get 'participations' => 'participations#index_recent'
 
       put 'users/me/profile' => 'profiles#update'
       get 'users/me/profile' => 'profiles#my_profile'

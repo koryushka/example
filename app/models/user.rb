@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   has_one :profile
   has_many :muted_events
   has_many :activities
+  has_many :sent_paticipations, class_name: 'Participation', foreign_key: 'sender_id'
+  has_many :participations
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

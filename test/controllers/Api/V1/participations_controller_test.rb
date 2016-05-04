@@ -49,4 +49,23 @@ class Api::V1::ParticipationsControllerTest < ActionController::TestCase
     end
   end
 
+  test 'should show recent participations sent by user' do
+    users_count = 5
+    users = FactoryGirl.create_list(:user, users_count)
+
+    resources_types.each do |resource_type|
+      resource = FactoryGirl.create(resource_type, user: @user)
+      users.each do |user|
+        Participation.create(user: user,
+                             participationable: resource,
+                             sender: @user)
+      end
+
+      get :index_recent
+      assert_response :success
+      assert_not_nil json_response
+      assert_equal users_count, json_response.size
+    end
+  end
+
 end
