@@ -28,6 +28,7 @@ class Api::V1::ApidocsController < ActionController::Base
       ListItemsController,
       ListItem,
       ListsController,
+      List,
       # ValidationError,
       # ValidationErrorsContainer,
       # ValidationError,
