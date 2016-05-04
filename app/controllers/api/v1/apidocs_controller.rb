@@ -23,6 +23,7 @@ class Api::V1::ApidocsController < ActionController::Base
       Calendar,
       EventsController,
       Event,
+      FilesController,
       # ValidationError,
       # ValidationErrorsContainer,
       # ValidationError,
