@@ -24,6 +24,7 @@ class Api::V1::ApidocsController < ActionController::Base
       EventsController,
       Event,
       FilesController,
+      File,
       # ValidationError,
       # ValidationErrorsContainer,
       # ValidationError,
