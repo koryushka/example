@@ -32,6 +32,8 @@ class Api::V1::ApidocsController < ActionController::Base
       List,
       SharingsController,
       UsersController,
+      User,
+      Profile,
       # ValidationError,
       # ValidationErrorsContainer,
       # ValidationError,

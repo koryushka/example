@@ -171,5 +171,5 @@ A verification email will be sent to the email address provided.'
       key :tags, ['Users']
     end # end operation :get
   end # end swagger_path /users/{user_id}/profile
-  
+
 end

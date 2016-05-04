@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  include Swagger::Blocks
+
   has_many :calendars
   has_many :events
   has_many :calendars_groups
@@ -28,4 +30,24 @@ class User < ActiveRecord::Base
         .where(%q[created_at + expires_in * INTERVAL '1 second' < now() OR revoked_at IS NOT NULL AND revoked_at < now()])
         .delete_all
   end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER SCHEMA: Model User
+  # ================================================================================
+
+  swagger_schema :User do
+    key :type, :object
+    property :id do
+      key :type, :integer
+    end
+    property :email do
+      key :type, :string
+    end
+    property :profile do
+      key :'$ref', '#/definitions/Profile'
+    end
+  end # end swagger_schema :User
+
 end
