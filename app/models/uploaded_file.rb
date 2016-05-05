@@ -14,6 +14,12 @@ private
     uploader.remove_file(key)
   end
 
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER SCHEMA: Model File
+  # ================================================================================
+
   # swagger_schema :File
   swagger_schema :File do
     key :type, :object
@@ -25,8 +31,7 @@ private
       key :type, :string
       key :description, 'URL of file. You can use it for file dwonloading'
     end
-
   end # end swagger_schema :File
 
-
 end
+

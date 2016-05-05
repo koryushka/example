@@ -3,6 +3,12 @@ class EventRecurrence < ActiveRecord::Base
 
   belongs_to :event
 
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER SCHEMA: Model Event Reccurence
+  # ================================================================================
+
   # swagger_schema :EventReccurenceInput
   swagger_schema :EventReccurenceInput do
     key :type, :object
@@ -37,4 +43,6 @@ For yearly recurring events:
   month of the original date/time of the event.'
     end
   end # end swagger_schema :EventReccurenceInput
+
 end
+

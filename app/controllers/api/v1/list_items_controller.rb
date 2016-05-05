@@ -48,6 +48,7 @@ private
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
   # SWAGGER PATH: Controller list items
   # ================================================================================
+
   # swagger_path /lists/{id}/items
   swagger_path '/lists/{id}/items' do
     operation :get do
@@ -110,6 +111,7 @@ private
       key :tags, ['List Items', 'Lists']
     end # end operation :post
   end # end swagger_path /lists/{id}/items
+
   # swagger_path /lists/{list_id}/items/{id}
   swagger_path '/lists/{list_id}/items/{id}' do
     operation :get do

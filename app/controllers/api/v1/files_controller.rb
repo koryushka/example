@@ -34,6 +34,7 @@ class Api::V1::FilesController < ApiController
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
   # SWAGGER PATH: Controller Files
   # ================================================================================
+
   # swagger_path /files
   swagger_path '/files' do
     operation :post do
@@ -63,6 +64,7 @@ class Api::V1::FilesController < ApiController
       key :tags, ['Files']
     end # end operation :post
   end # end /files
+
   # swagger_path /files/{id}
   swagger_path '/files/{id}' do
     operation :get do
@@ -111,7 +113,5 @@ class Api::V1::FilesController < ApiController
       key :tags, ['Files']
     end # end operation :delete
   end # end swagger_path /files/{id}
-
-
 
 end

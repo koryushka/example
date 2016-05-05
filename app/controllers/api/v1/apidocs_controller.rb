@@ -24,6 +24,7 @@ class Api::V1::ApidocsController < ActionController::Base
       Calendar,
       EventsController,
       Event,
+      EventCancellationsController,
       EventCancellation,
       EventRecurrence,
       NotificationsPrefsController,
@@ -40,16 +41,6 @@ class Api::V1::ApidocsController < ActionController::Base
       Profile,
       GroupsController,
       Group,
-      # ValidationError,
-      # ValidationErrorsContainer,
-      # ValidationError,
-
-      # Api::V1::CalendarsController,
-      # Calendar,
-      # ErrorModel,
-      # TokensController,
-      # ErrorsContainer,
-      # Error,
       self,
   ].freeze
 

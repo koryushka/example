@@ -37,6 +37,7 @@ class User < ActiveRecord::Base
   # SWAGGER SCHEMA: Model User
   # ================================================================================
 
+  # swagger_schema :User
   swagger_schema :User do
     key :type, :object
     property :id do

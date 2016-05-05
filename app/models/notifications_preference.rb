@@ -7,6 +7,12 @@ class NotificationsPreference < ActiveRecord::Base
   validates :sms, allow_blank: true, inclusion: {in: [true, false]}
   validates :push, allow_blank: true, inclusion: {in: [true, false]}
 
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER SCHEMA: Model Notification Preference
+  # ================================================================================
+
   # swagger_schema :NotificationPreference
   swagger_schema :NotificationPreference do
     key :type, :object

@@ -102,6 +102,7 @@ class Api::V1::GroupsController < ApiController
       key :tags, ['User groups']
     end # end operation :post
   end # end swagger_path /groups:
+
   # swagger_path /groups/{id}
   swagger_path '/groups/{id}' do
     operation :get do
@@ -177,6 +178,7 @@ class Api::V1::GroupsController < ApiController
       key :tags, ['User groups']
     end # end operation :delete
   end # end swagger_path /groups/{id}
+
   # swagger_path /groups/{group_id}/users
   swagger_path '/groups/{group_id}/users' do
     operation :get do
@@ -201,6 +203,7 @@ class Api::V1::GroupsController < ApiController
       key :tags, ['User groups']
     end # end operation :get
   end # end swagger_path /groups/{group_id}/users
+
   # swagger_path /groups/{group_id}/users/{user_id}
   swagger_path '/groups/{group_id}/users/{user_id}' do
     operation :post do

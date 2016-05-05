@@ -5,6 +5,12 @@ class EventCancellation < AbstractModel
 
   validates 'date', date: true, presence: true
 
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER SCHEMA: Model Event Cancellation
+  # ================================================================================
+
   #swagger_schema :EventCancellationInput
   swagger_schema :EventCancellationInput do
     key :type, :object
@@ -17,4 +23,5 @@ class EventCancellation < AbstractModel
           which the recurrence to be cancelled falls'
     end
   end # end swagger_schema :EventCancellationInput
+
 end

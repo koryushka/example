@@ -119,3 +119,4 @@ class Calendar < AbstractModel
   end # end swagger_schema :CalendarInput
 
 end
+

@@ -51,6 +51,7 @@ class Api::V1::UsersController < ApiController
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
   # SWAGGER PATH: Controller Users
   # ================================================================================
+
   # swagger_path /users
   swagger_path '/users' do
     operation :post do
@@ -74,6 +75,7 @@ A verification email will be sent to the email address provided.'
       key :tags, ['Users']
     end # end operation :post
   end # end swagger_path /users
+
   # swagger_path /users/me
   swagger_path '/users/me' do
     operation :get do
@@ -94,6 +96,7 @@ A verification email will be sent to the email address provided.'
       key :tags, ['Users']
     end # end operation :get
   end # end swagger_path /users/me
+
   # swagger_path /users/me/profile
   swagger_path '/users/me/profile' do
     operation :get do
@@ -145,6 +148,7 @@ A verification email will be sent to the email address provided.'
       key :tags, ['Users']
     end # end operation :put
   end # end swagger_path /users/me/profile
+
   # swagger_path /users/{user_id}/profile
   swagger_path '/users/{user_id}/profile' do
     operation :get do
@@ -173,3 +177,4 @@ A verification email will be sent to the email address provided.'
   end # end swagger_path /users/{user_id}/profile
 
 end
+

@@ -42,7 +42,7 @@ class CalendarsGroup < AbstractModel
     end
   end # end swagger_schema :CalendarsGroupInput
 
-
 end
+
 
 

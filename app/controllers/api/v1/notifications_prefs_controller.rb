@@ -71,7 +71,7 @@ private
   # ================================================================================
   # Swagger::Blocks
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Notification
+  # SWAGGER PATH: Controller Notifications Preferences
   # ================================================================================
 
   # swagger_path /notification_prefs/{id}
@@ -124,6 +124,5 @@ private
       key :tags, ['Notifications', 'Events']
     end # end operation :delete
   end # end swagger_path '/notification_prefs/{id}'
-
 
 end

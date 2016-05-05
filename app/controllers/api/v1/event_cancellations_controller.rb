@@ -1,4 +1,6 @@
 class Api::V1::EventCancellationsController < ApiController
+  include Swagger::Blocks
+
   before_filter only:[:create] do
     find_entity type: :event, id_param: :event_id
   end
@@ -28,4 +30,75 @@ private
   def event_cancellation_params
     params.permit(:date)
   end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER PATH: Controller Event Cancellation
+  # ================================================================================
+
+  # swagger_path /event_cancellations/{id}
+  swagger_path '/event_cancellations/{id}' do
+    operation :put do
+      key :summary, 'Updates event cancellation'
+      parameter do
+        key :name, 'id'
+        key :description, 'Event ID'
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      parameter do
+        key :name, 'data'
+        key :description, 'Cancellation data'
+        key :in, 'body'
+        key :required, true
+        schema do
+          key :'$ref', '#/definitions/EventCancellationInput'
+        end
+      end
+      # responses
+      response 200 do
+        key :description, 'Updated'
+        schema do
+          key :'$ref', '#/definitions/EventCancellation'
+        end
+      end # end response 200
+      response 400 do
+        key :description, 'Validation errors'
+        schema do
+          key :'$ref', '#/definitions/ValidationErrorsContainer'
+        end
+      end # end response 400
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', '#/definitions/ErrorsContainer'
+        end
+      end # end response :default
+      key :tags, ['Events', 'Event Cancellations']
+    end # end operation :put
+    operation :delete do
+      key :summary, 'Removes event cancellation'
+      parameter do
+        key :name, 'id'
+        key :description, 'Event ID'
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      # responses
+      response 204 do
+        key :description, 'Deleted'
+      end # end response 204
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', '#/definitions/ErrorsContainer'
+        end
+      end # end response :default
+      key :tags, ['Events', 'Event Cancellations']
+    end # end operation :delete
+  end # end swagger_path /event_cancellations/{id}
+
 end

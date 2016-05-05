@@ -19,6 +19,7 @@ class ListItem < AbstractModel
   # SWAGGER SCHEMA: Model List Item
   # ================================================================================
 
+  # swagger_schema :ListItem
   swagger_schema :ListItem do
     key :type, :object
     property :id do

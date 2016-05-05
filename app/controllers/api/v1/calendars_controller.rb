@@ -44,6 +44,7 @@ private
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
   # SWAGGER PATH: Controller Calendars
   # ================================================================================
+
   # swagger_path /calendars
   swagger_path '/calendars' do
     operation :get do

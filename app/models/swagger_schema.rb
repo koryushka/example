@@ -2,6 +2,12 @@
 class SwaggerSchema
   include Swagger::Blocks
 
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER SCHEMA: Error Models and Participation
+  # ================================================================================
+
   # swagger_schema :ErrorsContainer
   swagger_schema :ErrorsContainer do
     key :type, :object
@@ -153,4 +159,5 @@ document or list'
       key :type, :integer
     end
   end # end swagger_schema :SharingInput
+
 end

@@ -25,6 +25,8 @@ private
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
   # SWAGGER PATH: Controller Tokens
   # ================================================================================
+
+  # swagger_path /oauth/token
   swagger_path '/oauth/token' do
     operation :post do
       key :summary, 'Authenticates user'
@@ -45,7 +47,7 @@ private
       end # end response 200
       key :tags, ['Auth']
     end # end operation :post
-  end
+  end # end swagger_path /oauth/token
 
   # definition :SignInCredentials
   swagger_schema :SignInCredentials do

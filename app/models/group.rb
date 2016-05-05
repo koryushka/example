@@ -12,6 +12,7 @@ class Group < AbstractModel
   # SWAGGER SCHEMA: Model Group
   # ================================================================================
 
+  # swagger_schema :Group
   swagger_schema :Group do
     key :type, :object
     property :id do

@@ -229,6 +229,7 @@ Examples:
       key :tags, ['Events']
     end # end operation :delete
   end # end swagger_path /events/{id}
+
   # swagger_path /events/{id}/cancellations
   swagger_path '/events/{id}/cancellations' do
     operation :post do
@@ -271,69 +272,7 @@ Examples:
       key :tags, ['Events', 'Event Cancellations']
     end # end operation :post
   end # end swagger_path /events/{id}/cancellations
-  # swagger_path /event_cancellations/{id}
-  swagger_path '/event_cancellations/{id}' do
-    operation :put do
-      key :summary, 'Updates event cancellation'
-      parameter do
-        key :name, 'id'
-        key :description, 'Event ID'
-        key :in, 'path'
-        key :required, true
-        key :type, :integer
-      end
-      parameter do
-        key :name, 'data'
-        key :description, 'Cancellation data'
-        key :in, 'body'
-        key :required, true
-        schema do
-          key :'$ref', '#/definitions/EventCancellationInput'
-        end
-      end
-      # responses
-      response 200 do
-        key :description, 'Updated'
-        schema do
-          key :'$ref', '#/definitions/EventCancellation'
-        end
-      end # end response 200
-      response 400 do
-        key :description, 'Validation errors'
-        schema do
-          key :'$ref', '#/definitions/ValidationErrorsContainer'
-        end
-      end # end response 400
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
-        end
-      end # end response :default
-      key :tags, ['Events', 'Event Cancellations']
-    end # end operation :put
-    operation :delete do
-      key :summary, 'Removes event cancellation'
-      parameter do
-        key :name, 'id'
-        key :description, 'Event ID'
-        key :in, 'path'
-        key :required, true
-        key :type, :integer
-      end
-      # responses
-      response 204 do
-        key :description, 'Deleted'
-      end # end response 204
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
-        end
-      end # end response :default
-      key :tags, ['Events', 'Event Cancellations']
-    end # end operation :delete
-  end # end swagger_path /event_cancellations/{id}
+
   # swagger_path /events/{event_id}/lists/{list_id}
   swagger_path '/events/{event_id}/lists/{list_id}' do
     operation :post do
@@ -445,6 +384,7 @@ Examples:
       key :tags, ['Notifications', 'Events']
     end # end operation :post
   end # end swagger_path /events/{id}/notifications
+
   # swagger_path /events/{id}/mute
   swagger_path '/events/{id}/mute' do
     operation :post do
@@ -469,6 +409,7 @@ Examples:
       key :tags, ['Notifications', 'Events']
     end # end operation :post
   end # end swagger_path /events/{id}/mute
+
   # swagger_path /events/{id}/unmute
   swagger_path '/events/{id}/unmute' do
     operation :delete do
@@ -494,4 +435,5 @@ Examples:
     end # end operation :delete
   end # end swagger_path /events/{id}/unmute
 end
+
 

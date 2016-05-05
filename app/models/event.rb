@@ -315,4 +315,5 @@ Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'"
       end
     end
   end # end swagger_schema :EventInput
+
 end

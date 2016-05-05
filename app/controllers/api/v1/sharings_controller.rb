@@ -51,6 +51,7 @@ private
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
   # SWAGGER PATH: Controller Sharings (& /participations)
   # ================================================================================
+
   # swagger_path /sharings
   swagger_path '/sharings' do
     operation :post do
@@ -72,6 +73,7 @@ private
       key :tags, ['Sharings']
     end # end operation :post
   end # end swagger_path /sharings
+
   # swagger_path /participations
   swagger_path '/participations' do
     operation :get do
@@ -113,6 +115,7 @@ shared BY current user'
       key :tags, ['Participations']
     end # end operation :post
   end # end swagger_path /participations
+
   # swagger_path /participations/:id
   swagger_path '/participations/:id' do
     operation :put do
