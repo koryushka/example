@@ -16,9 +16,12 @@ class Participation < AbstractModel
 
   def change_status_to(status)
     update(status: status)
-    activity = Activity.new(notificationable: self,
-                            user: user,
-                            activity_type: status)
-    activities << activity
+
+    unless status == PENDING
+      activity = Activity.new(notificationable: self,
+                              user: user,
+                              activity_type: status)
+      activities << activity
+    end
   end
 end

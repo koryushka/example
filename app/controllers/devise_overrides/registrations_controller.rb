@@ -1,6 +1,18 @@
 class DeviseOverrides::RegistrationsController < DeviseTokenAuth::RegistrationsController
   include Doorkeeper::Helpers::Controller
+
+  after_action :accept_family_invitation, only: [:create]
 protected
+  def accept_family_invitation
+    user = @resource
+    participation = Participation.where(email: user.email,
+                                        participationable_type: Group.name,
+                                        status: Participation::PENDING).first
+    return if participation.nil?
+
+    participation.change_status_to(Participation::ACCEPTED)
+  end
+
   # overriding of DeviseTokenAuth::Concerns::SetUserByToken
   def set_user_by_token(mapping=nil)
     # determine target authentication class

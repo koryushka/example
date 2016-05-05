@@ -23,19 +23,21 @@ class Api::V1::ParticipationsController < ApiController
     existing_users = participation_params[:user_ids] || []
 
     participation_params[:emails].each do |email|
-      next if Participation.exists?(email: email,
-                               participationable_type: participationable.class.name,
-                               participationable_id: participationable.id,
-                               status: Participation::ACCEPTED)
+      next if current_user.sent_paticipations.exists?(email: email,
+                                                      participationable_type: participationable.class.name,
+                                                      participationable_id: participationable.id,
+                                                      status: Participation::ACCEPTED)
 
       existing_user = User.where(email: email).select(:id).first
       unless existing_user.nil?
         existing_users << existing_user.id
         next
       end
+      participation = current_user.sent_paticipations
+                          .where(email: email, participationable: participationable).first
       participation = Participation.create(email: email,
-                           participationable: participationable,
-                           sender: current_user)
+                                           participationable: participationable,
+                                           sender: current_user) if participation.nil?
       ParticipationsMailer.invitation(participation).deliver_now
     end if participation_params[:emails]
 
@@ -68,7 +70,7 @@ class Api::V1::ParticipationsController < ApiController
     render nothing: true
   end
 
-protected
+  protected
   def participation_params
     params.permit(:messaage, emails: [], user_ids: [])
   end
