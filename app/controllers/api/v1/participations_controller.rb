@@ -17,16 +17,34 @@ class Api::V1::ParticipationsController < ApiController
     render 'index'
   end
 
+  # must be refactoried!
   def create
     participationable = find_participationable
+    existing_users = participation_params[:user_ids] || []
 
     participation_params[:emails].each do |email|
-      Participation.create(email: email,
+      next if Participation.exists?(email: email,
+                               participationable_type: participationable.class.name,
+                               participationable_id: participationable.id,
+                               status: Participation::ACCEPTED)
+
+      existing_user = User.where(email: email).select(:id).first
+      unless existing_user.nil?
+        existing_users << existing_user.id
+        next
+      end
+      participation = Participation.create(email: email,
                            participationable: participationable,
                            sender: current_user)
+      ParticipationsMailer.invitation(participation).deliver_now
     end if participation_params[:emails]
 
     participation_params[:user_ids].each do |user_id|
+      next if Participation.exists?(user_id: user_id,
+                                    participationable_type: participationable.class.name,
+                                    participationable_id: participationable.id,
+                                    status: Participation::ACCEPTED)
+      next unless User.exists?(id: user_id)
       Participation.create(user: User.find(user_id),
                            participationable: participationable,
                            sender: current_user)
@@ -56,7 +74,7 @@ protected
   end
 
   def find_participationable
-    klass = [Event, List].detect { |c| params["#{c.name.underscore}_id"] }
+    klass = [Event, List, Group].detect { |c| params["#{c.name.underscore}_id"] }
     klass.find(params["#{klass.name.underscore}_id"])
   end
 end

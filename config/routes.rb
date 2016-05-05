@@ -51,7 +51,7 @@ Rails.application.routes.draw do
       end
       delete 'groups/:id/leave' => 'groups#leave'
 
-      [:lists, :events].each do |resource|
+      [:lists, :events, :groups].each do |resource|
         resources resource do
           resources :participations, only: [:index, :create, :destroy]
         end
