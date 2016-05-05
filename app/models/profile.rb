@@ -37,4 +37,20 @@ class Profile < AbstractModel
     end
   end # end swagger_schema :Profile
 
+  # swagger_schema :ProfileInput
+  swagger_schema :ProfileInput do
+    key :type, :object
+    property :full_name do
+      key :type, :string
+    end
+    property :image_url do
+      key :type, :string
+      key :description, 'Avatar URL'
+    end
+    property :color do
+      key :type, :string
+      key :description, 'Hex string representation of color'
+    end
+  end # end swagger_schema ProfileInput
+
 end

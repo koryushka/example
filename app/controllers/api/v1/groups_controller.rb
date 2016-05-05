@@ -194,7 +194,7 @@ class Api::V1::GroupsController < ApiController
         schema do
           key :type, :array
           items do
-            key ':$ref', '#/definitions/User'
+            key :'$ref', '#/definitions/User'
           end
         end
       end # end response 200

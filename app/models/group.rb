@@ -23,4 +23,13 @@ class Group < AbstractModel
     end
   end # end swagger_schema :Group
 
+  swagger_schema :GroupInput do
+    key :type, :object
+    key :required, :title
+    property :title do
+      key :type, :string
+      key :description, 'Group title'
+    end
+  end # end swagger_schema :GroupInput
+
 end
