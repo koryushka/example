@@ -26,6 +26,10 @@ Rails.application.routes.draw do
         resources :notifications_prefs, only: [:index, :create], path: 'notifications'
         resources :event_cancellations, only: [:create], path: 'cancellations'
       end
+      post 'events/:id/lists/:list_id', to: 'events#add_list'
+      delete 'events/:id/lists/:list_id', to: 'events#remove_list'
+      post 'events/:id/mute', to: 'events#mute'
+      delete 'events/:id/unmute', to: 'events#unmute'
 
       resources :event_cancellations, only: [:update, :destroy]
       resources :notifications_prefs, only: [:update, :destroy]
@@ -35,6 +39,7 @@ Rails.application.routes.draw do
       resources :lists, except: [:edit, :new] do
         resources :list_items, except: [:new, :edit], path: 'items'
       end
+      get 'lists/:list_id/events', to: 'events#index_of_list'
 
       resources :sharings, only: [:create, :destroy]
       get 'sharings/resources' => 'sharings#resources'

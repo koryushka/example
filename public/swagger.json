@@ -505,7 +505,7 @@
                         "description": "OK"
                     },
                     "406": {
-                        "description": "Impossible to event to the same calendar twice",
+                        "description": "Impossible add event to the same calendar twice",
                         "schema": {
                             "$ref": "#/definitions/ErrorsContainer"
                         }
@@ -523,7 +523,7 @@
                 ]
             },
             "delete": {
-                "summary": "Removed spcified event from specified calendar",
+                "summary": "Removes spcified event from specified calendar",
                 "parameters": [
                     {
                         "name": "id",
@@ -835,6 +835,74 @@
                 "tags": [
                     "Events",
                     "Event Cancellations"
+                ]
+            }
+        },
+        "/events/{event_id}/lists/{list_id}": {
+            "post": {
+                "summary": "Assigns specified list to specified event",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "description": "Event ID",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "list_id",
+                        "description": "ID of list which should be added",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorsContainer"
+                        }
+                    }
+                },
+                "tags": [
+                    "Events"
+                ]
+            },
+            "delete": {
+                "summary": "Removes spcified list from specified event",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "description": "Event ID",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "list_id",
+                        "description": "ID of list which should be removed",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Events"
                 ]
             }
         },
@@ -1167,6 +1235,42 @@
                 ]
             }
         },
+        "/lists/{id}/events": {
+            "get": {
+                "summary": "Show events",
+                "description": "Returns all events which have list specified by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "List's ID",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Event"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Lists",
+                    "Events"
+                ]
+            }
+        },
         "/lists/{list_id}/items/{id}": {
             "get": {
                 "summary": "Shows list item",
@@ -1399,6 +1503,64 @@
                         "schema": {
                             "$ref": "#/definitions/NotificationPreference"
                         }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Notifications",
+                    "Events"
+                ]
+            }
+        },
+        "/events/{id}/mute": {
+            "post": {
+                "summary": "Stops sending notifications for specified event",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Event ID",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Notifications",
+                    "Events"
+                ]
+            }
+        },
+        "/events/{id}/unmute": {
+            "delete": {
+                "summary": "Re-starts sending notifications for specified event",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Event ID",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "default": {
                         "description": "Unexpected error",
@@ -1997,6 +2159,10 @@
                     "type": "string",
                     "description": "Location name. It might be city name, neighborhood name or anything else"
                 },
+                "muted": {
+                    "type": "boolean",
+                    "description": "Shows whether user receives notifications related to this event"
+                },
                 "event_recurrences_attributes": {
                     "type": "array",
                     "items": {
@@ -2008,6 +2174,9 @@
                     "items": {
                         "$ref": "#/definitions/EventCancellation"
                     }
+                },
+                "list": {
+                    "$ref": "#/definitions/List"
                 }
             }
         },

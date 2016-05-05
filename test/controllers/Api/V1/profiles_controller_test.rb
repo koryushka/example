@@ -20,9 +20,9 @@ class Api::V1::ProfilesControllerTest < ActionController::TestCase
 
   #### Profile update group
   test 'should update profile of current user' do
-    new_full_name = Faker::Name.name
-    put :update, full_name: new_full_name
+    new_first_name = Faker::Name.first_name
+    put :update, first_name: new_first_name
     assert_response :success
-    assert_equal json_response['full_name'], new_full_name
+    assert_equal json_response['first_name'], new_first_name
   end
 end
