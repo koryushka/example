@@ -11,7 +11,8 @@ Rails.application.routes.draw do
         skip_controllers :authorizations, :applications, :authorized_applications
       end
       mount_devise_token_auth_for 'User', at: 'users', controllers: {
-          registrations: 'devise_overrides/registrations'
+          registrations: 'devise_overrides/registrations',
+          passwords: 'devise_overrides/passwords'
       }
       get 'users/me' => 'users#me'
       #put 'users' => 'users#update'

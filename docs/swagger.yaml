@@ -52,6 +52,70 @@ paths:
             $ref: '#/definitions/ErrorsContainer'
       tags:
         - Users
+  /users/password:
+    post:
+      summary: Starts password resetting process
+      description: Accepts email and redirect_url as params. The user matching the email param will be sent instructions on how to reset their password. redirect_url is the url to which the user will be redirected after visiting the link contained in the email.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordResetInput'
+      responses:
+        200:
+          description: OK
+        400:
+          description: Validation error
+          schema:
+            $ref: '#/definitions/ValidationError'
+        404:
+          description: Unable to find user with given email
+        default:
+          description: Unxpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Password reset
+    put:
+      summary: Updates user's password and finishes password resetting process
+      description: "This method changes user's password. It requires values of params: client_id, token and uid. These params can be obtained when user click on link which were sent after /users/password calling"
+      parameters:
+        - name: client
+          description: Value of cleint_id query param should be placed here
+          type: string
+          in: header
+          required: true
+        - name: uid
+          description: Value of uid query param should be placed here
+          type: string
+          in: header
+          required: true
+        - name: access-token
+          description: Value of token query param should be placed here
+          type: string
+          in: header
+          required: true
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordChangeInput'
+      responses:
+        200:
+          description: OK
+        400:
+          description: Validation error
+          schema:
+            $ref: '#/definitions/ValidationError'
+        404:
+          description: Token is invalid or expired
+        default:
+          description: Unxpected error
+          schema:
+            $ref: '#/definitions/ErrorsContainer'
+      tags:
+        - Password reset
   /users/me:
     get:
       summary: Current user with profile
@@ -1370,6 +1434,29 @@ definitions:
       expires_in:
         type: integer
         description: Access_token expiration in seconds
+  PasswordResetInput:
+    type: object
+    required:
+      - email
+      - redirect_url
+    properties:
+      email:
+        description: Email of user who requested password resetting
+        type: string
+        format: email
+      redirect_url:
+        description: The url to which the user will be redirected after visiting the link contained in the received email
+        type: string
+        format: url
+  PasswordChangeInput:
+    type: object
+    properties:
+      password:
+        description: New password
+        type: string
+      password_confirmation:
+        description: New password confirmation
+        type: string
   User:
     type: object
     properties:
