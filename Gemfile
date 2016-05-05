@@ -12,7 +12,7 @@ gem 'jbuilder', '~> 2.0'
 #gem 'bcrypt', '~> 3.1.7'
 gem 'bcrypt'
 
-gem 'devise'
+#gem 'devise'
 gem 'devise_token_auth'
 gem 'doorkeeper'
 
