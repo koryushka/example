@@ -52,6 +52,8 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
+  config.action_mailer.default_url_options = { host: 'staging.curagolife.com' }
+
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks                            = true
@@ -86,4 +88,15 @@ Rails.application.configure do
     config.bucket  = 'curago-staging'
     config.subdir  = 'files'
   end
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      address: 'email-smtp.us-west-2.amazonaws.com',
+      port: 587, # Port 25 is throttled on AWS
+      user_name: 'AKIAIJ767QJKJRCQ45UQ', # Your SMTP user here.
+      password: 'As6Sc0bXvxuLk/ROuDdJSK/tvg+2sDcgEnDYIhgGNpdX', # Your SMTP password here.
+      authentication: :login,
+      enable_starttls_auto: true
+  }
+  ActionMailer::Base.default from: 'bdrazhzhov@weezlabs.com'
 end
