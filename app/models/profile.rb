@@ -1,4 +1,5 @@
 class Profile < AbstractModel
+  include Swagger::Blocks
   belongs_to :user
 
   validates :full_name, length: {maximum: 64}
