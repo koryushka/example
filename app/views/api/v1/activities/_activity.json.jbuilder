@@ -1,4 +1,4 @@
-json.extract! activity, :id, :activity_type
+json.extract! activity, :id, :activity_type, :created_at
 json.kind activity.notificationable_type
 json.activity_object do
   partial_name = activity.notificationable_type.downcase

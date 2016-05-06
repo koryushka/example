@@ -19,7 +19,7 @@ class Participation < AbstractModel
 
     unless status == PENDING
       activity = Activity.new(notificationable: self,
-                              user: user,
+                              user: sender,
                               activity_type: status)
       activities << activity
     end
