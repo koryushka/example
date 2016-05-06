@@ -10,41 +10,6 @@ class Api::V1::CalendarsGroupsController < ApiController
     @groups = current_user.calendars_groups
   end
 
-  def show
-    render partial: 'group', locals: { group: @calendars_group }
-  end
-
-  def create
-    @calendars_group = CalendarsGroup.new(calendars_group_params)
-    @calendars_group.user = current_user
-
-    return render nothing: true, status: :internal_server_error unless @calendars_group.save
-    render partial: 'group', locals: { group: @calendars_group }, status: :created
-  end
-
-  def update
-    @calendars_group.assign_attributes(calendars_group_params)
-
-    return render nothing: true, status: :internal_server_error unless @calendars_group.save
-    render partial: 'group', locals: { group: @calendars_group }, status: :created
-  end
-
-  def destroy
-    @calendars_group.destroy
-    render nothing: true, status: :no_content
-  end
-
-private
-  def calendars_group_params
-    params.permit(:title)
-  end
-
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Calendar Group
-  # ================================================================================
-
   # swagger_path '/calendars_groups'
   swagger_path '/calendars_groups' do
     operation :get do
@@ -99,6 +64,40 @@ private
       key :tags, ['Calendar Groups']
     end # end operation :post
   end # end swagger_path '/calendars_groups'
+  def show
+    render partial: 'group', locals: { group: @calendars_group }
+  end
+
+  def create
+    @calendars_group = CalendarsGroup.new(calendars_group_params)
+    @calendars_group.user = current_user
+
+    return render nothing: true, status: :internal_server_error unless @calendars_group.save
+    render partial: 'group', locals: { group: @calendars_group }, status: :created
+  end
+
+  def update
+    @calendars_group.assign_attributes(calendars_group_params)
+
+    return render nothing: true, status: :internal_server_error unless @calendars_group.save
+    render partial: 'group', locals: { group: @calendars_group }, status: :created
+  end
+
+  def destroy
+    @calendars_group.destroy
+    render nothing: true, status: :no_content
+  end
+
+private
+  def calendars_group_params
+    params.permit(:title)
+  end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER PATH: Controller Calendar Group
+  # ================================================================================
 
   # swagger_path '/calendars_groups/{id}'
   swagger_path '/calendars_groups/{id}' do

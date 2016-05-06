@@ -14,29 +14,6 @@ class Api::V1::EventCancellationsController < ApiController
     render partial: 'event_cancellation', locals: {event_cancellation: @event_cancellation }, status: :created
   end
 
-  def update
-    @event_cancellation.assign_attributes(event_cancellation_params)
-
-    return render nothing: true, status: :internal_server_error unless @event_cancellation.save
-    render partial: 'event_cancellation', locals: {event_cancellation: @event_cancellation }
-  end
-
-  def destroy
-    @event_cancellation.destroy
-    render nothing: true, status: :no_content
-  end
-
-private
-  def event_cancellation_params
-    params.permit(:date)
-  end
-
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Event Cancellation
-  # ================================================================================
-
   # swagger_path /event_cancellations/{id}
   swagger_path '/event_cancellations/{id}' do
     operation :put do
@@ -100,5 +77,29 @@ private
       key :tags, ['Events', 'Event Cancellations']
     end # end operation :delete
   end # end swagger_path /event_cancellations/{id}
+  def update
+    @event_cancellation.assign_attributes(event_cancellation_params)
+
+    return render nothing: true, status: :internal_server_error unless @event_cancellation.save
+    render partial: 'event_cancellation', locals: {event_cancellation: @event_cancellation }
+  end
+
+  def destroy
+    @event_cancellation.destroy
+    render nothing: true, status: :no_content
+  end
+
+private
+  def event_cancellation_params
+    params.permit(:date)
+  end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER PATH: Controller Event Cancellation
+  # ================================================================================
+
+
 
 end

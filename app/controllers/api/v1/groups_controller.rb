@@ -5,47 +5,6 @@ class Api::V1::GroupsController < ApiController
   authorize_resource
   check_authorization
 
-  def index
-    @groups = current_user.groups
-  end
-
-  def show
-    render partial: 'group', locals: {group: @group }
-  end
-
-  def create
-    @group = Group.new(group_params)
-    @group.owner = current_user
-
-
-    return render nothing: true, status: :internal_server_error unless @group.save
-    render partial: 'group', locals: {group: @group }, status: :created
-  end
-
-  def update
-    @group.assign_attributes(group_params)
-
-
-    return render nothing: true, status: :internal_server_error unless @group.save
-    render partial: 'group', locals: {group: @group }
-  end
-
-  def destroy
-    @group.destroy
-    render nothing: true, status: :no_content
-  end
-
-  private
-  def group_params
-    params.permit(:title)
-  end
-
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Groups
-  # ================================================================================
-
   #swagger_path /groups:
   swagger_path '/groups' do
     operation :get do
@@ -102,6 +61,46 @@ class Api::V1::GroupsController < ApiController
       key :tags, ['User groups']
     end # end operation :post
   end # end swagger_path /groups:
+  def index
+    @groups = current_user.groups
+  end
+
+  def show
+    render partial: 'group', locals: {group: @group }
+  end
+
+  def create
+    @group = Group.new(group_params)
+    @group.owner = current_user
+
+
+    return render nothing: true, status: :internal_server_error unless @group.save
+    render partial: 'group', locals: {group: @group }, status: :created
+  end
+
+  def update
+    @group.assign_attributes(group_params)
+
+
+    return render nothing: true, status: :internal_server_error unless @group.save
+    render partial: 'group', locals: {group: @group }
+  end
+
+  def destroy
+    @group.destroy
+    render nothing: true, status: :no_content
+  end
+
+  private
+  def group_params
+    params.permit(:title)
+  end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER PATH: Controller Groups
+  # ================================================================================
 
   # swagger_path /groups/{id}
   swagger_path '/groups/{id}' do

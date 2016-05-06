@@ -3,29 +3,6 @@ class Api::V1::TokensController < Doorkeeper::TokensController
 
   include ActionController::StrongParameters
 
-  def create
-    @login_data = LoginData.new(auth_params)
-    unless @login_data.valid?
-      return render json: { validation_errors: @login_data.errors.messages }, status: :bad_request
-    end
-
-    super
-
-    server.resource_owner.clean_tokens if server.resource_owner # resource owner is an instance of User model
-  end
-
-private
-
-  def auth_params
-    params.permit(:username, :password, :refresh_token, :scope, :grant_type)
-  end
-
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Tokens
-  # ================================================================================
-
   # swagger_path /oauth/token
   swagger_path '/oauth/token' do
     operation :post do
@@ -48,6 +25,28 @@ private
       key :tags, ['Auth']
     end # end operation :post
   end # end swagger_path /oauth/token
+  def create
+    @login_data = LoginData.new(auth_params)
+    unless @login_data.valid?
+      return render json: { validation_errors: @login_data.errors.messages }, status: :bad_request
+    end
+
+    super
+
+    server.resource_owner.clean_tokens if server.resource_owner # resource owner is an instance of User model
+  end
+
+private
+
+  def auth_params
+    params.permit(:username, :password, :refresh_token, :scope, :grant_type)
+  end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER PATH: Controller Tokens
+  # ================================================================================
 
   # swagger_schema :SignInCredentials
   swagger_schema :SignInCredentials do

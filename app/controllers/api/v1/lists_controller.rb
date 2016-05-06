@@ -6,44 +6,6 @@ class Api::V1::ListsController < ApiController
   authorize_resource
   check_authorization
 
-  def index
-    @lists = current_user.lists.includes(:list_items)
-  end
-
-  def show
-    render partial: 'list', locals: { list: @list }
-  end
-
-  def create
-    @list = List.new(list_params)
-    @list.user = current_user
-
-    return render nothing: true, status: :internal_server_error unless @list.save
-    render partial: 'list', locals: { list: @list }, status: :created
-  end
-
-  def update
-    @list.assign_attributes(list_params)
-
-    return render nothing: true, status: :internal_server_error unless @list.save
-    render partial: 'list', locals: { list: @list }
-  end
-
-  def destroy
-    @list.destroy
-    render nothing: true, status: :no_content
-  end
-
-private
-  def list_params
-    params.permit(:title, :notes, :kind)
-  end
-
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Lists
-  # ================================================================================
   #swagger_path /lists
   swagger_path '/lists' do
     operation :get do
@@ -98,6 +60,10 @@ private
       key :tags, ['Lists']
     end # end operation :post
   end # end swagger_path /lists
+  def index
+    @lists = current_user.lists.includes(:list_items)
+  end
+
   # swagger_path /lists/{id}
   swagger_path '/lists/{id}' do
     operation :get do
@@ -186,6 +152,41 @@ private
       key :tags, ['Lists']
     end # end operation :delete
   end # end /lists/{id}
+  def show
+    render partial: 'list', locals: { list: @list }
+  end
+
+  def create
+    @list = List.new(list_params)
+    @list.user = current_user
+
+    return render nothing: true, status: :internal_server_error unless @list.save
+    render partial: 'list', locals: { list: @list }, status: :created
+  end
+
+  def update
+    @list.assign_attributes(list_params)
+
+    return render nothing: true, status: :internal_server_error unless @list.save
+    render partial: 'list', locals: { list: @list }
+  end
+
+  def destroy
+    @list.destroy
+    render nothing: true, status: :no_content
+  end
+
+private
+  def list_params
+    params.permit(:title, :notes, :kind)
+  end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER PATH: Controller Lists
+  # ================================================================================
+
   # swagger_path /lists/{id}/events
   swagger_path '/lists/{id}/events' do
     operation :get do
