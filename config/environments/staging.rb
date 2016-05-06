@@ -89,14 +89,6 @@ Rails.application.configure do
     config.subdir  = 'files'
   end
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-      address: 'email-smtp.us-west-2.amazonaws.com',
-      port: 587, # Port 25 is throttled on AWS
-      user_name: 'AKIAIJ767QJKJRCQ45UQ', # Your SMTP user here.
-      password: 'As6Sc0bXvxuLk/ROuDdJSK/tvg+2sDcgEnDYIhgGNpdX', # Your SMTP password here.
-      authentication: :login,
-      enable_starttls_auto: true
-  }
-  ActionMailer::Base.default from: 'bdrazhzhov@weezlabs.com'
+  config.action_mailer.delivery_method = :ses
+  ActionMailer::Base.default from: 'app@curagolife.com'
 end
