@@ -64,7 +64,7 @@ class Api::V1::GroupsController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['User groups']
@@ -96,7 +96,7 @@ class Api::V1::GroupsController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['User groups']
@@ -124,7 +124,7 @@ class Api::V1::GroupsController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['User groups']
@@ -152,7 +152,7 @@ class Api::V1::GroupsController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['User groups']
@@ -172,7 +172,7 @@ class Api::V1::GroupsController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['User groups']

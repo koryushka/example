@@ -139,7 +139,7 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Events']
@@ -182,7 +182,7 @@ Examples:
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Events']
@@ -210,7 +210,7 @@ Examples:
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Events']
@@ -248,7 +248,7 @@ Examples:
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Events']
@@ -269,7 +269,7 @@ Examples:
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Events']
@@ -312,7 +312,7 @@ Examples:
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Events', 'Event Cancellations']
@@ -344,7 +344,7 @@ Examples:
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Events']

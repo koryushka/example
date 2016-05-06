@@ -28,7 +28,7 @@ class Api::V1::ProfilesController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Users']
@@ -52,7 +52,7 @@ class Api::V1::ProfilesController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Users']
@@ -83,7 +83,7 @@ class Api::V1::ProfilesController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
       key :tags, ['Users']

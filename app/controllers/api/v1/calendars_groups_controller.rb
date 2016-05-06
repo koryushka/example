@@ -136,7 +136,7 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response Default
       key :tags, ['Calendar Groups']
@@ -159,7 +159,7 @@ private
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response Default
       key :tags, ['Calendar Groups']
