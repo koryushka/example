@@ -5,6 +5,7 @@ class Ability
     can :manage, :all, user_id: user.id
     can :manage, Participation, sender_id: user.id
     cannot :manage, Participation, user_id: user.id
+    can [:accept, :decline], Participation, user_id: user.id
     can :leave, Group do |group|
       group.members.exists?(users: {id: user.id})
     end

@@ -1,7 +1,6 @@
 class Calendar < AbstractModel
   belongs_to :user
   has_and_belongs_to_many :events
-  has_and_belongs_to_many :calendars_groups
   has_and_belongs_to_many :complex_events, join_table: 'calendars_events', readonly: true, association_foreign_key: 'event_id'
 
   validates :title, length: {maximum: 128}, presence: true

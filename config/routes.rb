@@ -42,9 +42,6 @@ Rails.application.routes.draw do
       end
       get 'lists/:list_id/events', to: 'events#index_of_list'
 
-      resources :sharings, only: [:create, :destroy]
-      get 'sharings/resources' => 'sharings#resources'
-
       resources :groups, except: [:edit, :new] do
         get 'users' => 'users#group_index'
         post 'users/:id' => 'users#add_to_group'
@@ -58,6 +55,8 @@ Rails.application.routes.draw do
         end
       end
       get 'participations' => 'participations#index_recent'
+      post 'participations/:id/accept' => 'participations#accept'
+      delete 'participations/:id/decline' => 'participations#decline'
 
       put 'users/me/profile' => 'profiles#update'
       get 'users/me/profile' => 'profiles#my_profile'

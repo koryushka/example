@@ -8,18 +8,6 @@ class Api::V1::UsersController < ApiController
     render partial: 'user', locals: { user: current_user }, status: :created
   end
 
-  def show
-    @user = User.find_by_id(params[:id])
-    raise NotFoundException if @user.nil?
-  end
-
-  def update
-    current_user.assign_attributes(user_params)
-
-    raise InternalServerErrorException unless current_user.save
-    render partial: 'user', locals: { user: current_user }, status: :created
-  end
-
   # Group members
   def group_index
     @members = @group.members

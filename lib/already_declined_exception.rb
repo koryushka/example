@@ -1,0 +1,2 @@
+class AlreadyDeclinedException < Exception
+end

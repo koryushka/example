@@ -14,14 +14,34 @@ class Participation < AbstractModel
     change_status_to(PENDING)
   end
 
+  def pending?
+    status == PENDING
+  end
+
+  def accepted?
+    status == ACCEPTED
+  end
+
+  def declined?
+    status == DECLINED
+  end
+
   def change_status_to(status)
     update(status: status)
 
-    unless status == PENDING
+    activity = nil
+
+    if pending? && user.present?
+      activity = Activity.new(notificationable: self,
+                              user: user,
+                              activity_type: status)
+    elsif !pending?
+      # sending notification about invitation acceptance to inviter
       activity = Activity.new(notificationable: self,
                               user: sender,
                               activity_type: status)
-      activities << activity
     end
+
+    activities << activity unless activity.nil?
   end
 end

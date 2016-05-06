@@ -39,7 +39,7 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
   #### group update group
   test 'should upadte existing group' do
     group = FactoryGirl.create(:group, owner: @user)
-    new_title = Faker::Lorem.word
+    new_title = 'New title'
     put :update, id: group.id, title: new_title
     assert_response :success
     assert_equal json_response['title'], new_title

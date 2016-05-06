@@ -21,10 +21,10 @@ class ApiController < ActionController::Base
     }, status: :forbidden
   end
 
-  rescue_from ActiveRecord::RecordNotUnique do
+  rescue_from ActiveRecord::RecordNotUnique do |e|
     render json: {
         code: 3,
-        message: t('errors.messages.entity_duplication', entity_name: controller_name.classify)
+        message: t('errors.messages.entity_duplication', entity_name: controller_name.classify),
         error_data: e.message[/DETAIL:.+/]
     }, status: :not_acceptable
   end
@@ -34,6 +34,22 @@ class ApiController < ActionController::Base
         code: 4,
         message: t('errors.messages.not_found')
     }, status: :not_found
+  end
+
+  rescue_from AlreadyAcceptedException do
+    render json: {
+        code: 5,
+        message: 'This invitation is alredy accepted',
+        error_data: nil
+    }, status: :not_acceptable
+  end
+
+  rescue_from AlreadyDeclinedException do
+    render json: {
+        code: 6,
+        message: 'This invitation is alredy declined',
+        error_data: nil
+    }, status: :not_acceptable
   end
 
 private

@@ -61,11 +61,17 @@ class Api::V1::ParticipationsController < ApiController
   end
 
   def accept
+    raise AlreadyAcceptedException if @participation.accepted?
+
+    # process_participation means adding to group, event, list, etc.
+    @participation.participationable.accept_participation(@participation)
     @participation.change_status_to(Participation::ACCEPTED)
     render nothing: true
   end
 
   def decline
+    raise AlreadyDeclinedException if @participation.declined?
+
     @participation.change_status_to(Participation::DECLINED)
     render nothing: true
   end

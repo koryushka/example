@@ -4,7 +4,13 @@ class Group < AbstractModel
   has_many :participations, as: :participationable
   has_many :activities, as: :notificationable
 
+  alias_attribute :user, :owner
+
   before_destroy { members.clear }
 
   validates :title, presence: true, length: {maximum: 128}
+
+  def accept_participation(participation)
+    members << participation.user
+  end
 end
