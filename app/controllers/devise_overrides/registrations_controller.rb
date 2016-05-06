@@ -2,6 +2,15 @@ class DeviseOverrides::RegistrationsController < DeviseTokenAuth::RegistrationsC
   include Doorkeeper::Helpers::Controller
 
   after_action :accept_family_invitation, only: [:create]
+
+  rescue_from ValidationException do |e|
+    render json: {
+        code: 1,
+        messages: t('errors.messages.validation_error'),
+        validation_errors: e.model.errors.messages
+    }, status: :bad_request
+  end
+
 protected
   def accept_family_invitation
     user = @resource

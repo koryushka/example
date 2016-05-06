@@ -28,9 +28,7 @@ class Api::V1::EventsController < ApiController
     @event = Event.new(event_params)
     @event.user = current_user
 
-    unless @event.save
-      return render nothing: true, status: :internal_server_error
-    end
+    raise InternalServerErrorException unless @event.save
 
     MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
     render partial: 'event', locals: {event: @event }, status: :created

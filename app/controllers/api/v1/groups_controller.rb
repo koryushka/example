@@ -15,16 +15,14 @@ class Api::V1::GroupsController < ApiController
     @group = Group.new(group_params)
     @group.owner = current_user
 
-
-    return render nothing: true, status: :internal_server_error unless @group.save
+    raise InternalServerErrorException unless @group.save
     render partial: 'group', locals: {group: @group }, status: :created
   end
 
   def update
     @group.assign_attributes(group_params)
 
-
-    return render nothing: true, status: :internal_server_error unless @group.save
+    raise InternalServerErrorException unless @group.save
     render partial: 'group', locals: {group: @group }
   end
 

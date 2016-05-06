@@ -2,23 +2,38 @@ class ApiController < ActionController::Base
   include Doorkeeper::Helpers::Controller
   before_action :doorkeeper_authorize!
 
-  rescue_from CanCan::AccessDenied do
-    render json: {
-        code: 1,
-        message: 'You are not permited for this resourse'
-    }, status: :forbidden
+  rescue_from InternalServerErrorException do
+    render nothing: true, status: :internal_server_error
   end
 
   rescue_from ValidationException do |e|
-    render json: { validation_errors: e.model.errors.messages }, status: :bad_request
-  end
-
-  rescue_from ActiveRecord::RecordNotUnique do |e|
     render json: {
         code: 1,
-        message: "Duplication for #{controller_name.classify} entity",
+        messages: t('errors.messages.validation_error'),
+        error_data: e.model.errors.messages
+    }, status: :bad_request
+  end
+
+  rescue_from CanCan::AccessDenied do
+    render json: {
+        code: 2,
+        message: t('errors.messages.not_permitted')
+    }, status: :forbidden
+  end
+
+  rescue_from ActiveRecord::RecordNotUnique do
+    render json: {
+        code: 3,
+        message: t('errors.messages.entity_duplication', entity_name: controller_name.classify)
         error_data: e.message[/DETAIL:.+/]
     }, status: :not_acceptable
+  end
+
+  rescue_from NotFoundException do
+    render json: {
+        code: 4,
+        message: t('errors.messages.not_found')
+    }, status: :not_found
   end
 
 private
@@ -78,10 +93,7 @@ private
     entity_id = params[id_param]
     entity = relation.where(id: entity_id).first
 
-    if entity.nil?
-      render text: "Could not find #{entity_class} with following id: '#{entity_id}'", status: :not_found
-      return
-    end
+    raise NotFoundException if entity.nil?
 
     # assigning controller's class property
     property_name = entity_class_name.underscore unless property_name

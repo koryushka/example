@@ -16,14 +16,14 @@ class Api::V1::CalendarsGroupsController < ApiController
     @calendars_group = CalendarsGroup.new(calendars_group_params)
     @calendars_group.user = current_user
 
-    return render nothing: true, status: :internal_server_error unless @calendars_group.save
+    raise InternalServerErrorException unless @calendars_group.save
     render partial: 'group', locals: { group: @calendars_group }, status: :created
   end
 
   def update
     @calendars_group.assign_attributes(calendars_group_params)
 
-    return render nothing: true, status: :internal_server_error unless @calendars_group.save
+    raise InternalServerErrorException unless @calendars_group.save
     render partial: 'group', locals: { group: @calendars_group }, status: :created
   end
 

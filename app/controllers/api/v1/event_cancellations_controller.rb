@@ -8,14 +8,14 @@ class Api::V1::EventCancellationsController < ApiController
     @event_cancellation = EventCancellation.new(event_cancellation_params)
     @event_cancellation.event = @event
 
-    return render nothing: true, status: :internal_server_error unless @event_cancellation.save
+    raise InternalServerErrorException unless @event_cancellation.save
     render partial: 'event_cancellation', locals: {event_cancellation: @event_cancellation }, status: :created
   end
 
   def update
     @event_cancellation.assign_attributes(event_cancellation_params)
 
-    return render nothing: true, status: :internal_server_error unless @event_cancellation.save
+    raise InternalServerErrorException unless @event_cancellation.save
     render partial: 'event_cancellation', locals: {event_cancellation: @event_cancellation }
   end
 

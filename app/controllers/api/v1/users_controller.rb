@@ -10,22 +10,13 @@ class Api::V1::UsersController < ApiController
 
   def show
     @user = User.find_by_id(params[:id])
-
-    if @user.nil?
-      render json: {errors: [{message: "User not found #{params[:id]}", code: 404}]}, :status => :not_found
-    end
+    raise NotFoundException if @user.nil?
   end
 
   def update
     current_user.assign_attributes(user_params)
-    if current_user.valid?
-      unless current_user.save!
-        return render nothing: true, status: :internal_server_error
-      end
-    else
-      return render json: { validation_errors: current_user.errors.messages }, status: :bad_request
-    end
 
+    raise InternalServerErrorException unless current_user.save
     render partial: 'user', locals: { user: current_user }, status: :created
   end
 
