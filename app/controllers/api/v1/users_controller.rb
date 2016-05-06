@@ -68,7 +68,7 @@ A verification email will be sent to the email address provided.'
         key :name, 'data'
         key :in, 'body'
         schema do
-          key :'$ref', '#/definitions/RegistrationInput'
+          key :'$ref', :RegistrationInput
         end
       end
       # responses

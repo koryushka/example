@@ -133,7 +133,7 @@ private
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/ArrayOfEvents'
+          key :'$ref', :ArrayOfEvents
         end
       end # end response 200
       response :default do
@@ -163,20 +163,20 @@ Examples:
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/EventInput'
+          key :'$ref', :EventInput
         end
       end
       # responses
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/Event'
+          key :'$ref', :Event
         end
       end # end response 201
       response 400 do
         key :description, 'Validation errors'
         schema do
-          key :'$ref', '#/definitions/ValidationErrorsContainer'
+          key :'$ref', :ValidationErrorsContainer
         end
       end # end response 400
       response :default do
@@ -204,7 +204,7 @@ Examples:
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/Event'
+          key :'$ref', :Event
         end
       end # end response 200
       response :default do
@@ -229,20 +229,20 @@ Examples:
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/EventInput'
+          key :'$ref', :EventInput
         end
       end
       # responses
       response 201 do
         key :description, 'Updated'
         schema do
-          key :'$ref', '#/definitions/Event'
+          key :'$ref', :Event
         end
       end # end response 201
       response 400 do
         key :description, 'Validation errors'
         schema do
-          key :'$ref', '#/definitions/ValidationErrorsContainer'
+          key :'$ref', :ValidationErrorsContainer
         end
       end # end response 400
       response :default do
@@ -293,20 +293,20 @@ Examples:
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/EventCancellationInput'
+          key :'$ref', :EventCancellationInput
         end
       end
       # responses
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/EventCancellation'
+          key :'$ref', :EventCancellation
         end
       end # end response 201
       response 400 do
         key :description, 'Validation errors'
         schema do
-          key :'$ref', '#/definitions/ValidationErrorsContainer'
+          key :'$ref', :ValidationErrorsContainer
         end
       end # end response 400
       response :default do
@@ -393,7 +393,7 @@ Examples:
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/NotificationPreference'
+          key :'$ref', :NotificationPreference
         end
       end # end response 200
       response :default do
@@ -418,7 +418,7 @@ Examples:
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/NotificationPreference'
+          key :'$ref', :NotificationPreference
         end
       end # end response 201
       response :default do

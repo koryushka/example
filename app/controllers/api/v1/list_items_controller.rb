@@ -65,7 +65,7 @@ private
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/ArrayOfListItems'
+          key :'$ref', :ArrayOfListItems
         end
       end # end response 200
       response :default do
@@ -92,14 +92,14 @@ private
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/ListItemInput'
+          key :'$ref', :ListItemInput
         end
       end
       # responses
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/ListItem'
+          key :'$ref', :ListItem
         end
       end # end response 201
       response :default do
@@ -135,7 +135,7 @@ private
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/ListItem'
+          key :'$ref', :ListItem
         end
       end # end response 200
       response :default do
@@ -169,14 +169,14 @@ private
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/ListItemInput'
+          key :'$ref', :ListItemInput
         end
       end
       # responses
       response 201 do
         key :description, 'Updated'
         schema do
-          key :'$ref', '#/definitions/ListItem'
+          key :'$ref', :ListItem
         end
       end # end response 201
       response :default do

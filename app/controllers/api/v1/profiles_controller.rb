@@ -1,4 +1,6 @@
 class Api::V1::ProfilesController < ApiController
+  include Swagger::Blocks
+
   before_filter only: [:show, :update] do
     @user = current_user
     find_entity type: :user, id_param: :user_id unless params[:user_id].blank?
@@ -22,7 +24,7 @@ class Api::V1::ProfilesController < ApiController
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/Profile'
+          key :'$ref', :Profile
         end
       end # end response 200
       response :default do
@@ -34,6 +36,7 @@ class Api::V1::ProfilesController < ApiController
       key :tags, ['Users']
     end # end operation :get
   end # end swagger_path /users/{user_id}/profile
+
   def show
     render partial: 'profile', locals: {profile: @profile}
   end
@@ -46,7 +49,7 @@ class Api::V1::ProfilesController < ApiController
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/Profile'
+          key :'$ref', :Profile
         end
       end # end response 200
       response :default do
@@ -64,20 +67,20 @@ class Api::V1::ProfilesController < ApiController
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/ProfileInput'
+          key :'$ref', :ProfileInput
         end
       end
       # responses
       response 201 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/Profile'
+          key :'$ref', :Profile
         end
       end # end response 201
       response 400 do
         key :description, 'Validation error'
         schema do
-          key :'$ref', '#/definitions/ValidationError'
+          key :'$ref', :ValidationError
         end
       end # end response 400
       response :default do

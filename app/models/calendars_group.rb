@@ -29,7 +29,7 @@ class CalendarsGroup < AbstractModel
   swagger_schema :ArrayOfCalendarGroups do
     key :type, :array
     items do
-      key :'$ref', '#/definitions/CalendarsGroup'
+      key :'$ref', :CalendarsGroup
     end
   end # end swagger_schema :ArrayOfCalendarGroups
 

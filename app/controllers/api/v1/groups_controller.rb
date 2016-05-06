@@ -57,7 +57,7 @@ class Api::V1::GroupsController < ApiController
         schema do
           key :type, :array
           items do
-            key :'$ref', '#/definitions/Group'
+            key :'$ref', :Group
           end
         end
       end # end response 200
@@ -77,20 +77,20 @@ class Api::V1::GroupsController < ApiController
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/GroupInput'
+          key :'$ref', :GroupInput
         end
       end
       # responses
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/Group'
+          key :'$ref', :Group
         end
       end # end response 201
       response 400 do
         key :description, 'Validation error'
         schema do
-          key :'$ref', '#/definitions/ValidationError'
+          key :'$ref', :ValidationError
         end
       end # end response 400
       response :default do
@@ -118,7 +118,7 @@ class Api::V1::GroupsController < ApiController
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/Group'
+          key :'$ref', :Group
         end
       end # end response 200
       response :default do
@@ -142,7 +142,7 @@ class Api::V1::GroupsController < ApiController
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/GroupInput'
+          key :'$ref', :GroupInput
         end
       end
       # responses
@@ -196,7 +196,7 @@ class Api::V1::GroupsController < ApiController
         schema do
           key :type, :array
           items do
-            key :'$ref', '#/definitions/User'
+            key :'$ref', :User
           end
         end
       end # end response 200

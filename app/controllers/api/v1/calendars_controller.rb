@@ -54,7 +54,7 @@ private
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/ArrayOfCalendars'
+          key :'$ref', :ArrayOfCalendars
         end
       end # end response 200
       # response :default
@@ -75,20 +75,20 @@ private
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/CalendarInput'
+          key :'$ref', :CalendarInput
         end
       end
       # responses
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/Calendar'
+          key :'$ref', :Calendar
         end
       end # end response 201
       response 400 do
         key :description, 'Validation errors'
         schema do
-          key :'$ref', '#/definitions/ValidationErrorsContainer'
+          key :'$ref', :ValidationErrorsContainer
         end
       end # end response 400
       response :default do
@@ -118,20 +118,20 @@ private
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/CalendarInput'
+          key :'$ref', :CalendarInput
         end
       end
       # responses
       response 201 do
         key :description, 'Updated'
         schema do
-          key :'$ref', '#/definitions/CalendarInput'
+          key :'$ref', :CalendarInput
         end
       end # end response OK
       response 400 do
         key :description, 'Validation errors'
         schema do
-          key :'$ref', '#/definitions/ValidationErrorsContainer'
+          key :'$ref', :ValidationErrorsContainer
         end
       end
       # response Default
@@ -187,7 +187,7 @@ private
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/EventsContainer'
+          key :'$ref', :EventsContainer
         end
       end
       response :default do

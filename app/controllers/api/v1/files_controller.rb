@@ -52,7 +52,7 @@ class Api::V1::FilesController < ApiController
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/File'
+          key :'$ref', :File
         end
       end # end response 201
       response :default do
@@ -80,7 +80,7 @@ class Api::V1::FilesController < ApiController
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/File'
+          key :'$ref', :File
         end
       end # end response 200
       response :default do

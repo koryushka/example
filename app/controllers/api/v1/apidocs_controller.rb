@@ -38,6 +38,7 @@ class Api::V1::ApidocsController < ActionController::Base
       SharingsController,
       UsersController,
       User,
+      ProfilesController,
       Profile,
       GroupsController,
       Group,

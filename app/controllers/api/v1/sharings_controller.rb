@@ -60,14 +60,14 @@ private
         key :name, 'sharing_data'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/SharingInput'
+          key :'$ref', :SharingInput
         end
       end
       # responses
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/SharingItem'
+          key :'$ref', :SharingItem
         end
       end # end response 201
       key :tags, ['Sharings']
@@ -84,7 +84,7 @@ shared BY current user'
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/ArrayOfParticipations'
+          key :'$ref', :ArrayOfParticipations
         end
       end # end response 200
       response :default do
@@ -103,7 +103,7 @@ shared BY current user'
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/Participation'
+          key :'$ref', :Participation
         end
       end # end response 201
       response :default do
@@ -125,7 +125,7 @@ shared BY current user'
       response 201 do
         key :description, 'Updated'
         schema do
-          key :'$ref', '#/definitions/Participation'
+          key :'$ref', :Participation
         end
       end # end response 201
       response :default do

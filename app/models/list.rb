@@ -42,7 +42,7 @@ class List < AbstractModel
     property :items do
       key :type, :array
       items do
-        key :'$ref', '#/definitions/ListItem'
+        key :'$ref', :ListItem
       end
     end
   end # end swagger_schema :List
@@ -51,7 +51,7 @@ class List < AbstractModel
   swagger_schema :ArrayOfLists do
     key :type, :array
     items do
-      key :'$ref', '#/definitions/List'
+      key :'$ref', :List
     end
   end # end swagger_schema :ArrayOfLists
 

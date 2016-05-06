@@ -90,7 +90,7 @@ private
       response 201 do
         key :description, 'Updated'
         schema do
-          key :'$ref', '#/definitions/NotificationPreference'
+          key :'$ref', :NotificationPreference
         end
       end # end response 201
       response :default do

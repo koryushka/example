@@ -153,11 +153,11 @@ For reminders time zone usually does not matter'
     property :event_cancellations_attributes do
       key :type, :array
       items do
-        key :'$ref', '#/definitions/EventCancellation'
+        key :'$ref', :EventCancellation
       end
     end
     property :list do
-      key :'$ref', '#/definitions/List'
+      key :'$ref', :List
     end
   end # end swagger_schema :Event
 
@@ -165,7 +165,7 @@ For reminders time zone usually does not matter'
   swagger_schema :ArrayOfEvents do
     key :type, :array
     items do
-      key :'$ref', '#/definitions/Event'
+      key :'$ref', :Event
     end
   end # end swagger_schema :ArrayOfEvents
 
@@ -176,14 +176,14 @@ For reminders time zone usually does not matter'
       key :type, :array
       key :description, 'List of items created by current user'
       items do
-        key :'$ref', '#/definitions/Event'
+        key :'$ref', :Event
       end
     end
     property :shared_items do
       key :type, :array
       key :description, 'List of items shared with current user'
       items do
-        key :'$ref', '#/definitions/Event'
+        key :'$ref', :Event
       end
     end
   end # end swagger_schema :EventsContainer
@@ -322,7 +322,7 @@ Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'"
     property :event_cancellations_attributes do
       key :type, :array
       items do
-        key :'$ref', '#/definitions/EventCancellationInput'
+        key :'$ref', :EventCancellationInput
       end
     end
   end # end swagger_schema :EventInput

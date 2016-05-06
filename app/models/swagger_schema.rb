@@ -30,18 +30,18 @@ class SwaggerSchema
     end
   end # end swagger_schema :Error
 
-  # defenition :ValidationErrorsContainer
+  # swagger_schema :ValidationErrorsContainer
   swagger_schema :ValidationErrorsContainer do
     key :type, :object
     property :validation_errors do
       key :type, :array
       items do
-        key :'$ref', '#/definitions/ValidationError'
+        key :'$ref', :ValidationError
       end
     end
-  end # end defenition :ValidationErrorsContainer
+  end # end swagger_schema :ValidationErrorsContainer
 
-  # defenition :ValidationError
+  # swagger_schema :ValidationError
   swagger_schema :ValidationError do
     key :type, :object
     key :description, 'Name of this field will be the same as the name of model field which has validation errors.
@@ -57,7 +57,7 @@ class SwaggerSchema
         key :type, :string
       end
     end
-  end # defenition :ValidationError
+  end # end swagger_schema :ValidationError
 
   # swagger_schema :Participation
   swagger_schema :Participation do
@@ -120,7 +120,7 @@ document or list'
   swagger_schema :ArrayOfParticipations do
     key :type, :array
     items do
-      key :'$ref', '#/definitions/Participation'
+      key :'$ref', :Participation
     end
   end # swagger_schema :ArrayOfParticipations
 

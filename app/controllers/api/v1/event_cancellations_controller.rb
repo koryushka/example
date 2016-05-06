@@ -54,20 +54,20 @@ private
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/EventCancellationInput'
+          key :'$ref', :EventCancellationInput
         end
       end
       # responses
       response 200 do
         key :description, 'Updated'
         schema do
-          key :'$ref', '#/definitions/EventCancellation'
+          key :'$ref', :EventCancellation
         end
       end # end response 200
       response 400 do
         key :description, 'Validation errors'
         schema do
-          key :'$ref', '#/definitions/ValidationErrorsContainer'
+          key :'$ref', :ValidationErrorsContainer
         end
       end # end response 400
       response :default do

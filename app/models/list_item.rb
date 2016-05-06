@@ -51,7 +51,7 @@ class ListItem < AbstractModel
   swagger_schema :ArrayOfListItems do
     key :type, :array
     items do
-      key :'$ref', '#/definitions/ListItem'
+      key :'$ref', :ListItem
     end
   end # swagger_schema :ArrayOfListItems
 

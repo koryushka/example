@@ -85,7 +85,7 @@ class Calendar < AbstractModel
   swagger_schema :ArrayOfCalendars do
     key :type, :array
     items do
-      key :'$ref', '#/definitions/Calendar'
+      key :'$ref', :Calendar
     end
   end # end swagger_schema :ArrayOfCalendars
 

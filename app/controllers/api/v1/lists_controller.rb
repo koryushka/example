@@ -53,7 +53,7 @@ private
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/ArrayOfLists'
+          key :'$ref', :ArrayOfLists
         end
       end # end response 200
       response :default do
@@ -73,20 +73,20 @@ private
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/ListInput'
+          key :'$ref', :ListInput
         end
       end
       # responses
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', '#/definitions/List'
+          key :'$ref', :List
         end
       end # end response 201
       response 400 do
         key :description, 'Validation erro'
         schema do
-          key :'$ref', '#/definitions/ValidationError'
+          key :'$ref', :ValidationError
         end
       end # end response 400
       response :default do
@@ -113,7 +113,7 @@ private
       response 201 do
         key :description, 'Updated'
         schema do
-          key :'$ref', '#/definitions/List'
+          key :'$ref', :List
         end
       end # end response 201
       response :default do
@@ -139,20 +139,20 @@ private
         key :in, 'body'
         key :required, true
         schema do
-          key :'$ref', '#/definitions/ListInput'
+          key :'$ref', :ListInput
         end
       end
       # responses
       response 201 do
         key :description, 'Updated'
         schema do
-          key :'$ref', '#/definitions/List'
+          key :'$ref', :List
         end
       end # end response 201
       response 400 do
         key :description, 'Validation error'
         schema do
-          key :'$ref', '#/definitions/ValidationError'
+          key :'$ref', :ValidationError
         end
       end # end response 400
       response :default do
@@ -204,7 +204,7 @@ private
         schema do
           key :type, :array
           items do
-            key :'$ref', '#/definitions/Event'
+            key :'$ref', :Event
           end
         end
       end # end response 200

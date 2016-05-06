@@ -35,21 +35,21 @@ private
         key :name, 'credentials'
         key :in, 'body'
         schema do
-          key :'$ref', '#/definitions/SignInCredentials'
+          key :'$ref', :SignInCredentials
         end
       end
       # responses
       response 200 do
         key :description, 'OK'
         schema do
-          key :'$ref', '#/definitions/SignInResponse'
+          key :'$ref', :SignInResponse
         end
       end # end response 200
       key :tags, ['Auth']
     end # end operation :post
   end # end swagger_path /oauth/token
 
-  # definition :SignInCredentials
+  # swagger_schema :SignInCredentials
   swagger_schema :SignInCredentials do
     key :type, :object
     key :required, [:grant_type, :username, :password]
@@ -73,9 +73,9 @@ private
       key :type, :string
       key :description, "User's refresh token. Required if grant_type is refresh_token"
     end
-  end # end definition :SignInCredentials
+  end # end swagger_schema :SignInCredentials
 
-  # definition SignInResponse
+  # swagger_schema SignInResponse
   swagger_schema :SignInResponse do
     key :type, :object
     key :required, [:access_token, :token_type, :expires_in, :refresh_token, :scope, :created_at]
@@ -103,5 +103,5 @@ private
       key :type, :integer
       key :description, 'Access_token expiration in seconds'
     end
-  end # end definition SignInResponse
+  end # end swagger_schema SignInResponse
 end
