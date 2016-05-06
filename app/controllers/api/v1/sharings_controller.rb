@@ -90,7 +90,7 @@ shared BY current user'
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Error'
+          key :'$ref', :Error
         end
       end # end response :default
       key :tags, ['Participations']
@@ -109,7 +109,7 @@ shared BY current user'
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Error'
+          key :'$ref', :Error
         end
       end # end response :default
       key :tags, ['Participations']
@@ -131,7 +131,7 @@ shared BY current user'
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Error'
+          key :'$ref', :Error
         end
       end # end response :default
       key :tags, ['Participations']
@@ -146,7 +146,7 @@ shared BY current user'
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Error'
+          key :'$ref', :Error
         end
       end # end response :default
       key :tags, ['Participations']

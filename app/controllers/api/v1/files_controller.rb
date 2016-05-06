@@ -58,7 +58,7 @@ class Api::V1::FilesController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Error'
+          key :'$ref', :Error
         end
       end # end response Default
       key :tags, ['Files']
@@ -86,7 +86,7 @@ class Api::V1::FilesController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Error'
+          key :'$ref', :Error
         end
       end # end response Default
       key :tags, ['Files']
@@ -107,7 +107,7 @@ class Api::V1::FilesController < ApiController
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', '#/definitions/Error'
+          key :'$ref', :Error
         end
       end # end response Default
       key :tags, ['Files']
