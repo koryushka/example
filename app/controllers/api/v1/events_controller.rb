@@ -78,7 +78,13 @@ Examples:
     end # end operation :post
   end # end swagger_path /events
   def index
-    @events = current_user.events.with_muted(current_user.id).includes(:event_cancellations, :event_recurrences)
+    @events = current_user.events.with_muted(current_user.id)
+                  .includes(:event_cancellations,
+                            :event_recurrences,
+                            participations: {
+                                user: :profile,
+                                sender: :profile
+                            })
   end
 
   # swagger_path /events/{id}
@@ -175,21 +181,14 @@ Examples:
     @event = Event.new(event_params)
     @event.user = current_user
 
-    unless @event.save
-      return render nothing: true, status: :internal_server_error
-    end
+    raise InternalServerErrorException unless @event.save
 
     MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
     render partial: 'event', locals: {event: @event }, status: :created
   end
 
   def update
-    @event.assign_attributes(event_params)
-
-    unless @event.save
-      return render nothing: true, status: :internal_server_error
-    end
-
+    @event.update(event_params)
     MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
     render partial: 'event', locals: {event: @event }
   end

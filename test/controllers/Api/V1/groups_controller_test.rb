@@ -39,7 +39,7 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
   #### group update group
   test 'should upadte existing group' do
     group = FactoryGirl.create(:group, owner: @user)
-    new_title = Faker::Lorem.word
+    new_title = 'New title'
     put :update, id: group.id, title: new_title
     assert_response :success
     assert_equal json_response['title'], new_title
@@ -60,5 +60,15 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
     assert_raises ActiveRecord::RecordNotFound do
       ListItem.find(group.id)
     end
+  end
+
+  test 'should remove current user from group' do
+    user = FactoryGirl.create(:user)
+    group = FactoryGirl.create(:group, owner: user)
+    group.members << @user
+
+    delete :leave, id: group.id
+    assert_response :success
+    assert_not group.members.exists?(users: {id: @user.id})
   end
 end

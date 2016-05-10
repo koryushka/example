@@ -5,6 +5,9 @@ class Api::V1::ListItemsController < ApiController
   before_filter do
     find_entity_of_current_user type: :list, id_param: :list_id
   end
+  before_filter only: [:assign, :unassign] do
+    find_entity type: :user
+  end
   after_filter :something_updated, except: [:index, :show]
   authorize_resource
   check_authorization
@@ -22,20 +25,28 @@ class Api::V1::ListItemsController < ApiController
     @list_item.list = @list
     @list_item.user = current_user
 
-    return render nothing: true, status: :internal_server_error unless @list_item.save
+    raise InternalServerErrorException unless @list_item.save
     render partial: 'list_item', locals: { list_item: @list_item }, status: :created
   end
 
   def update
     @list_item.assign_attributes(list_item_params)
 
-    return render nothing: true, status: :internal_server_error unless @list_item.save
+    raise InternalServerErrorException unless @list_item.save
     render partial: 'list_item', locals: { list_item: @list_item }
   end
 
   def destroy
     @list_item.destroy
     render nothing: true, status: :no_content
+  end
+
+  def assign
+
+  end
+
+  def unassign
+
   end
 
 private

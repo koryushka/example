@@ -27,9 +27,11 @@ class Api::V1::TokensController < Doorkeeper::TokensController
   end # end swagger_path /oauth/token
   def create
     @login_data = LoginData.new(auth_params)
-    unless @login_data.valid?
-      return render json: { validation_errors: @login_data.errors.messages }, status: :bad_request
-    end
+    return render json: {
+        code: 1,
+        messages: I18n.t('errors.messages.validation_error'),
+        validation_errors: @login_data.errors.messages
+    }, status: :bad_request unless @login_data.valid?
 
     super
 

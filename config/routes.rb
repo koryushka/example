@@ -50,15 +50,25 @@ Rails.application.routes.draw do
         post 'users/:id' => 'users#add_to_group'
         delete 'users/:id' => 'users#remove_from_group'
       end
+      delete 'groups/:id/leave' => 'groups#leave'
+
+      [:lists, :events, :groups].each do |resource|
+        resources resource do
+          resources :participations, only: [:index, :create, :destroy]
+        end
+      end
+      get 'participations' => 'participations#index_recent'
+      post 'participations/:id/accept' => 'participations#accept'
+      delete 'participations/:id/decline' => 'participations#decline'
 
       put 'users/me/profile' => 'profiles#update'
       get 'users/me/profile' => 'profiles#my_profile'
       get 'users/:user_id/profile' => 'profiles#show'
 
+      resources :activities, only: [:index]
+
       resources :apidocs, only: [:index]
 
     end
   end
-
-
 end

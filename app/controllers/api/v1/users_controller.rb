@@ -29,14 +29,6 @@ class Api::V1::UsersController < ApiController
     render partial: 'user', locals: { user: current_user }, status: :created
   end
 
-  def show
-    @user = User.find_by_id(params[:id])
-
-    if @user.nil?
-      render json: {errors: [{message: "User not found #{params[:id]}", code: 404}]}, :status => :not_found
-    end
-  end
-
   # Group members
   def group_index
     @members = @group.members

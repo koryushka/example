@@ -1,16 +1,16 @@
 class User < ActiveRecord::Base
   include Swagger::Blocks
 
-  has_many :calendars
-  has_many :events
-  has_many :calendars_groups
-  has_many :lists
-  has_many :documents
-  has_many :sharing_permissions
-  has_many :list_items
-  has_many :groups
-  has_one :profile
-  has_many :muted_events
+  has_many :calendars, dependent: :destroy
+  has_many :events, dependent: :destroy
+  has_many :lists, dependent: :destroy
+  has_many :list_items, dependent: :destroy
+  has_many :groups, dependent: :destroy
+  has_one :profile, dependent: :destroy
+  has_many :muted_events, dependent: :destroy
+  has_many :activities, dependent: :destroy
+  has_many :sent_paticipations, class_name: 'Participation', foreign_key: 'sender_id'
+  has_many :participations
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

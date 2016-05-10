@@ -74,7 +74,7 @@ class Api::V1::CalendarsController < ApiController
     @calendar = Calendar.new(calendar_params)
     @calendar.user = current_user
 
-    return render nothing: true, status: :internal_server_error unless @calendar.save
+    raise InternalServerErrorException unless @calendar.save
     render partial: 'calendar', locals: { calendar: @calendar }, status: :created
   end
 
@@ -145,7 +145,7 @@ class Api::V1::CalendarsController < ApiController
   def update
     @calendar.assign_attributes(calendar_params)
 
-    return render nothing: true, status: :internal_server_error unless @calendar.save
+    raise InternalServerErrorException unless @calendar.save
     render partial: 'calendar', locals: { calendar: @calendar }
   end
 

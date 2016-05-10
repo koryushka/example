@@ -46,7 +46,7 @@ class Api::V1::CalendarsControllerTest < ActionController::TestCase
   #### Calendar update group
   test 'should upadte existing calendar' do
     calendar = FactoryGirl.create(:calendar, user: @user)
-    new_title = Faker::Lorem.word
+    new_title = 'New title'
     put :update, id: calendar.id, title: new_title
     assert_response :success
     assert_equal json_response['title'], new_title
