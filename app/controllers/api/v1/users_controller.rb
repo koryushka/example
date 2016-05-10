@@ -80,14 +80,14 @@ A verification email will be sent to the email address provided.'
       end # end response 403
       key :tags, ['Users']
     end # end operation :post
-    operation 'put' do
+    operation :put do
       key :summary, "Updates user's data (password, email)"
       key :description, "Updates user's data (password, email). For updating password current_password field is required"
       parameter do
         key :name, 'data'
         key :in, 'body'
         schema do
-          key :'$ref', '#/definitions/UserUpdateInput'
+          key :'$ref', :UserUpdateInput
         end
       end
       # responses
@@ -106,16 +106,102 @@ A verification email will be sent to the email address provided.'
       response 422 do
         key :description, 'Incorrect request body'
         schema do
-          key :'$ref', '#/definitions/ErrorsContainer'
+          key :'$ref', :ErrorsContainer
         end
       end # end response 422
       response :default do
         key :description, 'Unxpected error'
-        key :'$ref', '#/definitions/ErrorsContainer'
+        key :'$ref', :ErrorsContainer
       end # end response :default
       key :tags, ['Users']
     end
-
   end # end swagger_path /users
+
+  swagger_path 'users/pasword' do
+    operation :post do
+      key :summary, 'Starts password resetting process'
+      key :description, 'Accepts email and redirect_url as params. The user matching the email
+param will be sent instructions on how to reset their password.
+redirect_url is the url to which the user will be redirected
+after visiting the link contained in the email.'
+      parameter do
+        key :name, 'data'
+        key :in, 'body'
+        key :required, true
+        schema do
+          key :'$ref', :PasswordResetInput
+        end
+      end
+      response 200 do
+        key :description, 'OK'
+      end
+      response 400 do
+        key :description, 'Validation error'
+        schema do
+          key :'$ref', :ValidataionError
+        end
+      end
+      response 404 do
+        key :description, 'Unable to find user with given email'
+      end
+      response :default do
+        key :description, 'Unxpected error'
+        key :'$ref', :ErrorsContainer
+      end
+      key :tags, ['Password reset']
+    end
+    operation :put do
+      key :summary, "Updates user's password and finishes password resetting process"
+      key :description, "This method changes user's password. It requires values of params:
+client_id, token and uid. These params can be obtained when user
+clicks on link which were sent after /users/password calling"
+      parameter do
+        key :name, 'client'
+        key :description, 'Value of cleint_id query param should be placed here'
+        key :in, 'header'
+        key :required, true
+        key :type, 'string'
+      end
+      parameter do
+        key :name, 'uid'
+        key :description, 'Value of uid query param should be placed here'
+        key :in, 'header'
+        key :required, true
+        key :type, 'string'
+      end
+      parameter do
+        key :name, 'access-token'
+        key :description, 'Value of token query param should be placed here'
+        key :in, 'header'
+        key :required, true
+        key :type, 'string'
+      end
+      parameter do
+        key :name, 'data'
+        key :in, 'body'
+        key :required, true
+        schema do
+          key :'$ref', :PasswordChangeInput
+        end
+      end
+      response 200 do
+        key :description, 'OK'
+      end
+      response 400 do
+        key :description, 'Validation error'
+        schema do
+          key :'$ref', :ValidataionError
+        end
+      end
+      response 404 do
+        key :description, 'Token is invalid or expired'
+      end
+      response :default do
+        key :description, 'Unxpected error'
+        key :'$ref', :ErrorsContainer
+      end
+      key :tags, ['Password reset']
+    end
+  end
 end
 

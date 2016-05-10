@@ -81,4 +81,33 @@ class User < ActiveRecord::Base
     end
   end # end swagger_schema :UserUpdateInput
 
+  swagger_schema :PasswordResetInput do
+    key :type, :object
+    key :required, %w(email redirect_url)
+    property :email do
+      key :type, :string
+      key :description, 'Email of user who requested password resetting'
+      key :format, 'email'
+    end
+    property :redirect_url do
+      key :description, 'The url to which the user will be redirected after
+visiting the link contained in the received email'
+      key :type, :string
+      key :format, :url
+    end
+  end
+
+  swagger_schema :PasswordChangeInput do
+    key :type, :object
+    key :required, %w(email redirect_url)
+    property :password do
+      key :type, :string
+      key :description, 'New password'
+    end
+    property :password_confirmation do
+      key :description, 'New password confirmation'
+      key :type, :string
+    end
+  end
+
 end
