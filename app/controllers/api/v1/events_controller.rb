@@ -35,7 +35,7 @@ class Api::V1::EventsController < ApiController
     end # end operation :get
     operation :post do
       key :summary, 'Create calendar item'
-      key :description, "Creates new calendar item.
+      key :description, 'Creates new calendar item.
 
 Examples:
 
@@ -46,7 +46,7 @@ Examples:
 - **title**: E.B. choir practice
 - **starts_at:** 5:30pm with date
 - **event_recurrences_attributes**: array of EventReccurenceInput objects
-  with following day property values: 1, 2, 3, 4, 5"
+  with following day property values: 1, 2, 3, 4, 5'
       parameter do
         key :name, 'event'
         key :in, 'body'

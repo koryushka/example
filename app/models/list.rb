@@ -48,6 +48,12 @@ class List < AbstractModel
         key :'$ref', :ListItem
       end
     end
+    property :participations do
+      key :type, :array
+      items do
+        key :'$ref', :Participation
+      end
+    end
   end # end swagger_schema :List
 
   # swagger_schema :ArrayOfLists

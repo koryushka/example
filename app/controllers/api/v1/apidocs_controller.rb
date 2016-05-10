@@ -4,7 +4,7 @@ class Api::V1::ApidocsController < ActionController::Base
   swagger_root do
     key :swagger, '2.0'
     info do
-      key :version, '1.3.0'
+      key :version, '1.4.0'
       key :title, 'Curago API'
       key :description, 'API documentation for Curago'
     end
@@ -18,8 +18,6 @@ class Api::V1::ApidocsController < ActionController::Base
   SWAGGERED_CLASSES = [
       SwaggerSchema,
       TokensController,
-      CalendarsGroupsController,
-      CalendarsGroup,
       CalendarsController,
       Calendar,
       EventsController,
@@ -35,13 +33,14 @@ class Api::V1::ApidocsController < ActionController::Base
       ListItem,
       ListsController,
       List,
-      SharingsController,
       UsersController,
       User,
       ProfilesController,
       Profile,
       GroupsController,
       Group,
+      ParticipationsController,
+      Participation,
       self,
   ].freeze
 

@@ -1,4 +1,6 @@
 class Participation < AbstractModel
+  include Swagger::Blocks
+
   belongs_to :user
   belongs_to :participationable, polymorphic: true
   belongs_to :sender, class_name: 'User', foreign_key: 'sender_id'
@@ -43,5 +45,60 @@ class Participation < AbstractModel
     end
 
     activities << activity unless activity.nil?
+  end
+
+  swagger_schema :ParticipationInput do
+    key :type, :object
+    property :user_ids do
+      key :description, 'Array of users ids which should participate events lists or groups'
+      key :type, :array
+      items do
+        key :type, :integer
+      end
+    end
+    property :emails do
+      key :description, 'Array of people emails which should participate events, lists or groups'
+      key :type, :array
+      items do
+        key :type, :string
+      end
+    end
+    property :message do
+      key :description, 'Is not being used'
+      key :type, :string
+    end
+  end
+
+  swagger_schema :Participation do
+    key :type, :object
+    key :required, %w(email redirect_url)
+    property :id do
+      key :type, :integer
+    end
+    property :email do
+      key :type, :string
+      key :format, :email
+      key :description, "Person's email which should participate events or lists"
+    end
+    property :status do
+      key :description, 'Can be: PENDING = 1, ACCEPTED = 2, DECLINED = 3'
+      key :type, :integer
+    end
+    property :kind do
+      key :type, :string
+      key :description, 'Type of participation: Event, List, Group'
+    end
+    property :message do
+      key :description, 'Is not being used'
+      key :type, :string
+    end
+    property :user do
+      key :description, 'Invited user'
+      key :'$ref', :User
+    end
+    property :sender do
+      key :description, 'User sent invitation'
+      key :'$ref', :User
+    end
   end
 end

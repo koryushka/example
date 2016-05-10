@@ -1,13 +1,70 @@
 class Api::V1::ParticipationsController < ApiController
+  include Swagger::Blocks
   before_filter :find_entity, only: [:destroy, :accept, :decline]
   authorize_resource
   check_authorization
 
+  swagger_path '/{resource}/{resource_id}/participations' do
+    operation :get do
+      key :summary, 'Shows list of participations for specified resource'
+      parameter do
+        key :name, :resource
+        key :description, "Can be 'lists', 'events' or 'groups'"
+        key :type, :string
+        key :in, :path
+        key :required, true
+      end
+      parameter do
+        key :name, :resource_id
+        key :description, "Can be 'lists', 'events' or 'groups'"
+        key :type, :integer
+        key :in, :path
+        key :required, true
+      end
+      response 200 do
+        key :description, 'OK'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Participation
+          end
+        end
+      end
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end
+      key :tags, ['Participations']
+    end
+  end
   def index
     @participations = find_participationable.participations
                           .includes(sender: :profile, user: :profile)
   end
 
+  swagger_path '/participations' do
+    operation :get do
+      key :summary, 'Returns recently sent invitations'
+      response 200 do
+        key :description, 'OK'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Participation
+          end
+        end
+      end
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end
+      key :tags, ['Participations']
+    end
+  end
   def index_recent
     @participations = current_user.sent_paticipations
                           .includes(sender: :profile, user: :profile)
@@ -17,6 +74,55 @@ class Api::V1::ParticipationsController < ApiController
     render 'index'
   end
 
+  swagger_path '/{resource}/{resource_id}/participations' do
+    operation :post do
+      key :summary, 'Adds participants to resource'
+      parameter do
+        key :name, :resource
+        key :description, "Can be 'lists', 'events' or 'groups'"
+        key :type, :string
+        key :in, :path
+        key :required, true
+      end
+      parameter do
+        key :name, :resource_id
+        key :description, "Can be 'lists', 'events' or 'groups'"
+        key :type, :integer
+        key :in, :path
+        key :required, true
+      end
+      parameter do
+        key :name, :data
+        key :in, :body
+        key :required, true
+        schema do
+          key :'$ref', :ParticipationInput
+        end
+      end
+      response 200 do
+        key :description, 'OK'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Participation
+          end
+        end
+      end
+      response 400 do
+        key :description, 'Validation error'
+        schema do
+          key :'$ref', :ValidationError
+        end
+      end
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end
+      key :tags, ['Participations']
+    end
+  end
   # must be refactoried!
   def create
     participationable = find_participationable
@@ -55,11 +161,79 @@ class Api::V1::ParticipationsController < ApiController
     render nothing: true
   end
 
+
+  swagger_path '/{resource}/{resource_id}/participations' do
+    operation :delete do
+      key :summary, 'Deletes participation from resource'
+      parameter do
+        key :name, :resource
+        key :description, "Can be 'lists', 'events' or 'groups'"
+        key :type, :string
+        key :in, :path
+        key :required, true
+      end
+      parameter do
+        key :name, :resource_id
+        key :description, "Can be 'lists', 'events' or 'groups'"
+        key :type, :integer
+        key :in, :path
+        key :required, true
+      end
+      parameter do
+        key :name, :id
+        key :description, 'Participation id'
+        key :type, :integer
+        key :in, :path
+        key :required, true
+      end
+      response 200 do
+        key :description, 'OK'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Participation
+          end
+        end
+      end
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end
+      key :tags, ['Participations']
+    end
+  end
   def destroy
     find_participationable.participations.destroy(@participation)
     render nothing: true
   end
 
+  swagger_path '/participations/{id}/accept' do
+    operation :post do
+      key :summary, 'Accepts invitation sent to Curago user'
+      parameter do
+        key :name, :id
+        key :description, 'Participation id'
+        key :type, :integer
+        key :in, :path
+        key :required, true
+      end
+      response 200 do
+        key :description, 'OK'
+      end
+      response 406 do
+        key :description, 'Invitation has been accepted earlier'
+      end
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end
+      key :tags, ['Participations']
+    end
+  end
   def accept
     raise AlreadyAcceptedException if @participation.accepted?
 
@@ -69,6 +243,31 @@ class Api::V1::ParticipationsController < ApiController
     render nothing: true
   end
 
+  swagger_path '/participations/{id}/decline' do
+    operation :post do
+      key :summary, 'Declines invitation sent to Curago user'
+      parameter do
+        key :name, :id
+        key :description, 'Participation id'
+        key :type, :integer
+        key :in, :path
+        key :required, true
+      end
+      response 200 do
+        key :description, 'OK'
+      end
+      response 406 do
+        key :description, 'Invitation has been declined earlier'
+      end
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end
+      key :tags, ['Participations']
+    end
+  end
   def decline
     raise AlreadyDeclinedException if @participation.declined?
 
