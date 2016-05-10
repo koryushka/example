@@ -76,10 +76,46 @@ A verification email will be sent to the email address provided.'
         key :description, 'OK'
       end # end response 200
       response 403 do
-        key :description, 'redurect_url is missing or not allowed, or user creation error'
+        key :description, 'redirect_url is missing or not allowed, or user creation error'
       end # end response 403
       key :tags, ['Users']
     end # end operation :post
+    operation 'put' do
+      key :summary, "Updates user's data (password, email)"
+      key :description, "Updates user's data (password, email). For updating password current_password field is required"
+      parameter do
+        key :name, 'data'
+        key :in, 'body'
+        schema do
+          key :'$ref', '#/definitions/UserUpdateInput'
+        end
+      end
+      # responses
+      response 200 do
+        key :description, 'OK'
+      end # end response 200
+      response 403 do
+        key :description, 'Update error'
+        schema do
+          key :'$ref', '#/definitions/ValidationError'
+        end
+      end # end response 403
+      response 404 do
+        key :description, 'User not found'
+      end # end response 404
+      response 422 do
+        key :description, 'Incorrect request body'
+        schema do
+          key :'$ref', '#/definitions/ErrorsContainer'
+        end
+      end # end response 422
+      response :default do
+        key :description, 'Unxpected error'
+        key :'$ref', '#/definitions/ErrorsContainer'
+      end # end response :default
+      key :tags, ['Users']
+    end
+
   end # end swagger_path /users
 end
 

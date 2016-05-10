@@ -64,4 +64,21 @@ class User < ActiveRecord::Base
     end
   end # end swagger_schema :RegistrationInput
 
+  # swagger_schema :UserUpdateInput
+  swagger_schema :UserUpdateInput do
+    key :type, :object
+    property :email do
+      key :type, :string
+      key :description, 'Email of registered user'
+    end
+    property :password do
+      key :type, :string
+      key :description, "New user's password"
+    end
+    property :current_password do
+      key :type, :string
+      key :description, "Current user's password. Required if password is going to be changed"
+    end
+  end # end swagger_schema :UserUpdateInput
+
 end
