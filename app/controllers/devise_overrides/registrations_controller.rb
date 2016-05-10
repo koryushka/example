@@ -1,5 +1,18 @@
 class DeviseOverrides::RegistrationsController < DeviseTokenAuth::RegistrationsController
+  include Doorkeeper::Helpers::Controller
 protected
+  # overriding of DeviseTokenAuth::Concerns::SetUserByToken
+  def set_user_by_token(mapping=nil)
+    # determine target authentication class
+    rc = resource_class(mapping)
+
+    # no default user defined
+    return unless rc
+    @resource = server.resource_owner
+
+    # user has already been found and authenticated
+    @resource if @resource and @resource.class == rc
+  end
 
   def render_create_success
     render json: @resource.as_json
