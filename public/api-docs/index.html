@@ -116,6 +116,14 @@
         }).always(function(){
           loginButton.prop('disabled', false);
         });
+
+
+      });
+
+      $('#version').on('change', function(e){
+        window.swaggerUi.updateSwaggerUi({
+          url: $('#version').val()
+        });
       });
     });
   </script>
@@ -131,6 +139,13 @@
       <div class='input'><a id="explore" href="#" data-sw-translate>Explore</a></div>
     </form>-->
     <form id="login_form" action="">
+      <div>
+        <label for="version">Version: </label>
+        <select name="version" id="version">
+          <option value="/swagger.json">1.3.0</option>
+          <option value="/api/v1/apidocs" selected="selected">1.4.0</option>
+        </select>
+      </div>
       <div>
         <label for="email">Email: </label>
         <input type="email" id="email">
