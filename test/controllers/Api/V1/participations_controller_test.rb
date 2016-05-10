@@ -78,7 +78,9 @@ class Api::V1::ParticipationsControllerTest < ActionController::TestCase
   end
 
   test 'should accept participation' do
-    participation = FactoryGirl.create(:participation_with_participationable, participationable_type: :group, user: @user)
+    participation = FactoryGirl.create(:participation_with_participationable,
+                                       participationable_type: :group,
+                                       user: @user)
     post :accept, id: participation.id
     assert_response :success
 
@@ -90,7 +92,9 @@ class Api::V1::ParticipationsControllerTest < ActionController::TestCase
   end
 
   test 'should decline participation' do
-    participation = FactoryGirl.create(:participation_with_participationable, participationable_type: :group, user: @user)
+    participation = FactoryGirl.create(:participation_with_participationable,
+                                       participationable_type: :group,
+                                       user: @user)
     post :decline, id: participation.id
     assert_response :success
 
@@ -102,11 +106,21 @@ class Api::V1::ParticipationsControllerTest < ActionController::TestCase
   end
 
   test 'should fail accepting of already accepted participation' do
-    assert false
+    participation = FactoryGirl.create(:participation_with_participationable,
+                                       participationable_type: :group,
+                                       user: @user,
+                                       status: Participation::ACCEPTED)
+    post :accept, id: participation.id
+    assert_response :not_acceptable
   end
 
   test 'should fail declining of already declined participation' do
-    assert false
+    participation = FactoryGirl.create(:participation_with_participationable,
+                                       participationable_type: :group,
+                                       user: @user,
+                                       status: Participation::DECLINED)
+    post :decline, id: participation.id
+    assert_response :not_acceptable
   end
 
 end
