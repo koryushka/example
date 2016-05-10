@@ -201,7 +201,32 @@ class Api::V1::GroupsController < ApiController
       end # end response 200
       key :tags, ['User groups']
     end # end operation :get
-  end # end swagger_path /groups/{group_id}/users
+  end # end swagger_path /groups/{group_id}
+
+  # swagger_path /groups/{id}/leave
+  swagger_path '/groups/{id}/leave' do
+    operation :delete do
+      key :summary, 'Removes current user from group'
+      parameter do
+        key :name, 'id'
+        key :description, 'Group ID'
+        key :in, 'path'
+        key :type, :integer
+        key :required, true
+      end
+      # responses
+      response 200 do
+        key :description, 'OK'
+      end # end response 200
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :ErrorsContainer
+        end
+      end # end response :default
+      key :tags, ['User groups']
+    end # end operation :delete
+  end # end swagger_path /groups/{id}/leave
 
   # swagger_path /groups/{group_id}/users/{user_id}
   swagger_path '/groups/{group_id}/users/{user_id}' do
@@ -246,5 +271,4 @@ class Api::V1::GroupsController < ApiController
       key :tags, ['User groups']
     end # end operation :delete
   end # end swagger_path /groups/{group_id}/users/{user_id}
-
 end
