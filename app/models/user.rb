@@ -99,7 +99,7 @@ visiting the link contained in the received email'
 
   swagger_schema :PasswordChangeInput do
     key :type, :object
-    key :required, %w(email redirect_url)
+    key :required, %w(password password_confirmation)
     property :password do
       key :type, :string
       key :description, 'New password'

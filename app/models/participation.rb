@@ -71,7 +71,6 @@ class Participation < AbstractModel
 
   swagger_schema :Participation do
     key :type, :object
-    key :required, %w(email redirect_url)
     property :id do
       key :type, :integer
     end
@@ -93,11 +92,9 @@ class Participation < AbstractModel
       key :type, :string
     end
     property :user do
-      key :description, 'Invited user'
       key :'$ref', :User
     end
     property :sender do
-      key :description, 'User sent invitation'
       key :'$ref', :User
     end
   end

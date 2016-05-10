@@ -206,14 +206,14 @@ private
         key :name, 'id'
         key :description, 'Calendars ID'
         key :in, 'path'
-        key :required, 'true'
+        key :required, true
         key :type, :integer
       end
       parameter do
         key :name, 'event_id'
         key :description, 'ID of event which should be added'
         key :in, 'path'
-        key :required, 'true'
+        key :required, true
         key :type, :integer
       end
       # responses
@@ -232,7 +232,7 @@ private
           key :'$ref', :ErrorsContainer
         end
       end # end response default
-      key :tags, ['Events', 'Calendars']
+      key :tags, %w(Events Calendars)
     end # end operation :post
     operation :delete do
       key :summary, 'Removed specified event from specified calendar'
@@ -240,14 +240,14 @@ private
         key :name, 'id'
         key :description, 'Calendars ID'
         key :in, 'path'
-        key :required, 'true'
+        key :required, true
         key :type, :integer
       end
       parameter do
         key :name, 'event_id'
         key :description, 'ID of event which should be removed'
         key :in, 'path'
-        key :required, 'true'
+        key :required, true
         key :type, :integer
       end
       response 204 do

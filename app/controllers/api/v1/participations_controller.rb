@@ -111,7 +111,7 @@ class Api::V1::ParticipationsController < ApiController
       response 400 do
         key :description, 'Validation error'
         schema do
-          key :'$ref', :ValidationError
+          key :'$ref', :ValidationErrorsContainer
         end
       end
       response :default do
@@ -162,7 +162,7 @@ class Api::V1::ParticipationsController < ApiController
   end
 
 
-  swagger_path '/{resource}/{resource_id}/participations' do
+  swagger_path '/{resource}/{resource_id}/participations/{id}' do
     operation :delete do
       key :summary, 'Deletes participation from resource'
       parameter do

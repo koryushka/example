@@ -48,7 +48,7 @@ class Api::V1::ListsController < ApiController
       response 400 do
         key :description, 'Validation erro'
         schema do
-          key :'$ref', :ValidationError
+          key :'$ref', :ValidationErrorsContainer
         end
       end # end response 400
       response :default do
@@ -123,7 +123,7 @@ class Api::V1::ListsController < ApiController
       response 400 do
         key :description, 'Validation error'
         schema do
-          key :'$ref', :ValidationError
+          key :'$ref', :ValidationErrorsContainer
         end
       end # end response 400
       response :default do
