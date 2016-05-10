@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
       key :type, :string
     end
     property :profile do
-      key :'$ref', '#/definitions/Profile'
+      key :'$ref', :Profile
     end
   end # end swagger_schema :User
 

@@ -14,7 +14,7 @@ class SwaggerSchema
     property :errors do
       key :type, :array
       items do
-        key :'$ref', '#/definitions/Error'
+        key :'$ref', :Error
       end
     end
   end # end swagger_schema :ErrorsContainer
