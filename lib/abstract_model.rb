@@ -1,7 +1,7 @@
 class AbstractModel < ActiveRecord::Base
   self.abstract_class = true
 
-  def save
+  def save(*)
     raise ValidationException.new(self) if invalid?
     apply_default_values
     super

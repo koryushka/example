@@ -53,7 +53,7 @@ class Api::V1::ListItemsControllerTest < ActionController::TestCase
   test 'should upadte existing list_item' do
     list = FactoryGirl.create(:list_with_items, user: @user)
     list_item = list.list_items.first
-    new_title = Faker::Lorem.word
+    new_title = 'New list item title'
     put :update, id: list_item.id, list_id: list.id, title: new_title
     assert_response :success
     assert_equal json_response['title'], new_title

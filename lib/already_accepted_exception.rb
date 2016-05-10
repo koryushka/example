@@ -1,0 +1,2 @@
+class AlreadyAcceptedException < Exception
+end

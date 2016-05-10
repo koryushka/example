@@ -3,6 +3,12 @@ class Ability
 
   def initialize(user)
     can :manage, :all, user_id: user.id
+    can :manage, Participation, sender_id: user.id
+    cannot :manage, Participation, user_id: user.id
+    can [:accept, :decline], Participation, user_id: user.id
+    can :leave, Group do |group|
+      group.members.exists?(users: {id: user.id})
+    end
     #Define abilities for the passed in user here. For example:
     # if user
     #   user.roles.includes(:permissions).each do |role|

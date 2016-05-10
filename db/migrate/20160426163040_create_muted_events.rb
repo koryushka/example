@@ -10,6 +10,6 @@ class CreateMutedEvents < ActiveRecord::Migration
     add_index :muted_events, [:event_id, :user_id], unique: true
     add_index :muted_events, [:event_id, :muted]
     add_index :muted_events, :user_id
-    add_index :muted_events, :upadted_at
+    add_index :muted_events, :updated_at
   end
 end

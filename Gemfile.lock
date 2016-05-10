@@ -37,6 +37,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    airbrussh (1.0.1)
+      sshkit (>= 1.6.1, != 1.7.0)
     ansi (1.5.0)
     arel (6.0.3)
     aws-ses (0.6.0)
@@ -48,13 +50,16 @@ GEM
     bcrypt (3.1.11-x86-mingw32)
     builder (3.2.2)
     cancancan (1.13.1)
-    capistrano (3.4.0)
+    capistrano (3.5.0)
+      airbrussh (>= 1.0.0)
+      capistrano-harrow
       i18n
       rake (>= 10.0.0)
-      sshkit (~> 1.3)
+      sshkit (>= 1.9.0)
     capistrano-bundler (1.1.4)
       capistrano (~> 3.1)
       sshkit (~> 1.2)
+    capistrano-harrow (0.4.0)
     capistrano-rails (1.1.6)
       capistrano (~> 3.1)
       capistrano-bundler (~> 1.1)
@@ -80,16 +85,15 @@ GEM
       timers (>= 4.1.1)
     celluloid-supervision (0.20.5)
       timers (>= 4.1.1)
-    concurrent-ruby (1.0.1)
+    concurrent-ruby (1.0.2)
     date_validator (0.9.0)
       activemodel
       activesupport
-    devise (3.5.6)
+    devise (4.0.2)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 3.2.6, < 5)
+      railties (>= 4.1.0, < 5.1)
       responders
-      thread_safe (~> 0.1)
       warden (~> 1.2.3)
     devise_token_auth (0.1.37)
       devise (> 3.5.2, < 4.1)
@@ -99,10 +103,10 @@ GEM
       railties (>= 3.2)
     erubis (2.7.0)
     excon (0.49.0)
-    factory_girl (4.5.0)
+    factory_girl (4.7.0)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.6.0)
-      factory_girl (~> 4.5.0)
+    factory_girl_rails (4.7.0)
+      factory_girl (~> 4.7.0)
       railties (>= 3.0.0)
     faker (1.6.3)
       i18n (~> 0.5)
@@ -159,9 +163,9 @@ GEM
       fog-json (~> 1.0)
       fog-xml (~> 0.1)
       ipaddress (~> 0.8)
-    fog-core (1.36.0)
+    fog-core (1.38.0)
       builder
-      excon (~> 0.45)
+      excon (~> 0.49)
       formatador (~> 0.2)
     fog-dynect (0.0.3)
       fog-core
@@ -179,8 +183,8 @@ GEM
       multi_json (~> 1.10)
     fog-local (0.3.0)
       fog-core (~> 1.27)
-    fog-openstack (0.1.2)
-      fog-core (>= 1.35)
+    fog-openstack (0.1.4)
+      fog-core (>= 1.38)
       fog-json (>= 1.0)
       fog-xml (>= 0.1)
       ipaddress (>= 0.8)
@@ -226,7 +230,7 @@ GEM
     fog-voxel (0.1.0)
       fog-core
       fog-xml
-    fog-vsphere (0.6.3)
+    fog-vsphere (0.6.4)
       fog-core
       rbvmomi (~> 1.8)
     fog-xenserver (0.2.3)
@@ -238,9 +242,9 @@ GEM
     formatador (0.2.5)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
-    hitimes (1.2.3)
-    hitimes (1.2.3-x86-mingw32)
-    httpclient (2.7.1)
+    hitimes (1.2.4)
+    hitimes (1.2.4-x86-mingw32)
+    httpclient (2.8.0)
     i18n (0.7.0)
     inflecto (0.0.2)
     ipaddress (0.8.3)
@@ -260,12 +264,12 @@ GEM
     minitest-rails (2.2.0)
       minitest (~> 5.7)
       railties (~> 4.1)
-    minitest-reporters (1.1.8)
+    minitest-reporters (1.1.9)
       ansi
       builder
       minitest (>= 5.0)
       ruby-progressbar
-    multi_json (1.11.2)
+    multi_json (1.12.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (3.1.1)
@@ -276,8 +280,8 @@ GEM
     orm_adapter (0.5.0)
     pg (0.18.4)
     pg (0.18.4-x86-mingw32)
-    pubnub (3.8.0)
-      celluloid (~> 0.16)
+    pubnub (3.8.1)
+      celluloid (~> 0.17)
       httpclient (~> 2.6)
       json (~> 1.8)
     rack (1.6.4)
@@ -313,24 +317,25 @@ GEM
       builder
       nokogiri (>= 1.4.1)
       trollop
-    responders (2.1.2)
+    responders (2.2.0)
       railties (>= 4.2.0, < 5.1)
-    ruby-progressbar (1.7.5)
+    ruby-progressbar (1.8.0)
     simplecov (0.11.2)
       docile (~> 1.1.0)
       json (~> 1.8)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
-    sprockets (3.5.2)
+    sprockets (3.6.0)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
     sprockets-rails (3.0.4)
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sshkit (1.9.0)
+    sshkit (1.10.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
+    swagger-blocks (1.3.3)
     thor (0.19.1)
     thread_safe (0.3.5)
     timers (4.1.1)
@@ -338,7 +343,7 @@ GEM
     trollop (2.1.2)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    tzinfo-data (1.2016.3)
+    tzinfo-data (1.2016.4)
       tzinfo (>= 1.0.0)
     validates_email_format_of (1.6.3)
       i18n
@@ -360,7 +365,6 @@ DEPENDENCIES
   capistrano-rvm
   capistrano3-nginx
   date_validator
-  devise
   devise_token_auth
   doorkeeper
   factory_girl_rails
@@ -375,6 +379,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 4.0)
   simplecov
+  swagger-blocks
   tzinfo-data
   validates_email_format_of
 

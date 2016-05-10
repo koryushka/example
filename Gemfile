@@ -12,7 +12,7 @@ gem 'jbuilder', '~> 2.0'
 #gem 'bcrypt', '~> 3.1.7'
 gem 'bcrypt'
 
-gem 'devise'
+#gem 'devise'
 gem 'devise_token_auth'
 gem 'doorkeeper'
 
@@ -28,6 +28,7 @@ gem 'fog-aws'
 gem 'cancancan', '~> 1.10'
 gem 'pubnub'
 gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
+gem 'swagger-blocks'
 
 # Use Capistrano for deployment
 group :development do

@@ -15,3 +15,6 @@ json.event_cancellations_attributes do
     json.extract! ec, :id, :date
   end
 end
+json.participations do
+  json.array! event.participations, partial: 'api/v1/participations/participation', as: :participation
+end

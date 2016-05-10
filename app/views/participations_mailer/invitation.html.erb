@@ -1,0 +1,6 @@
+<p>Hi there!</p>
+
+<p>
+  <%= @participation.sender.profile.first_name %> <%= @participation.sender.profile.last_name %>
+  invites you into <%= @participation.participationable_type.downcase %> '<%= @participation.participationable.title %>'
+</p>
