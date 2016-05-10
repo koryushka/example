@@ -42,6 +42,9 @@ Rails.application.routes.draw do
       end
       get 'lists/:list_id/events', to: 'events#index_of_list'
 
+      resources :sharings, only: [:create, :destroy]
+      get 'sharings/resources' => 'sharings#resources'
+
       resources :groups, except: [:edit, :new] do
         get 'users' => 'users#group_index'
         post 'users/:id' => 'users#add_to_group'
@@ -63,6 +66,9 @@ Rails.application.routes.draw do
       get 'users/:user_id/profile' => 'profiles#show'
 
       resources :activities, only: [:index]
+
+      resources :apidocs, only: [:index]
+
     end
   end
 end

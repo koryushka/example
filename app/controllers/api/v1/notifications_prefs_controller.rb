@@ -1,4 +1,6 @@
 class Api::V1::NotificationsPrefsController < ApiController
+  include Swagger::Blocks
+
   before_filter :find_calendar_item
   before_filter :find_prefs, except: [:create, :index]
   after_filter :something_updated, except: [:index]
@@ -24,6 +26,56 @@ class Api::V1::NotificationsPrefsController < ApiController
     render partial: 'prefs', locals: {prefs: @prefs }, status: :created
   end
 
+  # swagger_path /notification_prefs/{id}
+  swagger_path '/notification_prefs/{id}' do
+    operation :put do
+      key :summary, 'Update notification preference'
+      key :description, 'Updates notification preference by ID'
+      parameter do
+        key :name, 'id'
+        key :description, 'Notifications preference ID'
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      # responses
+      response 201 do
+        key :description, 'Updated'
+        schema do
+          key :'$ref', :NotificationPreference
+        end
+      end # end response 201
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end # end response :default
+      key :tags, ['Notifications', 'Events']
+    end # end operation :put
+    operation :delete do
+      key :summary, 'Delete notification preference'
+      key :description, 'Deletes notification preference by ID'
+      parameter do
+        key :name, 'id'
+        key :description, 'Notifications preference ID'
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      # responses
+      response 204 do
+        key :description, 'Deleted'
+      end # end response 204
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end # end response :default
+      key :tags, ['Notifications', 'Events']
+    end # end operation :delete
+  end # end swagger_path '/notification_prefs/{id}'
   def update
     @prefs.assign_attributes(pref_params)
 
@@ -65,4 +117,13 @@ private
       render nothing: true, status: :not_found
     end
   end
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER PATH: Controller Notifications Preferences
+  # ================================================================================
+
+
+
 end
