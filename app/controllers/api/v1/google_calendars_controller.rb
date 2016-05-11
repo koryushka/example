@@ -11,7 +11,17 @@ class Api::V1::GoogleCalendarsController < ApiController
 
   def oauth2callback
     response = @client.fetch_access_token!
+    # AccessToken.create( user_id: current_user.id,
+    #                     token: response.access_token,
+    #                     expires_at: Time.now + response.expires_in,
+    #                     account: nil
+    #                     )
     render json: {data: response}
+  end
+
+  def update_access_token
+    access_token = AccessToken.find_by(token: params[:access_token])
+
   end
 
   def index
@@ -23,6 +33,8 @@ class Api::V1::GoogleCalendarsController < ApiController
   end
 
   def import_calendars
+    # require 'sync/google_calendars'
+    # GoogleCalendars.new.import_calendars
     @calendar_list = @service.list_calendar_lists
     calendars = []
     @calendar_list.items.each do |item|
@@ -83,26 +95,29 @@ class Api::V1::GoogleCalendarsController < ApiController
   end
 
   def synchronize_event(item)
-    event = Event.find_by_google_event_id(item.id)
+    # event = Event.find_by_google_event_id(item.id)
     puts
-    puts "EVENT UPDATED AT #{event.try(:updated_at)}"
+    puts "EVENT UPDATED AT #{@event.try(:updated_at)}"
     puts "ITEM UPDATED AT #{item.try(:updated)} - CALENDAR_ID - #{@calendar.title}- ID #{item.id} title #{item.summary}"
-    if event.etag != item.etag
-      update_local_event(item, event)
+    if @event.etag != item.etag
+      update_local_event(item)
     else
-      if (event.updated_at > item.updated) && (event.updated_at != event.created_at)
-        updated_google_event = update_google_event(item, event)
-        event.update_column(:etag, updated_google_event.etag) if updated_google_event.try(:etag)
+      if (@event.updated_at > item.updated) && (@event.updated_at != @event.created_at)
+        updated_google_event = update_google_event(item)
+        @event.update_column(:etag, updated_google_event.etag) if updated_google_event.try(:etag)
       end
     end
 
   end
 
-  def update_local_event(item, event)
-    event.update_attributes(
+  def update_local_event(item)
+    if single_event_has_recurrences(item) || frequency_has_been_changed(item)
+      destroy_event_reccurences
+    end
+    @event.update_attributes(
       starts_at: start_date(item),
       ends_at: item.end.date_time,
-      timezone_name: item.start.try(:time_zone) || event.timezone_name,
+      timezone_name: item.start.try(:time_zone) || @event.timezone_name,
       notes: item.description,
       title: title(item),
       frequency: get_frequency(item),
@@ -111,45 +126,46 @@ class Api::V1::GoogleCalendarsController < ApiController
       location_name: item.location,
       etag: item.etag
     )
+    calculate_event_recurrence if @frequence
     puts 'LOCAL EVENT HAS BEEN UPDATED'
   end
 
-  def update_google_event(item, event)
+  def update_google_event(item)
     @update_errors = []
     begin
-      google_event = @service.get_event(@calendar.title, event.google_event_id)
+      google_event = @service.get_event(@calendar.title, @event.google_event_id)
       google_event.update!(
         start: {
-          date_time: formatted_date(event.starts_at) ,
-          time_zone: event.timezone_name
+          date_time: formatted_date(@event.starts_at) ,
+          time_zone: @event.timezone_name
         },
         end:{
-          date_time: formatted_date(event.ends_at) ,
-          time_zone: event.timezone_name
+          date_time: formatted_date(@event.ends_at) ,
+          time_zone: @event.timezone_name
         },
         # recurrence: count_recurrence(event),
-        location: event.location_name,
-        description: event.notes,
-        summary: event.title
+        location: @event.location_name,
+        description: @event.notes,
+        summary: @event.title
       )
-      updated_event = @service.update_event(@calendar.title, event.google_event_id, google_event)
+      updated_event = @service.update_event(@calendar.title, @event.google_event_id, google_event)
       puts 'GOOGLE EVENT HAS BEEN UPDATED'
       updated_event
     rescue Google::Apis::ClientError => error
       @update_errors << [error, google_event]
     end
-
   end
 
-  def test_summary(event)
-  puts "EVENT #{event.inspect}"
-    if event.summary
-      if event.summary.end_with?('!')
-        event.summary.chop
-      else
-        event.summary + '!'
-      end
-    end
+  def frequency_has_been_changed(item)
+    get_frequency(item) != @event.frequency
+  end
+
+  def destroy_event_reccurences
+    @event.event_recurrences.destroy_all
+  end
+
+  def single_event_has_recurrences(item)
+    (!item.recurrence) && @event.event_recurrences
   end
 
   def formatted_date(date)
@@ -185,34 +201,33 @@ class Api::V1::GoogleCalendarsController < ApiController
   def create_weekly_event_recurrence
     days = @frequence[:BYDAY].split(',')
     days.map do |day|
-      EventRecurrence.find_or_create_by(
-        event_id: @event.id,
-        month: nil,
-        week: nil,
-        day: get_day(day)
-      )
+      find_or_create_event_recurrence(nil, nil, get_day(day))
     end
   end
 
   def create_monthly_event_recurrence
-    days = @frequence[:BYDAY].split(',')
-    days.map do |day|
-      day.squish!
-      EventRecurrence.find_or_create_by(
-      event_id: @event.id,
-      week: day.slice!(0).to_i,
-      day: get_day(day)
-      )
+    if byday = @frequence[:BYDAY]
+      days = byday.split(',')
+      days.map do |day|
+        day.squish!
+        find_or_create_event_recurrence(nil, day.slice!(0).to_i, get_day(day))
+      end
+    else
+      find_or_create_event_recurrence(nil, nil, @event.starts_at.day)
     end
   end
 
   def create_yearly_event_recurrence
     date = @event.starts_at.to_date
+    find_or_create_event_recurrence(date.month, nil, date.day)
+  end
+
+  def find_or_create_event_recurrence(month, week, day)
     EventRecurrence.find_or_create_by(
       event_id: @event.id,
-      month: date.month,
-      week: nil,
-      day: date.day
+      month: month,
+      week: week,
+      day: day
     )
   end
 
@@ -282,7 +297,7 @@ class Api::V1::GoogleCalendarsController < ApiController
     if cancelled?(item)
       Event.find_by_google_event_id(item.recurring_event_id).title
     else
-      item.summary
+      item.summary || 'Untitled event'
     end
   end
 
@@ -294,7 +309,7 @@ class Api::V1::GoogleCalendarsController < ApiController
     @client = Signet::OAuth2::Client.new({
       authorization_uri: google_auth_uri,
       token_credential_uri: google_token_uri,
-      scope: Google::Apis::CalendarV3::AUTH_CALENDAR,
+      scope: [Google::Apis::CalendarV3::AUTH_CALENDAR],
       code: params[:code],
       expires_in: 604800,
       expiry: 604800,
