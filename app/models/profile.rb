@@ -2,13 +2,13 @@ class Profile < AbstractModel
   include Swagger::Blocks
   belongs_to :user
 
-  validates :full_name, length: {maximum: 64}
+  validates :first_name, length: {maximum: 64}
+  validates :last_name, length: {maximum: 64}
   validates :image_url, length: {maximum: 2048}
   validates :color, length: {maximum: 6}
 
   default :first_name, ''
   default :last_name, ''
-  default :full_name, ''
 
   # ================================================================================
   # Swagger::Blocks

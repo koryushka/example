@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   end
 
   validates :email, length: {maximum: 128}, presence: true,
-            email_format: {:message => "doesn't look like an email address."},
+            email_format: {message: "doesn't look like an email address."},
             uniqueness: true
 
   def clean_tokens
