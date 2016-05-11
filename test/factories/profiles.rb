@@ -5,5 +5,6 @@ FactoryGirl.define do
     last_name {Faker::Name.last_name}
     image_url {Faker::Avatar.image}
     color {Faker::Color.hex_color[1..6]}
+    notification_time {Faker::Number.between(30, 160)}
   end
 end

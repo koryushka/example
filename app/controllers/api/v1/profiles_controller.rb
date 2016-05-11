@@ -60,6 +60,12 @@ class Api::V1::ProfilesController < ApiController
       end # end response :default
       key :tags, ['Users']
     end # end operation :get
+  end # end swagger_path /users/me/profile
+  def my_profile
+    render partial: 'profile', locals: {profile: current_user.profile}
+  end
+
+  swagger_path '/users/me/profile' do
     operation :put do
       key :summary, 'Updates current user profile'
       parameter do
@@ -91,11 +97,7 @@ class Api::V1::ProfilesController < ApiController
       end # end response :default
       key :tags, ['Users']
     end # end operation :put
-  end # end swagger_path /users/me/profile
-  def my_profile
-    render partial: 'profile', locals: {profile: current_user.profile}
   end
-
   def update
     @profile.assign_attributes(profile_params)
 
@@ -105,6 +107,6 @@ class Api::V1::ProfilesController < ApiController
 
 private
   def profile_params
-    params.permit(:first_name, :last_name, :image_url, :color)
+    params.permit(:first_name, :last_name, :image_url, :color, :notification_time)
   end
 end
