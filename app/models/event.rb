@@ -44,7 +44,10 @@ class Event < AbstractModel
   default :kind, 0
 
   before_save do
-    assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
+    unless all_day.nil?
+      assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
+      assign_attributes(starts_on: nil, ends_on: nil) unless all_day
+    end
   end
 
   ACTIVITY_TYPES = [UPDATED = 1]

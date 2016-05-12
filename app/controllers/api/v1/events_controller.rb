@@ -87,7 +87,6 @@ Examples:
                             })
   end
 
-  # swagger_path /events/{id}
   swagger_path '/events/{id}' do
     operation :get do
       key :summary, 'Returns event'
@@ -112,7 +111,50 @@ Examples:
         end
       end # end response :default
       key :tags, ['Events']
-    end # end operation :get
+    end
+  end
+  def show
+    render partial: 'event', locals: {event: @event }
+  end
+
+  swagger_path '/events' do
+    operation :post do
+      key :summary, 'Create notification preference'
+      key :description, 'Creates new notification preference'
+      parameter do
+        key :name, 'id'
+        key :description, 'Event ID'
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      # responses
+      response 201 do
+        key :description, 'Created'
+        schema do
+          key :'$ref', :NotificationPreference
+        end
+      end # end response 201
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end # end response :default
+      key :tags, ['Notifications', 'Events']
+    end
+  end
+  def create
+    @event = Event.new(event_params)
+    @event.user = current_user
+
+    raise InternalServerErrorException unless @event.save
+
+    MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
+    render partial: 'event', locals: {event: @event }, status: :created
+  end
+
+  swagger_path '/events/{id}' do
     operation :put do
       key :summary, 'Updates event'
       parameter do
@@ -150,7 +192,15 @@ Examples:
         end
       end # end response :default
       key :tags, ['Events']
-    end # end operation :put
+    end
+  end
+  def update
+    @event.update(event_params)
+    MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
+    render partial: 'event', locals: {event: @event }
+  end
+
+  swagger_path '/events/{id}' do
     operation :delete do
       key :summary, 'Deletes event'
       parameter do
@@ -171,28 +221,8 @@ Examples:
         end
       end # end response :default
       key :tags, ['Events']
-    end # end operation :delete
-  end # end swagger_path /events/{id}
-  def show
-    render partial: 'event', locals: {event: @event }
+    end
   end
-
-  def create
-    @event = Event.new(event_params)
-    @event.user = current_user
-
-    raise InternalServerErrorException unless @event.save
-
-    MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
-    render partial: 'event', locals: {event: @event }, status: :created
-  end
-
-  def update
-    @event.update(event_params)
-    MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
-    render partial: 'event', locals: {event: @event }
-  end
-
   def destroy
     @event.destroy
     render nothing: true, status: :no_content
@@ -392,31 +422,7 @@ private
       end # end response :default
       key :tags, ['Notifications', 'Events']
     end # end operation :get
-    operation :post do
-      key :summary, 'Create notification preference'
-      key :description, 'Creates new notification preference'
-      parameter do
-        key :name, 'id'
-        key :description, 'Event ID'
-        key :in, 'path'
-        key :required, true
-        key :type, :integer
-      end
-      # responses
-      response 201 do
-        key :description, 'Created'
-        schema do
-          key :'$ref', :NotificationPreference
-        end
-      end # end response 201
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', :Error
-        end
-      end # end response :default
-      key :tags, ['Notifications', 'Events']
-    end # end operation :post
+     # end operation :post
   end # end swagger_path /events/{id}/notifications
 
   # swagger_path /events/{event_id}/lists/{list_id}
