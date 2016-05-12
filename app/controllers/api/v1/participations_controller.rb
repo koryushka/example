@@ -129,6 +129,7 @@ class Api::V1::ParticipationsController < ApiController
     existing_users = participation_params[:user_ids] || []
 
     participation_params[:emails].each do |email|
+      # go to next email if user already accepted participation
       next if current_user.sent_paticipations.exists?(email: email,
                                                       participationable_type: participationable.class.name,
                                                       participationable_id: participationable.id,

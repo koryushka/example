@@ -6,7 +6,7 @@ class Participation < AbstractModel
   belongs_to :sender, class_name: 'User', foreign_key: 'sender_id'
   has_many :activities, as: :notificationable
 
-  PARTICIPATION_STATUS = [PENDING = 1, ACCEPTED = 2, DECLINED = 3]
+  PARTICIPATION_STATUS = [PENDING = 1, ACCEPTED = 2, DECLINED = 3, FAILED = 4]
 
   validates :user_id, allow_blank: true, numericality: {only_integer: true}
   validates :email, length: {maximum: 128}, allow_blank: true,
