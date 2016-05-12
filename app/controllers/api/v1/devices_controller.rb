@@ -40,12 +40,21 @@ class Api::V1::DevicesController < ApiController
 
   # TODO: add to swagger_path
   def update
-    # updates devise in Amazon SNS registry (if it is being required)
+    # updates device in Amazon SNS registry (if it is being required)
   end
 
   # TODO: add to swagger_path
   def destroy
-    # removes devise from database and from Amazon SNS registry
+    # removes device from database and from Amazon SNS registry
+    begin
+      @sns.delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
+    rescue => e
+      return render json: { errors: [{ message: e.message }] }, status: :bad_request
+    end
+
+    @device.destroy
+
+    render nothing: true
   end
 
 private
