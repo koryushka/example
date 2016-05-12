@@ -31,20 +31,20 @@ class Participation < AbstractModel
   def change_status_to(status)
     update(status: status)
 
-    activity = nil
-
-    if pending? && user.present?
-      activity = Activity.new(notificationable: self,
-                              user: user,
-                              activity_type: status)
-    elsif !pending?
-      # sending notification about invitation acceptance to inviter
-      activity = Activity.new(notificationable: self,
-                              user: sender,
-                              activity_type: status)
-    end
-
-    activities << activity unless activity.nil?
+    # activity = nil
+    #
+    # if pending? && user.present?
+    #   activity = Activity.new(notificationable: self,
+    #                           user: user,
+    #                           activity_type: status)
+    # elsif !pending?
+    #   # sending notification about invitation acceptance to inviter
+    #   activity = Activity.new(notificationable: self,
+    #                           user: sender,
+    #                           activity_type: status)
+    # end
+    #
+    # activities << activity unless activity.nil?
   end
 
   swagger_schema :ParticipationInput do

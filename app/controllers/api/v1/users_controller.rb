@@ -29,21 +29,6 @@ class Api::V1::UsersController < ApiController
     render partial: 'user', locals: { user: current_user }, status: :created
   end
 
-  # Group members
-  def group_index
-    @members = @group.members
-  end
-
-  def add_to_group
-    @group.members << @user
-    render nothing: true
-  end
-
-  def remove_from_group
-    @group.members.delete(@user)
-    render nothing: true, status: :no_content
-  end
-
   # ================================================================================
   # Swagger::Blocks
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.

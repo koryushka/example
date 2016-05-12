@@ -123,7 +123,7 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
-  # must be refactoried!
+  # TODO: must be refactoried!
   def create
     participationable = find_participationable
     existing_users = participation_params[:user_ids] || []
@@ -140,6 +140,7 @@ class Api::V1::ParticipationsController < ApiController
         existing_users << existing_user.id
         next
       end
+
       participation = current_user.sent_paticipations
                           .where(email: email, participationable: participationable).first
       participation = Participation.create(email: email,
@@ -148,16 +149,23 @@ class Api::V1::ParticipationsController < ApiController
       ParticipationsMailer.invitation(participation).deliver_now
     end if participation_params[:emails]
 
-    participation_params[:user_ids].each do |user_id|
+    existing_users = existing_users.concat(participation_params[:user_ids]) if participation_params[:user_ids]
+    existing_users.each do |user_id|
       next if Participation.exists?(user_id: user_id,
                                     participationable_type: participationable.class.name,
                                     participationable_id: participationable.id,
                                     status: Participation::ACCEPTED)
       next unless User.exists?(id: user_id)
-      Participation.create(user: User.find(user_id),
-                           participationable: participationable,
-                           sender: current_user)
-    end if participation_params[:user_ids]
+
+      user = User.find(user_id)
+      if participationable.respond_to? :create_participation
+        participationable.create_participation(current_user, user)
+      else
+        Participation.create(user: user,
+                             participationable: participationable,
+                             sender: current_user)
+      end
+    end
 
     render nothing: true
   end

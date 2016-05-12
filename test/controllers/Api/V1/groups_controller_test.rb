@@ -36,6 +36,26 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  test 'should fail group creation if user is owner of other group' do
+    FactoryGirl.create(:group, user: @user)
+    post :create, {
+        title: Faker::Lorem.word
+    }
+
+    assert_response :conflict
+  end
+
+  test 'should fail group creation if user is a member of other group' do
+    user = FactoryGirl.create(:user)
+    group = FactoryGirl.create(:group, user: user)
+    group.participations << Participation.new(user: @user, sender: user, status: Participation::ACCEPTED)
+    post :create, {
+        title: Faker::Lorem.word
+    }
+
+    assert_response :conflict
+  end
+
   #### group update group
   test 'should upadte existing group' do
     group = FactoryGirl.create(:group, owner: @user)
@@ -69,6 +89,6 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
 
     delete :leave, id: group.id
     assert_response :success
-    assert_not group.members.exists?(users: {id: @user.id})
+    assert_not group.participations.exists?(user: @user)
   end
 end
