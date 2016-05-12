@@ -47,6 +47,12 @@ class Group < AbstractModel
       key :type, :string
       key :description, 'Group name'
     end
+    property :participations do
+      key :type, :array
+      items do
+        key :'$ref', :Participation
+      end
+    end
   end
 
   swagger_schema :GroupInput do
