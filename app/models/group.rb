@@ -30,10 +30,9 @@ class Group < AbstractModel
                            participationable: self,
                            sender: sender)
     end
-
-
   end
 
+  # TODO: should be removed if unnecessary
   def accept_participation(participation)
     members << participation.user
   end
