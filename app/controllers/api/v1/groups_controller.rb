@@ -29,7 +29,7 @@ class Api::V1::GroupsController < ApiController
     end
   end
   def index
-    @groups = current_user.groups
+    @groups = current_user.groups.includes(participations: :sender)
   end
 
   swagger_path '/groups/{id}' do

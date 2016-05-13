@@ -57,6 +57,9 @@ class User < ActiveRecord::Base
     property :profile do
       key :'$ref', :Profile
     end
+    property :group do
+      key :'$ref', :GroupWithoutUsers
+    end
   end # end swagger_schema :User
 
   # swagger_schema :RegistrationInput

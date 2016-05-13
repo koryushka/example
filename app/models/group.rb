@@ -54,6 +54,17 @@ class Group < AbstractModel
     end
   end
 
+  swagger_schema :GroupWithoutUsers do
+    key :type, :object
+    property :id do
+      key :type, :integer
+    end
+    property :title do
+      key :type, :string
+      key :description, 'Group name'
+    end
+  end
+
   swagger_schema :GroupInput do
     key :type, :object
     key :required, [:title]
