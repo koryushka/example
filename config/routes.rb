@@ -72,7 +72,6 @@ Rails.application.routes.draw do
       # devices
       put 'devices' => 'devices#update'
       delete 'devices' => 'devices#destroy'
-      resources :devices
 
     end
   end

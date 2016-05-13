@@ -10,7 +10,7 @@ module ApiHelper
   end
 
   # Send push notification
-  def self.send(devise_token, payload)
+  def self.send(device_token, payload)
     ApiHelper::sns
     notification_object = { object: payload }
 
@@ -26,26 +26,12 @@ module ApiHelper
         }.to_json
     }
 
-    # TODO: define devices by devise_token, like this:
-    #devices = Device.where(user_id: devise_token) # usage of devise_token
-    # devices.each do |device|
-    #   next unless device && device.end_point_arn && device.os_type
-    #   message = ios_message
-    #   next if message.nil?
-    #
-    #   # send push notification
-    #   @sns.publish(
-    #       target_arn: device.end_point_arn,
-    #       message: message.to_json,
-    #       message_structure: 'json'
-    #   )
-    #
-    # end
-
-    # e.g. send push notification
-    @sns.publish(
-          target_arn: 'arn:aws:sns:us-east-1:XXXXXXXXXXXX:endpoint/APNS_SANDBOX/Neighborly-iOS/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',
-          message: message.to_json,
-          message_structure: 'json')
+    devices = Device.where(user_id: device_token)
+    devices.each do |device|
+      @sns.publish(
+            target_arn: device.aws_endpoint_arn,
+            message: message.to_json,
+            message_structure: 'json')
+    end
   end
 end
