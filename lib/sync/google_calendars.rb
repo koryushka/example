@@ -1,8 +1,8 @@
 class GoogleCalendars
   attr_accessor :items
-  
-  def initialize(current_user, service)
-    @current_user, @service = current_user, service
+
+  def initialize(current_user, service, account)
+    @current_user, @service, @account = current_user, service, account
     @items = []
   end
 
@@ -10,7 +10,11 @@ class GoogleCalendars
     @calendar_list = @service.list_calendar_lists
     calendars = []
     @calendar_list.items.each do |item|
-      @calendar = Calendar.find_or_initialize_by(title: item.id, user_id: @current_user.id)
+      @calendar = Calendar.find_or_initialize_by(
+        title: item.id,
+        user_id: @current_user.id,
+        account: @account
+      )
       if @calendar.new_record? && @calendar.save
         calendars << @calendar
       end
@@ -39,8 +43,8 @@ class GoogleCalendars
       if @event.new_record?
         @calendar.events << @event if @event.save
       else
-        next if public_event(item)
         if !cancelled?(item)
+          next if user_is_not_creator(item)
           next unless synchronize_event(item)
         end
       end
@@ -135,6 +139,10 @@ class GoogleCalendars
     end
   end
 
+  def user_is_not_creator(item)
+    item.creator.email != @account
+  end
+
   def public_event(item)
     item.visibility == 'public'
   end
@@ -214,27 +222,6 @@ class GoogleCalendars
     hash
   end
 
-  # %w(token auth).each do |method|
-  #   define_method "google_#{method}_uri" do
-  #     google_oauth2_path + '/' + method
-  #   end
-  # end
-  #
-  # def google_oauth2_path
-  #   'https://accounts.google.com/o/oauth2'
-  # end
-
-  # def google_auth
-  #   client = Signet::OAuth2::Client.new(access_token: @access_token)
-  #   @service = Google::Apis::CalendarV3::CalendarService.new
-  #   @service.authorization = client
-  #   render json: {error: 'Access-token required'}, status: 403 and return unless @access_token
-  # end
-
-  # def show_errors
-  #   render json: {error: 'Invalid access-token. Generate new one.'}, status: 401
-  # end
-
   def start_date(item)
     if cancelled?(item)
       item.original_start_time.date_time
@@ -261,19 +248,5 @@ class GoogleCalendars
   def cancelled?(item)
     item.status == 'cancelled'
   end
-
-  # def set_client
-  #   @client = Signet::OAuth2::Client.new({
-  #     authorization_uri: google_auth_uri,
-  #     token_credential_uri: google_token_uri,
-  #     scope: ['https://www.googleapis.com/auth/userinfo.email', Google::Apis::CalendarV3::AUTH_CALENDAR],
-  #     code: params[:code],
-  #     expires_in: 604800,
-  #     expiry: 604800,
-  #     client_id: Rails.application.secrets.google_client_id,
-  #     client_secret: Rails.application.secrets.google_client_secret,
-  #     redirect_uri: url_for(:action => :oauth2callback)
-  #   })
-  # end
 
 end

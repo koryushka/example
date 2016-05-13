@@ -105,4 +105,8 @@ private
   def find_entity_of_current_user(type: nil, id_param: 'id'.to_sym, property_name: nil)
     find_entity(type: type, id_param: id_param, property_name: property_name, condition: {user_id: current_user.id})
   end
+
+  def account_info_uri
+    'https://www.googleapis.com/oauth2/v1/userinfo?access_token='
+  end
 end
