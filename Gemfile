@@ -37,6 +37,7 @@ group :development do
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
   gem 'capistrano3-nginx'
+
 end
 
 group :test do
@@ -46,3 +47,5 @@ group :test do
   gem 'simplecov', require: false
   gem 'faker'
 end
+
+gem 'bullet', group: [:development, :test]

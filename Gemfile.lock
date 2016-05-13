@@ -47,6 +47,9 @@ GEM
     bcrypt (3.1.11)
     bcrypt (3.1.11-x86-mingw32)
     builder (3.2.2)
+    bullet (5.0.0)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.9.0)
     cancancan (1.13.1)
     capistrano (3.4.0)
       i18n
@@ -340,6 +343,7 @@ GEM
       thread_safe (~> 0.1)
     tzinfo-data (1.2016.4)
       tzinfo (>= 1.0.0)
+    uniform_notifier (1.9.0)
     validates_email_format_of (1.6.3)
       i18n
     warden (1.2.6)
@@ -353,6 +357,7 @@ PLATFORMS
 DEPENDENCIES
   aws-ses (~> 0.6.0)
   bcrypt
+  bullet
   cancancan (~> 1.10)
   capistrano (= 3.4.0)
   capistrano-bundler
