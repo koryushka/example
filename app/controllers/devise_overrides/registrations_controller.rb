@@ -19,7 +19,7 @@ protected
                                         status: Participation::PENDING).first
     return if participation.nil?
 
-    participation.change_status_to(Participation::ACCEPTED)
+    participation.update(status: Participation::ACCEPTED, user_id: user.id)
   end
 
   # overriding of DeviseTokenAuth::Concerns::SetUserByToken
