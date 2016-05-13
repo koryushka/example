@@ -32,6 +32,13 @@ class User < ActiveRecord::Base
         .delete_all
   end
 
+  # TODO: make it simpler without additional N+1 queries
+  def participated_group
+    participation = participations.where(participationable_type: Group.name,
+                                         status: Participation::ACCEPTED).first
+    participation.participationable if participation.present?
+  end
+
   # ================================================================================
   # Swagger::Blocks
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.

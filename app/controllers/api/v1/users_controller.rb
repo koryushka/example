@@ -1,8 +1,7 @@
 class Api::V1::UsersController < ApiController
   include Swagger::Blocks
 
-  before_filter :find_entity, only: [:show, :add_to_group, :remove_from_group]
-  before_filter only: [:group_index, :add_to_group, :remove_from_group] do
+  before_filter only: [:group_index] do
     find_entity type: :group, id_param: :group_id
   end
 
