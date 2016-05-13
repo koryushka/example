@@ -26,7 +26,7 @@ class Api::V1::UsersController < ApiController
     end # end operation :get
   end
   def me
-    render partial: 'user', locals: { user: current_user }, status: :created
+    render partial: 'user', locals: { user: current_user }
   end
 
   # ================================================================================
