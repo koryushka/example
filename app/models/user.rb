@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   end
 
   validates :email, length: {maximum: 128}, presence: true,
-            email_format: {:message => "doesn't look like an email address."},
+            email_format: {message: "doesn't look like an email address."},
             uniqueness: true
 
   def clean_tokens
@@ -99,7 +99,7 @@ visiting the link contained in the received email'
 
   swagger_schema :PasswordChangeInput do
     key :type, :object
-    key :required, %w(email redirect_url)
+    key :required, %w(password password_confirmation)
     property :password do
       key :type, :string
       key :description, 'New password'

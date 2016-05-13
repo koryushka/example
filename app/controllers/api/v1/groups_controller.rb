@@ -49,7 +49,7 @@ class Api::V1::GroupsController < ApiController
       response 400 do
         key :description, 'Validation error'
         schema do
-          key :'$ref', :ValidationError
+          key :'$ref', :ValidationErrorsContainer
         end
       end # end response 400
       response :default do

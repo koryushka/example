@@ -36,7 +36,7 @@ class Group < AbstractModel
 
   swagger_schema :GroupInput do
     key :type, :object
-    key :required, :title
+    key :required, [:title]
     property :title do
       key :type, :string
       key :description, 'Group title'

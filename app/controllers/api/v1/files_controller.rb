@@ -13,7 +13,7 @@ class Api::V1::FilesController < ApiController
     operation :post do
       key :summary, 'Accepts files'
       key :description, 'Accept files and sends them to storage'
-      key :consumes, '[multipart/form-data]'
+      key :consumes, ['multipart/form-data']
       parameter do
         key :name, 'file'
         key :description, 'binary file'

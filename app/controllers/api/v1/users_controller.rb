@@ -103,13 +103,15 @@ A verification email will be sent to the email address provided.'
       end # end response 422
       response :default do
         key :description, 'Unxpected error'
-        key :'$ref', :ErrorsContainer
+        schema do
+          key :'$ref', :ErrorsContainer
+        end
       end # end response :default
       key :tags, ['Users']
     end
   end # end swagger_path /users
 
-  swagger_path 'users/pasword' do
+  swagger_path '/users/pasword' do
     operation :post do
       key :summary, 'Starts password resetting process'
       key :description, 'Accepts email and redirect_url as params. The user matching the email
@@ -130,7 +132,7 @@ after visiting the link contained in the email.'
       response 400 do
         key :description, 'Validation error'
         schema do
-          key :'$ref', :ValidataionError
+          key :'$ref', :ValidationErrorsContainer
         end
       end
       response 404 do
@@ -138,7 +140,9 @@ after visiting the link contained in the email.'
       end
       response :default do
         key :description, 'Unxpected error'
-        key :'$ref', :ErrorsContainer
+        schema do
+          key :'$ref', :ErrorsContainer
+        end
       end
       key :tags, ['Password reset']
     end
@@ -182,7 +186,7 @@ clicks on link which were sent after /users/password calling"
       response 400 do
         key :description, 'Validation error'
         schema do
-          key :'$ref', :ValidataionError
+          key :'$ref', :ValidationErrorsContainer
         end
       end
       response 404 do
@@ -190,7 +194,9 @@ clicks on link which were sent after /users/password calling"
       end
       response :default do
         key :description, 'Unxpected error'
-        key :'$ref', :ErrorsContainer
+        schema do
+          key :'$ref', :ErrorsContainer
+        end
       end
       key :tags, ['Password reset']
     end

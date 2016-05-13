@@ -42,7 +42,7 @@ class ListItem < AbstractModel
       key :default, 0
     end
     property :done do
-      key :type, :integer
+      key :type, :boolean
       key :description, 'Shows whether user finished with this item or not'
       key :default, false
     end
