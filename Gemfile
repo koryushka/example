@@ -38,6 +38,10 @@ group :development do
   gem 'capistrano-rvm'
   gem 'capistrano3-nginx'
 
+  gem 'brakeman', require: false
+  gem 'rails_best_practices'
+  gem 'rubocop', require: false
+  gem 'rubycritic', require: false
 end
 
 group :test do

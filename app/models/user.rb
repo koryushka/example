@@ -33,19 +33,13 @@ class User < ActiveRecord::Base
   end
 
   # TODO: make it simpler without additional N+1 queries
-  def participated_group
+  def family
     participation = participations.where(participationable_type: Group.name,
                                          status: Participation::ACCEPTED).first
-    participation.participationable if participation.present?
+    return participation.participationable if participation.present?
+    groups.includes(participations: [:user, :sender]).first
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER SCHEMA: Model User
-  # ================================================================================
-
-  # swagger_schema :User
   swagger_schema :User do
     key :type, :object
     property :id do
@@ -58,11 +52,23 @@ class User < ActiveRecord::Base
       key :'$ref', :Profile
     end
     property :group do
-      key :'$ref', :GroupWithoutUsers
+      key :'$ref', :Group
     end
-  end # end swagger_schema :User
+  end
 
-  # swagger_schema :RegistrationInput
+  swagger_schema :UserWithProfileOnly do
+    key :type, :object
+    property :id do
+      key :type, :integer
+    end
+    property :email do
+      key :type, :string
+    end
+    property :profile do
+      key :'$ref', :Profile
+    end
+  end
+
   swagger_schema :RegistrationInput do
     key :type, :object
     property :email do
@@ -72,9 +78,8 @@ class User < ActiveRecord::Base
     property :password do
       key :type, :string
     end
-  end # end swagger_schema :RegistrationInput
+  end
 
-  # swagger_schema :UserUpdateInput
   swagger_schema :UserUpdateInput do
     key :type, :object
     property :email do
@@ -89,7 +94,7 @@ class User < ActiveRecord::Base
       key :type, :string
       key :description, "Current user's password. Required if password is going to be changed"
     end
-  end # end swagger_schema :UserUpdateInput
+  end
 
   swagger_schema :PasswordResetInput do
     key :type, :object
