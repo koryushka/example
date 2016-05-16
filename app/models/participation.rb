@@ -80,7 +80,7 @@ class Participation < AbstractModel
       key :description, "Person's email which should participate events or lists"
     end
     property :status do
-      key :description, 'Can be: PENDING = 1, ACCEPTED = 2, DECLINED = 3'
+      key :description, 'Can be: PENDING = 1, ACCEPTED = 2, DECLINED = 3, FAILED = 4'
       key :type, :integer
     end
     property :kind do
@@ -92,10 +92,10 @@ class Participation < AbstractModel
       key :type, :string
     end
     property :user do
-      key :'$ref', :User
+      key :'$ref', :UserWithProfileOnly
     end
     property :sender do
-      key :'$ref', :User
+      key :'$ref', :UserWithProfileOnly
     end
   end
 end

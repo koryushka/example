@@ -43,7 +43,10 @@ when event occurence notifications should be sent. Default value is 30 minutes b
 
   swagger_schema :ProfileInput do
     key :type, :object
-    property :full_name do
+    property :first_name do
+      key :type, :string
+    end
+    property :last_name do
       key :type, :string
     end
     property :image_url do

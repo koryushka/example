@@ -7,7 +7,7 @@ class Api::V1::UsersController < ApiController
 
   swagger_path '/users/me' do
     operation :get do
-      key :summary, 'Current user with profile'
+      key :summary, 'Returns current user object'
       # responses
       response 200 do
         key :description, 'OK'
