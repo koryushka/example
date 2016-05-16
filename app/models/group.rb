@@ -46,6 +46,9 @@ class Group < AbstractModel
       key :type, :string
       key :description, 'Group name'
     end
+    property :owner_id do
+      key :type, :integer
+    end
     property :participations do
       key :type, :array
       items do
