@@ -46,8 +46,8 @@ class Group < AbstractModel
       key :type, :string
       key :description, 'Group name'
     end
-    property :owner_id do
-      key :type, :integer
+    property :owner do
+      key :'$ref', :UserWithProfileOnly
     end
     property :participations do
       key :type, :array
