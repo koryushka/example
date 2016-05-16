@@ -1,29 +1,60 @@
 class Api::V1::DevicesController < ApiController
   include Swagger::Blocks
 
-  # TODO: add to swagger_path
+  # swagger_path :Devices
+  swagger_path 'Devices' do
+    operation :post do
+      key :summary, 'Create device'
+      key :description, 'Creates new device'
+      parameter do
+        key :name, 'device'
+        key :in, 'body'
+        key :required, true
+        schema do
+          key :'$ref', :DeviceInput
+        end
+      end
+      # responses
+
+      response 400 do
+        key :description, 'Validation errors'
+        schema do
+          key :'$ref', :ValidationErrorsContainer
+        end
+      end # end response 400
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :ErrorsContainer
+        end
+      end # end response :default
+      key :tags, ['Devices']
+    end # end operation post
+  end # end swagger_path :Devices
   def create
     @device = Device.find_by(device_token: device_params[:device_token])
+    # Check if device is exists
     if @device
+      # Delete if exists
         endpoint_response = delete_endpoint(@device.aws_endpoint_arn)
-        @device.destroy if endpoint_response.present? && endpoint_response.http_response.status == 200
+        if endpoint_response.present? && endpoint_response.http_response.status == 200
+          raise InternalServerErrorException unless @device.destroy
+        end
     end
 
     @device = Device.new(device_params)
-    return render json: { validation_errors: @device.errors.messages }, status: :bad_request if @device.invalid?
+
     sns_response = insert_token(@device.device_token)
     if sns_response.present? && sns_response.http_response.status == 200
-
-      Device.where(user_id: current_user.id).each do |device|
+      Device.where(user_id: current_user).each do |device|
         endpoint_response = delete_endpoint(device.aws_endpoint_arn)
         next if endpoint_response.nil? || endpoint_response.http_response.status != 200
-        device.destroy
+        raise InternalServerErrorException unless device.destroy
       end
       @device.aws_endpoint_arn = sns_response.endpoint_arn
       raise InternalServerErrorException unless @device.save
     end
     render nothing: true
-
   end
 
   # # TODO: add to swagger_path
@@ -84,7 +115,7 @@ class Api::V1::DevicesController < ApiController
 
 private
   def device_params
-    params[:user_id] = current_user.id
+    params[:user_id] = current_user
     params.permit(:user_id,
     :device_token,
     :aws_endpoint_arn)
