@@ -11,26 +11,31 @@ class GoogleCalendars
     calendars = []
     @calendar_list.items.each do |item|
       @calendar = Calendar.find_or_initialize_by(
-        title: item.id,
+        google_calendar_id: item.id,
+        title: item.summary,
         user_id: @current_user.id,
         account: @account
       )
-      if @calendar.new_record? && @calendar.save
-        calendars << @calendar
+      if @calendar.should_be_synchronised?
+        if @calendar.new_record? && @calendar.save
+          calendars << @calendar
+        end
+        parse_events_from_calendar
       end
-      parse_events_from_calendar
     end
   end
 
   private
 
   def parse_events_from_calendar
+    @google_calendar_events = @service.list_events(@calendar.google_calendar_id).items
     @i ||= 0
-    @service.list_events(@calendar.title).items.each do |item|
+    @google_calendar_events.each do |item|
       @i += 1
       puts "#{@i} - EVENT #{item.summary} - ID #{item.id}"
       @items << item
       @event = Event.find_or_initialize_by(google_event_id: item.id) do |event|
+        event.calendar_id = @calendar.id
         event.etag = item.etag
         event.starts_at = start_date item
         event.ends_at = end_date item
@@ -41,7 +46,7 @@ class GoogleCalendars
       end
 
       if @event.new_record?
-        @calendar.events << @event if @event.save
+        @event.save
       else
         if !cancelled?(item)
           next if user_is_not_creator(item)
@@ -94,7 +99,7 @@ class GoogleCalendars
   def update_google_event(item)
     @update_errors = []
     begin
-      google_event = @service.get_event(@calendar.title, @event.google_event_id)
+      google_event = @service.get_event(@calendar.google_calendar_id, @event.google_event_id)
       google_event.update!(
         start: {
           date_time: formatted_date(@event.starts_at) ,
@@ -109,7 +114,7 @@ class GoogleCalendars
         description: @event.notes,
         summary: @event.title
       )
-      updated_event = @service.update_event(@calendar.title, @event.google_event_id, google_event)
+      updated_event = @service.update_event(@calendar.google_calendar_id, @event.google_event_id, google_event)
       puts 'GOOGLE EVENT HAS BEEN UPDATED'
       updated_event
     rescue Google::Apis::ClientError => error

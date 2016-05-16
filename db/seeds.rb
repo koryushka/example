@@ -5,3 +5,9 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+Calendar.all.each do |calendar|
+  calendar.events.each do |event|
+    event.update_column(:calendar_id, calendar.id)
+  end
+end

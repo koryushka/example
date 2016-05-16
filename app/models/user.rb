@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   has_many :calendars
-  has_many :events
+  has_many :events, through: :calendars
   has_many :calendars_groups
   has_many :lists
   has_many :documents
@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   has_one :profile
   has_many :muted_events
   has_many :google_access_tokens, dependent: :destroy
+
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

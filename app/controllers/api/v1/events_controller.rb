@@ -42,7 +42,17 @@ class Api::V1::EventsController < ApiController
   end
 
   def destroy
-    @event.destroy
+    if @event.destroy && @event.etag
+      calendar = @event.calendar
+      google_access_token = GoogleAccessToken.find_by_account(calendar.account)
+      if google_access_token && calendar.should_be_synchronised?
+        authorize google_access_token
+        begin
+          @service.delete_event(calendar.google_calendar_id, @event.google_event_id)
+        rescue Google::Apis::ClientError => error
+        end  
+      end
+    end
     render nothing: true, status: :no_content
   end
 

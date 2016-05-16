@@ -1,5 +1,6 @@
 class Event < AbstractModel
   belongs_to :user
+  belongs_to :calendar
   has_and_belongs_to_many :calendars
   has_and_belongs_to_many :documents
   has_one :notifications_preference

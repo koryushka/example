@@ -30,22 +30,6 @@ class Api::V1::GoogleOauthController < ApiController
     render json: {params: params}
   end
 
-  def refresh_token(google_access_token)
-    uri = google_token_uri
-    data = {
-      grant_type: 'refresh_token',
-      refresh_token: google_access_token.refresh_token,
-      client_id: Rails.application.secrets.google_client_id,
-      client_secret: Rails.application.secrets.google_client_secret,
-    }
-    request = Net::HTTP.post_form(URI.parse(uri), data)
-    body = JSON.parse(request.body)
-    google_access_token.update_attributes(
-      token: body['access_token'],
-      expires_at: Time.now + body['expires_in'].to_i
-    )
-  end
-
   private
 
   def get_account_info(data)
@@ -70,8 +54,6 @@ class Api::V1::GoogleOauthController < ApiController
       @google_access_token.save
     end
 
-    # Api::V1::GoogleCalendarsController.new.sync
-    # redirect_to 'http://localhost:3000/api/v1/google_calendars/sync'
     render json:{data: response}
   end
 

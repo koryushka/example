@@ -19,6 +19,8 @@ Rails.application.routes.draw do
       get 'oauth2callback', to: 'google_oauth#oauth2callback'
       # get 'google_calendars', to: 'google_calendars#index'
       get 'google_calendars/sync', to: 'google_calendars#sync'
+      put 'google_calendars/unsync_calendar', to: 'google_calendars#unsync_calendar'
+      put 'google_calendars/sync_calendar', to: 'google_calendars#sync_calendar'
       post 'google/refresh_token', to: 'google_oauth#refresh_token'
       get 'google/account_info', to: 'google_oauth#get_account_info'
       delete 'google/remove_account', to: 'google_oauth#remove_account'
