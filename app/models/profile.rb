@@ -6,6 +6,7 @@ class Profile < AbstractModel
   validates :last_name, length: {maximum: 64}
   validates :image_url, length: {maximum: 2048}
   validates :color, length: {maximum: 6}
+  validates :notification_time, numericality: {only_integer: true, greater_than: 0}, allow_blank: true
 
   default :first_name, ''
   default :last_name, ''
