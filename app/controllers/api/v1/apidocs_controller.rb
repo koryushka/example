@@ -41,6 +41,8 @@ class Api::V1::ApidocsController < ActionController::Base
       Group,
       ParticipationsController,
       Participation,
+      DevicesController,
+      Device,
       self,
   ].freeze
 
