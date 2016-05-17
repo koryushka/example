@@ -5,8 +5,9 @@ class CreateDevices < ActiveRecord::Migration
       t.string :device_token
       t.string :aws_endpoint_arn
 
-      t.foreign_key :users
       t.timestamps null: false
     end
+    add_index :devices, :user_id
+    add_foreign_key :devices, :users, :dependent => :cascade
   end
 end
