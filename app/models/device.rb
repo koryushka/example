@@ -7,7 +7,7 @@ class Device < ActiveRecord::Base
   # ================================================================================
   # Swagger::Blocks
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER SCHEMA: Model Calendar
+  # SWAGGER SCHEMA: Model Device
   # ================================================================================
 
   # swagger_schema :Device

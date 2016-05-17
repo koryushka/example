@@ -107,6 +107,22 @@ class Api::V1::DevicesController < ApiController
       end # end response Default
       key :tags, ['Devices']
     end # end operation :put
+  end # end swagger_path /device/{id}
+
+  def update
+    @device.assign_attributes(device_params)
+    @sns.delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
+    sns_response = insert_token(@device.aws_endpoint_arn)
+    if sns_response.present? && sns_response.http_response.status == 200
+      # save new endpoint
+      @device.aws_endpoint_arn = sns_response.endpoint_arn
+      raise InternalServerErrorException unless @device.save
+    end
+    render nothing: true
+  end
+
+  # TODO: add to swagger_path
+  swagger_path '/device/{id}' do
     operation :delete do
       key :summary, 'Delete device'
       key :description, 'Deletes device by ID'
@@ -128,21 +144,7 @@ class Api::V1::DevicesController < ApiController
       end # end response default
       key :tags, ['Devices']
     end # end operation :delete
-  end # end swagger_path /device/{id}
-
-  def update
-    @device.assign_attributes(device_params)
-    @sns.delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
-    sns_response = insert_token(@device.aws_endpoint_arn)
-    if sns_response.present? && sns_response.http_response.status == 200
-      # save new endpoint
-      @device.aws_endpoint_arn = sns_response.endpoint_arn
-      raise InternalServerErrorException unless @device.save
-    end
-    render nothing: true
   end
-
-  # TODO: add to swagger_path
   def destroy
     @sns.delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
     @device.destroy
