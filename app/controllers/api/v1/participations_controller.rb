@@ -159,9 +159,9 @@ class Api::V1::ParticipationsController < ApiController
                                     participationable_type: participationable.class.name,
                                     participationable_id: participationable.id,
                                     status: Participation::ACCEPTED)
-      next unless User.exists?(id: user_id)
+      user = User.where(id: user_id).first
+      next if user.nil?
 
-      user = User.find(user_id)
       if participationable.respond_to? :create_participation
         @participations << participationable.create_participation(current_user, user)
       else

@@ -18,7 +18,7 @@ class GroupTest < ActiveSupport::TestCase
     assert Participation.exists?(sender: sender1,
                                  user: participant1,
                                  participationable_type: Group.name,
-                                 status: Participation::PENDING)
+                                 status: Participation::ACCEPTED)
 
     sender2 = FactoryGirl.create(:user)
     group2 = FactoryGirl.create(:group, user: sender2)

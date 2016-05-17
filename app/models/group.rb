@@ -28,7 +28,8 @@ class Group < AbstractModel
     else
       Participation.create(user: user,
                            participationable: self,
-                           sender: sender)
+                           sender: sender,
+                           status: Participation::ACCEPTED)
     end
   end
 
