@@ -4,8 +4,8 @@ class List < AbstractModel
   belongs_to :user
   has_many :list_items, dependent: :destroy
   has_many :events
-  has_many :participations, as: :participationable
-  has_many :activities, as: :notificationable
+  has_many :participations, as: :participationable, dependent: :destroy
+  has_many :activities, as: :notificationable, dependent: :destroy
 
   LIST_KINDS = [GROCERY = 1, TODO = 2]
 
