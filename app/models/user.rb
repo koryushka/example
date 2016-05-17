@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   has_many :activities, dependent: :destroy
   has_many :sent_paticipations, class_name: 'Participation', foreign_key: 'sender_id'
   has_many :participations
+  has_many :devices, dependent: :destroy
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

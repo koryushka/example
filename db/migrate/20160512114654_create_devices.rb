@@ -8,6 +8,6 @@ class CreateDevices < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_index :devices, :user_id
-    add_foreign_key :devices, :users, :dependent => :cascade
+    add_foreign_key :devices, :users
   end
 end

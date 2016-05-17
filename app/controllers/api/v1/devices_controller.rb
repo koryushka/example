@@ -4,34 +4,40 @@ class Api::V1::DevicesController < ApiController
   before_filter :find_entity, except: [:create]
 
   # swagger_path /device
-  # swagger_path '/devices' do
-  #   operation :post do
-  #     key :summary, 'Create device'
-  #     key :description, 'Creates new device'
-  #     parameter do
-  #       key :name, 'device'
-  #       key :in, 'body'
-  #       key :required, true
-  #     end
-  #     # responses
-  #     response 201 do
-  #       key :description, 'Created'
-  #     end # end response 201
-  #     response 400 do
-  #       key :description, 'Validation errors'
-  #       schema do
-  #         key :'$ref', :ValidationErrorsContainer
-  #       end
-  #     end # end response 400
-  #     response :default do
-  #       key :description, 'Unexpected error'
-  #       schema do
-  #         key :'$ref', :ErrorsContainer
-  #       end
-  #     end # end response :default
-  #     key :tags, ['Devices']
-  #   end # end operation post
-  # end # end swagger_path :Devices
+  swagger_path '/devices' do
+    operation :post do
+      key :summary, 'Create device'
+      key :description, 'Creates new device'
+      parameter do
+        key :name, 'device'
+        key :in, 'body'
+        key :required, true
+        schema do
+          key :'$ref', :DeviceInput
+        end
+      end
+      # responses
+      response 201 do
+        key :description, 'Created'
+        schema do
+          key :'$ref', :Device
+        end
+      end # end response 201
+      response 400 do
+        key :description, 'Validation errors'
+        schema do
+          key :'$ref', :ValidationErrorsContainer
+        end
+      end # end response 400
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :ErrorsContainer
+        end
+      end # end response :default
+      key :tags, ['Devices']
+    end # end operation post
+  end # end swagger_path :Devices
   def create
     @device = Device.find_by(device_token: device_params[:device_token])
     # Check if device is exists
@@ -146,7 +152,6 @@ class Api::V1::DevicesController < ApiController
 
 private
   def device_params
-    params[:user_id] = current_user
     params.permit(:user_id,
     :device_token,
     :aws_endpoint_arn)
