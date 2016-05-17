@@ -2,18 +2,6 @@ class ApiController < ActionController::Base
   include Doorkeeper::Helpers::Controller
   before_action :doorkeeper_authorize!
 
-  rescue_from InternalServerErrorException do
-    render nothing: true, status: :internal_server_error
-  end
-
-  rescue_from ValidationException do |e|
-    render json: {
-        code: 1,
-        messages: t('errors.messages.validation_error'),
-        error_data: e.model.errors.messages
-    }, status: :bad_request
-  end
-
   rescue_from CanCan::AccessDenied do
     render json: {
         code: 2,
@@ -29,29 +17,13 @@ class ApiController < ActionController::Base
     }, status: :not_acceptable
   end
 
-  rescue_from NotFoundException do
+  rescue_from AppException do |e|
     render json: {
-        code: 4,
-        message: t('errors.messages.not_found')
-    }, status: :not_found
+        code: e.code,
+        message: e.message,
+        error_data: e.data
+    }, status: e.http_status
   end
-
-  rescue_from AlreadyAcceptedException do
-    render json: {
-        code: 5,
-        message: 'This invitation is alredy accepted',
-        error_data: nil
-    }, status: :not_acceptable
-  end
-
-  rescue_from AlreadyDeclinedException do
-    render json: {
-        code: 6,
-        message: 'This invitation is alredy declined',
-        error_data: nil
-    }, status: :not_acceptable
-  end
-
 private
 
   def current_user

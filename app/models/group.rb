@@ -12,17 +12,32 @@ class Group < AbstractModel
 
   validates :title, presence: true, length: {maximum: 128}
 
+  def create_participation(sender, user)
+    # TODO: must be combined into single query
+    participation = Participation.where(user: user, participationable_type: Group.name)
+                        .where.not(sender: sender, status: Participation::FAILED).exists?
+    failed_participation = Participation.where(user: user,
+                                               participationable: self,
+                                               sender: sender,
+                                               status: Participation::FAILED).first
+    if participation && failed_participation.nil?
+      Participation.create(user: user,
+                           participationable: self,
+                           sender: sender,
+                           status: Participation::FAILED)
+    else
+      Participation.create(user: user,
+                           participationable: self,
+                           sender: sender,
+                           status: Participation::ACCEPTED)
+    end
+  end
+
+  # TODO: should be removed if unnecessary
   def accept_participation(participation)
     members << participation.user
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER SCHEMA: Model Group
-  # ================================================================================
-
-  # swagger_schema :Group
   swagger_schema :Group do
     key :type, :object
     property :id do
@@ -32,7 +47,16 @@ class Group < AbstractModel
       key :type, :string
       key :description, 'Group name'
     end
-  end # end swagger_schema :Group
+    property :owner do
+      key :'$ref', :UserWithProfileOnly
+    end
+    property :participations do
+      key :type, :array
+      items do
+        key :'$ref', :Participation
+      end
+    end
+  end
 
   swagger_schema :GroupInput do
     key :type, :object
@@ -41,6 +65,6 @@ class Group < AbstractModel
       key :type, :string
       key :description, 'Group title'
     end
-  end # end swagger_schema :GroupInput
+  end
 
 end
