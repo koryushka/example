@@ -1,6 +1,6 @@
 module ApiHelper
   # Send push notification
-  def self.send(device_token, payload)
+  def self.send(user_id , payload)
     notification_object = { object: payload }
 
     message = {
@@ -15,7 +15,7 @@ module ApiHelper
         }.to_json
     }
 
-    devices = Device.where(user_id: device_token)
+    devices = Device.where(user_id: user_id)
     devices.each do |device|
       @sns.publish(
             target_arn: device.aws_endpoint_arn,
