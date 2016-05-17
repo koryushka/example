@@ -1,4 +1,6 @@
 class GoogleCalendars
+  include Recurrence
+  include Googleable
   attr_accessor :items
 
   def initialize(current_user, service, account)
@@ -34,7 +36,8 @@ class GoogleCalendars
       @i += 1
       puts "#{@i} - EVENT #{item.summary} - ID #{item.id}"
       @items << item
-      @event = Event.find_or_initialize_by(google_event_id: item.id) do |event|
+      @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid) do |event|
+        event.google_event_id = item.id
         event.calendar_id = @calendar.id
         event.etag = item.etag
         event.starts_at = start_date item
@@ -109,7 +112,7 @@ class GoogleCalendars
           date_time: formatted_date(@event.ends_at) ,
           time_zone: @event.timezone_name
         },
-        # recurrence: count_recurrence(event),
+        # recurrence: count_google_recurrence,
         location: @event.location_name,
         description: @event.notes,
         summary: @event.title
@@ -138,12 +141,6 @@ class GoogleCalendars
     date.to_datetime.strftime("%FT%T%:z") if date
   end
 
-  def count_recurrence(event)
-    if event.event_recurrences
-    else
-    end
-  end
-
   def user_is_not_creator(item)
     item.creator.email != @account
   end
@@ -156,48 +153,6 @@ class GoogleCalendars
     EventCancellation.find_or_create_by(
       event_id: @event.id,
       date: item.original_start_time.date_time.to_date
-    )
-  end
-
-  def calculate_event_recurrence
-    case @frequence[:FREQ]
-      when 'DAILY'  then puts 'DAILY'
-      when 'WEEKLY' then create_weekly_event_recurrence
-      when 'MONTHLY'then create_monthly_event_recurrence
-      when 'YEARLY' then create_yearly_event_recurrence
-    end
-  end
-
-  def create_weekly_event_recurrence
-    days = @frequence[:BYDAY].split(',')
-    days.map do |day|
-      find_or_create_event_recurrence(nil, nil, get_day(day))
-    end
-  end
-
-  def create_monthly_event_recurrence
-    if byday = @frequence[:BYDAY]
-      days = byday.split(',')
-      days.map do |day|
-        day.squish!
-        find_or_create_event_recurrence(nil, day.slice!(0).to_i, get_day(day))
-      end
-    else
-      find_or_create_event_recurrence(nil, nil, @event.starts_at.day)
-    end
-  end
-
-  def create_yearly_event_recurrence
-    date = @event.starts_at.to_date
-    find_or_create_event_recurrence(date.month, nil, date.day)
-  end
-
-  def find_or_create_event_recurrence(month, week, day)
-    EventRecurrence.find_or_create_by(
-      event_id: @event.id,
-      month: month,
-      week: week,
-      day: day
     )
   end
 

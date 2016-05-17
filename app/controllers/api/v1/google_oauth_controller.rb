@@ -1,4 +1,5 @@
 class Api::V1::GoogleOauthController < ApiController
+  include Googleable
   skip_before_filter :doorkeeper_authorize!, except: [:remove_account, :get_account_info, :auth]
   before_action :set_client, only: [:auth, :oauth2callback]
   before_action :check_for_params, only: [:remove_account]
@@ -69,15 +70,15 @@ class Api::V1::GoogleOauthController < ApiController
     end
   end
 
-  %w(token auth).each do |method|
-    define_method "google_#{method}_uri" do
-      google_oauth2_path + '/' + method
-    end
-  end
-
-  def google_oauth2_path
-    'https://accounts.google.com/o/oauth2'
-  end
+  # %w(token auth).each do |method|
+  #   define_method "google_#{method}_uri" do
+  #     google_oauth2_path + '/' + method
+  #   end
+  # end
+  #
+  # def google_oauth2_path
+  #   'https://accounts.google.com/o/oauth2'
+  # end
 
   def set_client
     @client = Signet::OAuth2::Client.new({

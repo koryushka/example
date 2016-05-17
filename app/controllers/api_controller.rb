@@ -105,32 +105,4 @@ private
   def find_entity_of_current_user(type: nil, id_param: 'id'.to_sym, property_name: nil)
     find_entity(type: type, id_param: id_param, property_name: property_name, condition: {user_id: current_user.id})
   end
-
-  def account_info_uri
-    'https://www.googleapis.com/oauth2/v1/userinfo?access_token='
-  end
-
-  def refresh_token(google_access_token)
-    uri = google_token_uri
-    data = {
-      grant_type: 'refresh_token',
-      refresh_token: google_access_token.refresh_token,
-      client_id: Rails.application.secrets.google_client_id,
-      client_secret: Rails.application.secrets.google_client_secret,
-    }
-    request = Net::HTTP.post_form(URI.parse(uri), data)
-    body = JSON.parse(request.body)
-    google_access_token.update_attributes(
-      token: body['access_token'],
-      expires_at: Time.now + body['expires_in'].to_i
-    )
-  end
-
-  def authorize(google_access_token)
-    @google_oauth ||= Api::V1::GoogleOauthController.new
-    @google_oauth.send :refresh_token, google_access_token if google_access_token.expired?
-    @client = Signet::OAuth2::Client.new(access_token: google_access_token.token)
-    @service ||= Google::Apis::CalendarV3::CalendarService.new
-    @service.authorization = @client
-  end
 end

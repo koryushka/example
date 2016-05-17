@@ -1,4 +1,5 @@
 class Api::V1::GoogleCalendarsController < ApiController
+  include Googleable
   before_action :google_auth, only: [:sync]
   before_action :check_for_params, only: [:unsync_calendar, :sync_calendar]
   before_action :set_calendar, only: [:unsync_calendar, :sync_calendar]
@@ -12,11 +13,11 @@ class Api::V1::GoogleCalendarsController < ApiController
       parser.import_calendars
       items << parser.items
       parser.items.each { |item| google_events_ids << item.id }
-      local_events = Event.where('google_event_id is not NULL and events.user_id = ?', current_user.id)
+      local_events_ids = Event.where('google_event_id IS NOT NULL AND events.user_id = ?', current_user.id)
         .includes(:calendar)
         .where(calendars: {sync_with_google: true})
-      result = local_events.pluck(:google_event_id) - google_events_ids
-      compare_events(result)
+        .pluck(:google_event_id)
+      compare_events(local_events_ids, google_events_ids)
     end
     render json: {items: items}
   end
@@ -41,11 +42,9 @@ class Api::V1::GoogleCalendarsController < ApiController
 
   private
 
-  def compare_events(result)
-    result.each do |e|
-      event = Event.find_by_google_event_id(e)
-      event.destroy if event
-    end
+  def compare_events(local_events_ids, google_events_ids)
+    result = local_events_ids - google_events_ids
+    Event.where('google_event_id in (?)', result).destroy_all
   end
 
   def check_for_params
@@ -77,13 +76,4 @@ class Api::V1::GoogleCalendarsController < ApiController
     end
   end
 
-  # def authorize(google_access_token)
-  #   puts "AUTHORIZATION"
-  #   @google_oauth ||= Api::V1::GoogleOauthController.new
-  #   puts "google oauth #{@google_oauth}"
-  #   @google_oauth.refresh_token google_access_token if google_access_token.expired?
-  #   @client = Signet::OAuth2::Client.new(access_token: google_access_token.token)
-  #   @service ||= Google::Apis::CalendarV3::CalendarService.new
-  #   @service.authorization = @client
-  # end
 end

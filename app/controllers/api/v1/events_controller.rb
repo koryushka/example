@@ -1,4 +1,5 @@
 class Api::V1::EventsController < ApiController
+  include Googleable
   before_filter :find_entity, except: [:index, :create, :index_of_calendar, :index_of_list]
   before_filter only: [:add_to_calendar, :remove_from_calendar, :index_of_calendar] do
     find_entity_of_current_user type: :calendar, id_param: :calendar_id
@@ -50,7 +51,7 @@ class Api::V1::EventsController < ApiController
         begin
           @service.delete_event(calendar.google_calendar_id, @event.google_event_id)
         rescue Google::Apis::ClientError => error
-        end  
+        end
       end
     end
     render nothing: true, status: :no_content
