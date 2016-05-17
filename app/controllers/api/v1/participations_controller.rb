@@ -217,7 +217,6 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
-
   def destroy
     find_participationable.participations.destroy(@participation)
     render nothing: true
@@ -248,12 +247,11 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
-
   def accept
     raise AlreadyAcceptedException if @participation.accepted?
 
-    # process_participation means adding to group, event, list, etc.
-    @participation.participationable.accept_participation(@participation)
+    # accept_participation means adding to group, event, list, etc.
+    #@participation.participationable.accept_participation(@participation)
     @participation.change_status_to(Participation::ACCEPTED)
     render nothing: true
   end
@@ -283,7 +281,6 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
-
   def decline
     raise AlreadyDeclinedException if @participation.declined?
 

@@ -17,6 +17,14 @@ class ApiController < ActionController::Base
     }, status: :not_acceptable
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: {
+        code: 4,
+        message: e.message,
+        error_data: nil
+    }, status: :not_found
+  end
+
   rescue_from AppException do |e|
     render json: {
         code: e.code,
