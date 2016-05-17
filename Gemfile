@@ -31,7 +31,6 @@ gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
 gem 'swagger-blocks'
 gem 'aws-sdk'
 
-
 # Use Capistrano for deployment
 group :development do
   gem 'capistrano', '3.4.0'
