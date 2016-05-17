@@ -3,8 +3,8 @@ class Group < AbstractModel
 
   belongs_to :owner, class_name: 'User', foreign_key: 'user_id'
   has_and_belongs_to_many :members, class_name: 'User'
-  has_many :participations, as: :participationable
-  has_many :activities, as: :notificationable
+  has_many :participations, as: :participationable, dependent: :destroy
+  has_many :activities, as: :notificationable, dependent: :destroy
 
   alias_attribute :user, :owner
 
@@ -20,6 +20,8 @@ class Group < AbstractModel
                                                participationable: self,
                                                sender: sender,
                                                status: Participation::FAILED).first
+    # if invitation was failed for other group and it does not exist for current croup
+    # we need to create failed participation for current group
     if participation && failed_participation.nil?
       Participation.create(user: user,
                            participationable: self,
