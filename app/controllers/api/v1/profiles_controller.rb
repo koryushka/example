@@ -13,7 +13,7 @@ class Api::V1::ProfilesController < ApiController
   # swagger_path /users/{user_id}/profile
   swagger_path '/users/{user_id}/profile' do
     operation :get do
-      key :summary, 'Updates current user profile'
+      key :summary, 'Returns profile of specified user'
       parameter do
         key :name, 'user_id'
         key :in, 'path'

@@ -6,7 +6,7 @@ class Participation < AbstractModel
   belongs_to :sender, class_name: 'User', foreign_key: 'sender_id'
   has_many :activities, as: :notificationable
 
-  PARTICIPATION_STATUS = [PENDING = 1, ACCEPTED = 2, DECLINED = 3]
+  PARTICIPATION_STATUS = [PENDING = 1, ACCEPTED = 2, DECLINED = 3, FAILED = 4]
 
   validates :user_id, allow_blank: true, numericality: {only_integer: true}
   validates :email, length: {maximum: 128}, allow_blank: true,
@@ -31,20 +31,20 @@ class Participation < AbstractModel
   def change_status_to(status)
     update(status: status)
 
-    activity = nil
-
-    if pending? && user.present?
-      activity = Activity.new(notificationable: self,
-                              user: user,
-                              activity_type: status)
-    elsif !pending?
-      # sending notification about invitation acceptance to inviter
-      activity = Activity.new(notificationable: self,
-                              user: sender,
-                              activity_type: status)
-    end
-
-    activities << activity unless activity.nil?
+    # activity = nil
+    #
+    # if pending? && user.present?
+    #   activity = Activity.new(notificationable: self,
+    #                           user: user,
+    #                           activity_type: status)
+    # elsif !pending?
+    #   # sending notification about invitation acceptance to inviter
+    #   activity = Activity.new(notificationable: self,
+    #                           user: sender,
+    #                           activity_type: status)
+    # end
+    #
+    # activities << activity unless activity.nil?
   end
 
   swagger_schema :ParticipationInput do
@@ -80,7 +80,7 @@ class Participation < AbstractModel
       key :description, "Person's email which should participate events or lists"
     end
     property :status do
-      key :description, 'Can be: PENDING = 1, ACCEPTED = 2, DECLINED = 3'
+      key :description, 'Can be: PENDING = 1, ACCEPTED = 2, DECLINED = 3, FAILED = 4'
       key :type, :integer
     end
     property :kind do
@@ -92,10 +92,10 @@ class Participation < AbstractModel
       key :type, :string
     end
     property :user do
-      key :'$ref', :User
+      key :'$ref', :UserWithProfileOnly
     end
     property :sender do
-      key :'$ref', :User
+      key :'$ref', :UserWithProfileOnly
     end
   end
 end

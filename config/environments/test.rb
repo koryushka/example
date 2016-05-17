@@ -47,4 +47,10 @@ Rails.application.configure do
         endpoint:   'http://tests.local'
     }
   end
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+    Bullet.raise = true # raise an error if n+1 query occurs
+  end
 end

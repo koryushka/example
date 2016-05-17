@@ -6,18 +6,12 @@ class Profile < AbstractModel
   validates :last_name, length: {maximum: 64}
   validates :image_url, length: {maximum: 2048}
   validates :color, length: {maximum: 6}
+  validates :notification_time, numericality: {only_integer: true, greater_than: 0}, allow_blank: true
 
   default :first_name, ''
   default :last_name, ''
   default :notification_time, 30
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER SCHEMA: Model Profile
-  # ================================================================================
-
-  #swagger_schema Profile:
   swagger_schema :Profile do
     key :type, :object
     property :id do
@@ -46,12 +40,14 @@ class Profile < AbstractModel
       key :description, 'Default time in minutes which is being used for detemining
 when event occurence notifications should be sent. Default value is 30 minutes before event occurs.'
     end
-  end # end swagger_schema :Profile
+  end
 
-  # swagger_schema :ProfileInput
   swagger_schema :ProfileInput do
     key :type, :object
-    property :full_name do
+    property :first_name do
+      key :type, :string
+    end
+    property :last_name do
       key :type, :string
     end
     property :image_url do
@@ -62,6 +58,6 @@ when event occurence notifications should be sent. Default value is 30 minutes b
       key :type, :string
       key :description, 'Hex string representation of color'
     end
-  end # end swagger_schema ProfileInput
+  end
 
 end

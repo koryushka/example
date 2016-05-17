@@ -172,7 +172,10 @@ For reminders time zone usually does not matter'
       key :'$ref', :List
     end
     property :participations do
-      key :'$ref', :Participation
+      key :type, :array
+      items do
+        key :'$ref', :Participation
+      end
     end
   end # end swagger_schema :Event
 

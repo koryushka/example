@@ -3,6 +3,7 @@ require File.expand_path('../../../../test_helper', __FILE__)
 class Api::V1::GroupsControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
+=begin
   test 'should get index' do
     groups_count = 5
     FactoryGirl.create_list(:group, groups_count, owner: @user)
@@ -10,6 +11,13 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_nil json_response
     assert json_response.size == groups_count
+  end
+=end
+  test 'should get family' do
+    FactoryGirl.create(:group, owner: @user)
+    get :index
+    assert_response :success
+    assert_not_nil json_response
   end
 
   test 'should get show' do
@@ -34,6 +42,26 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
         title: 'x'*200
     }
     assert_response :bad_request
+  end
+
+  test 'should fail group creation if user is owner of other group' do
+    FactoryGirl.create(:group, user: @user)
+    post :create, {
+        title: Faker::Lorem.word
+    }
+
+    assert_response :conflict
+  end
+
+  test 'should fail group creation if user is a member of other group' do
+    user = FactoryGirl.create(:user)
+    group = FactoryGirl.create(:group, user: user)
+    group.participations << Participation.new(user: @user, sender: user, status: Participation::ACCEPTED)
+    post :create, {
+        title: Faker::Lorem.word
+    }
+
+    assert_response :conflict
   end
 
   #### group update group
@@ -69,6 +97,6 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
 
     delete :leave, id: group.id
     assert_response :success
-    assert_not group.members.exists?(users: {id: @user.id})
+    assert_not group.participations.exists?(user: @user)
   end
 end

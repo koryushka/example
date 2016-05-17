@@ -37,4 +37,12 @@ Rails.application.configure do
         endpoint:   'http://localhost:3000'
     }
   end
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+    Bullet.rails_logger = true
+    #Bullet.stacktrace_includes = [ 'your_gem', 'your_middleware' ]
+    #Bullet.stacktrace_excludes = [ 'their_gem', 'their_middleware' ]
+  end
 end
