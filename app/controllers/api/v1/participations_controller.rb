@@ -136,8 +136,7 @@ class Api::V1::ParticipationsController < ApiController
       # go to next email if user already accepted participation
       next if current_user.sent_paticipations.exists?(email: email,
                                                       participationable_type: participationable.class.name,
-                                                      participationable_id: participationable.id,
-                                                      status: Participation::ACCEPTED)
+                                                      participationable_id: participationable.id)
 
       existing_user = User.where(email: email).select(:id).first
       unless existing_user.nil?
@@ -158,8 +157,7 @@ class Api::V1::ParticipationsController < ApiController
     existing_users.each do |user_id|
       next if Participation.exists?(user_id: user_id,
                                     participationable_type: participationable.class.name,
-                                    participationable_id: participationable.id,
-                                    status: Participation::ACCEPTED)
+                                    participationable_id: participationable.id)
       user = User.where(id: user_id).first
       next if user.nil?
 
