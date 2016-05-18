@@ -66,6 +66,7 @@ class Event < AbstractModel
     participation = Participation.create(user: user, sender: sender, participationable: self)
     family_member = sender.family && sender.family.participations.exists?(user: user)
     participation.change_status_to(Participation::ACCEPTED) if family_member
+    participation
   end
 
 private
