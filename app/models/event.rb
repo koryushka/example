@@ -62,6 +62,12 @@ class Event < AbstractModel
     me.present? && me.muted?
   end
 
+  def create_participation(sender, user)
+    participation = Participation.create(user: user, sender: sender, participationable: self)
+    family_member = sender.family && sender.family.participations.exists?(user: user)
+    participation.change_status_to(Participation::ACCEPTED) if family_member
+  end
+
 private
   def recurrency_check
     if frequency == 'once' && event_recurrences.size > 0
