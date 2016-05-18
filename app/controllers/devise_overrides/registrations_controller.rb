@@ -1,7 +1,7 @@
 class DeviseOverrides::RegistrationsController < DeviseTokenAuth::RegistrationsController
   include Doorkeeper::Helpers::Controller
 
-  after_action :accept_family_invitation, only: [:create]
+  after_action :accept_invitations, only: [:create]
 
   rescue_from ValidationException do |e|
     render json: {
@@ -20,6 +20,16 @@ protected
     return if participation.nil?
 
     participation.update(status: Participation::ACCEPTED, user_id: user.id)
+  end
+
+  def attach_events_invitations
+    existing_participations = Participation.where(email: @resource.email, participationable_type: Event.name)
+    existing_participations.update_all(user_id: @resource.id)
+  end
+
+  def accept_invitations
+    attach_events_invitations
+    accept_family_invitation
   end
 
   # overriding of DeviseTokenAuth::Concerns::SetUserByToken
