@@ -1,5 +1,4 @@
 class Api::V1::EventsController < ApiController
-  include Googleable
   before_filter :find_entity, except: [:index, :create, :index_of_calendar, :index_of_list]
   before_filter only: [:add_to_calendar, :remove_from_calendar, :index_of_calendar] do
     find_entity_of_current_user type: :calendar, id_param: :calendar_id
@@ -43,17 +42,9 @@ class Api::V1::EventsController < ApiController
   end
 
   def destroy
-    if @event.destroy && @event.etag
-      calendar = @event.calendar
-      google_access_token = GoogleAccessToken.find_by_account(calendar.account)
-      if google_access_token && calendar.should_be_synchronised?
-        authorize google_access_token
-        begin
-          @service.delete_event(calendar.google_calendar_id, @event.google_event_id)
-        rescue Google::Apis::ClientError => error
-        end
-      end
-    end
+    @event.destroy #&& @event.etag
+    #   @event.destroy_from_google
+    # end
     render nothing: true, status: :no_content
   end
 

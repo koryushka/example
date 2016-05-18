@@ -22,12 +22,9 @@ class Api::V1::GoogleOauthController < ApiController
 
   def remove_account
     account = params[:account]
-    remove_events = params[:remove_events]
     google_access_token = current_user.google_access_tokens.find_by_account(account)
     google_access_token.update_column(:deleted, true)
-    if remove_events == 'true'
-      Api::V1::GoogleCalendarsController.new.remove_calendars(account)
-    end
+    Api::V1::GoogleCalendarsController.new.remove_calendars(account)
     render json: {params: params}
   end
 
@@ -36,7 +33,8 @@ class Api::V1::GoogleOauthController < ApiController
   def get_account_info(data)
     uri = account_info_uri + data['access_token']
     response = JSON.parse(open(uri).string)
-    if google_access_token = GoogleAccessToken.find_by_account(response['email'])
+    if google_access_token = GoogleAccessToken.find_by(account: response['email'],
+                                                       user_id: current_user.id)
       if @google_access_token
         google_access_token.update_attributes(
           token: data['access_token'],
@@ -50,22 +48,24 @@ class Api::V1::GoogleOauthController < ApiController
         )
       end
     else
-      @google_access_token.account = response['email']
-      @google_access_token.user_id = current_user.id
-      @google_access_token.save
+      if google_access_token = GoogleAccessToken.find_by(account: response['email'])
+        GoogleAccessToken.new(google_access_token
+                              .attributes
+                              .except('id', 'created_at', 'updated_at')
+                              .merge({user_id: current_user.id}))
+                              .save
+      else
+        @google_access_token.update_attributes(account: response['email'],
+                                               user_id: current_user.id)
+      end
     end
 
     render json:{data: response}
   end
 
   def check_for_params
-    errors = []
-    errors << 'Account required' if params[:account].blank?
-    if params[:remove_events].blank? && errors.empty?
-      errors << 'Should we remove events connected with this account?'
-    end
-    if !errors.empty?
-      render json: {errors: errors}, status: 403
+    if params[:account].blank?
+      render json: {errors: 'Account required'}, status: 403
       return
     end
   end

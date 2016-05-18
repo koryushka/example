@@ -1,4 +1,5 @@
 class Event < AbstractModel
+  include Googleable
   belongs_to :user
   belongs_to :calendar
   has_and_belongs_to_many :calendars
@@ -49,6 +50,24 @@ class Event < AbstractModel
     me.present? && me.muted?
   end
 
+  def destroy
+    super
+    if self.etag
+      destroy_from_google
+    end
+  end
+
+  def destroy_from_google
+    calendar = self.calendar
+    google_access_token = GoogleAccessToken.find_by_account(calendar.account)
+    if google_access_token && calendar.should_be_synchronised?
+      authorize google_access_token
+      begin
+        @service.delete_event(calendar.google_calendar_id, self.google_event_id)
+      rescue Google::Apis::ClientError => error
+      end
+    end
+  end
 private
   def recurrency_check
     if frequency == 'once' && event_recurrences.size > 0
@@ -74,4 +93,5 @@ private
     errors.add(:ends_at, I18n.t('events.start_date_not_end_date')) if starts_at == ends_at
     errors.add(:ends_at, I18n.t('events.start_date_more_than_end_date')) if ends_at.present? && starts_at.present? && (starts_at > ends_at)
   end
+
 end

@@ -36,6 +36,8 @@ class GoogleCalendars
       @i += 1
       puts "#{@i} - EVENT #{item.summary} - ID #{item.id}"
       @items << item
+      next if item.recurring_event_id || cancelled?(item)
+      frequency = get_frequency item
       @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid) do |event|
         event.google_event_id = item.id
         event.calendar_id = @calendar.id
@@ -43,24 +45,25 @@ class GoogleCalendars
         event.starts_at = start_date item
         event.ends_at = end_date item
         event.title = title item
-        event.frequency = get_frequency item
         event.user_id = @current_user.id
         event.location_name = item.location
+        event.frequency = frequency
+        event.notes = item.description
       end
 
+
       if @event.new_record?
+        assign_event_frequency_attributes
         @event.save
+        calculate_event_recurrence
       else
         if !cancelled?(item)
           next if user_is_not_creator(item)
           next unless synchronize_event(item)
+        else
+          create_event_cancellation(item)
         end
       end
-
-      if @frequence && @event.persisted?
-        calculate_event_recurrence
-      end
-      create_event_cancellation(item) if cancelled?(item)
       @frequence = nil if @frequence
     end
   end
@@ -80,22 +83,23 @@ class GoogleCalendars
   end
 
   def update_local_event(item)
-    if single_event_has_recurrences(item) || frequency_has_been_changed(item)
-      destroy_event_reccurences
-    end
+    destroy_event_reccurences
+    frequency = get_frequency(item)
+    assign_event_frequency_attributes
     @event.update_attributes(
       starts_at: start_date(item),
       ends_at: item.end.date_time,
       timezone_name: item.start.try(:time_zone) || @event.timezone_name,
       notes: item.description,
       title: title(item),
-      frequency: get_frequency(item),
+      frequency: frequency,
       user_id: @current_user.id,
       google_event_id: item.id,
       location_name: item.location,
-      etag: item.etag
+      etag: item.etag,
+      notes: item.description
     )
-    calculate_event_recurrence if @frequence
+    calculate_event_recurrence
     puts 'LOCAL EVENT HAS BEEN UPDATED'
   end
 
@@ -156,18 +160,12 @@ class GoogleCalendars
     )
   end
 
-  def get_day(day)
-   week = {
-      'SU' => 0,'MO' => 1,'TU' => 2,'WE' => 3,'TH' => 4,'FR' => 5,'SA' => 6
-    }
-    week[day]
-  end
-
   def get_frequency(item)
     if item.recurrence
       @frequence = count_frequency(item.recurrence[0])
       @frequence[:FREQ].downcase
     else
+      assign_event_frequency_attributes(nil, nil, nil)
       'once'
     end
   end
