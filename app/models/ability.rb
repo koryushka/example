@@ -7,7 +7,7 @@ class Ability
     cannot :manage, Participation, user_id: user.id
     can [:accept, :decline], Participation, user_id: user.id
     can :leave, Group do |group|
-      group.members.exists?(users: {id: user.id})
+      group.participations.exists?(user: user)
     end
     #Define abilities for the passed in user here. For example:
     # if user
