@@ -1,6 +1,7 @@
 class Api::V1::ParticipationsController < ApiController
   include Swagger::Blocks
   before_filter :find_entity, only: [:destroy, :accept, :decline]
+  after_filter :something_updated, except: [:index, :index_recent]
   authorize_resource
   check_authorization
 

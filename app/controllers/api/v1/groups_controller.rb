@@ -2,6 +2,7 @@ class Api::V1::GroupsController < ApiController
   include Swagger::Blocks
 
   before_filter :find_entity, except: [:index, :create]
+  after_filter :something_updated, except: [:index, :show]
   authorize_resource
   check_authorization
 
