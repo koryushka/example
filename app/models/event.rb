@@ -20,8 +20,6 @@ class Event < AbstractModel
   accepts_nested_attributes_for :event_recurrences
   accepts_nested_attributes_for :event_cancellations
 
-  attr_accessor :all_day
-
   validates :title, length: {maximum: 128}, presence: true
   validates :starts_at, date: true, allow_blank: true
   validates :starts_at, presence: true, unless: Proc.new {|model| model.all_day && model.starts_at.present?}
@@ -43,12 +41,11 @@ class Event < AbstractModel
   default :separation, 1
   default :notes, ''
   default :kind, 0
+  default :all_day, false
 
   before_save do
-    unless all_day.nil?
-      assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
-      assign_attributes(starts_on: nil, ends_on: nil) unless all_day
-    end
+    assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
+    assign_attributes(starts_on: nil, ends_on: nil) unless all_day
   end
 
   ACTIVITY_TYPES = [UPDATED = 1]

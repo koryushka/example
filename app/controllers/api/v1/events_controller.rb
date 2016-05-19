@@ -119,29 +119,43 @@ Examples:
 
   swagger_path '/events' do
     operation :post do
-      key :summary, 'Create notification preference'
-      key :description, 'Creates new notification preference'
+      key :summary, 'Creates new event'
+      key :description, "Creates new calendar item.\n
+Examples:\n
+**E.B. choir practice weekdays at 5:30pm:**\n
+*Event object properties:*
+- **title**: E.B. choir practice
+- **starts_at:** 5:30pm with date
+- **event_recurrences_attributes**: array of EventReccurenceInput objects\n
+  with following day property values: 1, 2, 3, 4, 5"
       parameter do
-        key :name, 'id'
-        key :description, 'Event ID'
-        key :in, 'path'
+        key :name, 'data'
+        key :in, 'body'
         key :required, true
-        key :type, :integer
+        schema do
+          key :'$ref', :EventInput
+        end
       end
       # responses
       response 201 do
         key :description, 'Created'
         schema do
-          key :'$ref', :NotificationPreference
+          key :'$ref', :Event
         end
-      end # end response 201
+      end
+      response 400 do
+        key :description, 'Validation errors'
+        schema do
+          key :'$ref', :ValidationErrorsContainer
+        end
+      end
       response :default do
         key :description, 'Unexpected error'
         schema do
-          key :'$ref', :Error
+          key :'$ref', :ErrorsContainer
         end
       end # end response :default
-      key :tags, ['Notifications', 'Events']
+      key :tags, ['Events']
     end
   end
   def create
@@ -172,19 +186,18 @@ Examples:
           key :'$ref', :EventInput
         end
       end
-      # responses
       response 201 do
         key :description, 'Updated'
         schema do
           key :'$ref', '#/definitions/Event'
         end
-      end # end response 201
+      end
       response 400 do
         key :description, 'Validation errors'
         schema do
           key :'$ref', :ValidationErrorsContainer
         end
-      end # end response 400
+      end
       response :default do
         key :description, 'Unexpected error'
         schema do
