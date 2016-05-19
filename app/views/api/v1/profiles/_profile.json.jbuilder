@@ -1,1 +1,1 @@
-json.extract! profile, :id, :user_id, :full_name, :image_url, :color
+json.extract! profile, :id, :user_id, :first_name, :last_name, :image_url, :color, :notification_time

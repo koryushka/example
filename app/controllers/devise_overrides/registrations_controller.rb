@@ -1,5 +1,49 @@
 class DeviseOverrides::RegistrationsController < DeviseTokenAuth::RegistrationsController
+  include Doorkeeper::Helpers::Controller
+
+  after_action :accept_invitations, only: [:create]
+
+  rescue_from ValidationException do |e|
+    render json: {
+        code: 1,
+        messages: t('errors.messages.validation_error'),
+        validation_errors: e.model.errors.messages
+    }, status: :bad_request
+  end
+
 protected
+  def accept_family_invitation
+    user = @resource
+    participation = Participation.where(email: user.email,
+                                        participationable_type: Group.name,
+                                        status: Participation::PENDING).first
+    return if participation.nil?
+
+    participation.update(status: Participation::ACCEPTED, user_id: user.id)
+  end
+
+  def attach_events_invitations
+    existing_participations = Participation.where(email: @resource.email, participationable_type: Event.name)
+    existing_participations.update_all(user_id: @resource.id)
+  end
+
+  def accept_invitations
+    attach_events_invitations
+    accept_family_invitation
+  end
+
+  # overriding of DeviseTokenAuth::Concerns::SetUserByToken
+  def set_user_by_token(mapping=nil)
+    # determine target authentication class
+    rc = resource_class(mapping)
+
+    # no default user defined
+    return unless rc
+    @resource = server.resource_owner
+
+    # user has already been found and authenticated
+    @resource if @resource and @resource.class == rc
+  end
 
   def render_create_success
     render json: @resource.as_json

@@ -70,6 +70,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     }
 
     assert_response :success
+    assert json_response['all_day']
   end
 
   #### Event update group
@@ -87,6 +88,10 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     put :update, id: event.id, all_day: true
     assert_response :success
     assert json_response['all_day']
+
+    put :update, id: event.id, all_day: false
+    assert_response :success
+    assert_not json_response['all_day']
   end
 
   test 'should fail event update with invalid data' do

@@ -4,23 +4,34 @@ class ApiController < ActionController::Base
 
   rescue_from CanCan::AccessDenied do
     render json: {
-        code: 1,
-        message: 'You are not permited for this resourse'
+        code: 2,
+        message: t('errors.messages.not_permitted')
     }, status: :forbidden
-  end
-
-  rescue_from ValidationException do |e|
-    render json: { validation_errors: e.model.errors.messages }, status: :bad_request
   end
 
   rescue_from ActiveRecord::RecordNotUnique do |e|
     render json: {
-        code: 1,
-        message: "Duplication for #{controller_name.classify} entity",
+        code: 3,
+        message: t('errors.messages.entity_duplication', entity_name: controller_name.classify),
         error_data: e.message[/DETAIL:.+/]
     }, status: :not_acceptable
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: {
+        code: 4,
+        message: e.message,
+        error_data: nil
+    }, status: :not_found
+  end
+
+  rescue_from AppException do |e|
+    render json: {
+        code: e.code,
+        message: e.message,
+        error_data: e.data
+    }, status: e.http_status
+  end
 private
 
   def current_user
@@ -78,10 +89,7 @@ private
     entity_id = params[id_param]
     entity = relation.where(id: entity_id).first
 
-    if entity.nil?
-      render text: "Could not find #{entity_class} with following id: '#{entity_id}'", status: :not_found
-      return
-    end
+    raise NotFoundException if entity.nil?
 
     # assigning controller's class property
     property_name = entity_class_name.underscore unless property_name

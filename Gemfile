@@ -12,7 +12,7 @@ gem 'jbuilder', '~> 2.0'
 #gem 'bcrypt', '~> 3.1.7'
 gem 'bcrypt'
 
-gem 'devise'
+#gem 'devise'
 gem 'devise_token_auth'
 gem 'doorkeeper'
 
@@ -31,14 +31,20 @@ gem 'cancancan', '~> 1.10'
 gem 'pubnub'
 gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
 gem 'swagger-blocks'
+gem 'aws-sdk'
 
 # Use Capistrano for deployment
 group :development do
-  gem 'capistrano'
+  gem 'capistrano', '3.4.0'
   gem 'capistrano-rails'
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
   gem 'capistrano3-nginx'
+
+  gem 'brakeman', require: false
+  gem 'rails_best_practices'
+  gem 'rubocop', require: false
+  gem 'rubycritic', require: false
 end
 
 group :test do
@@ -48,3 +54,5 @@ group :test do
   gem 'simplecov', require: false
   gem 'faker'
 end
+
+gem 'bullet', group: [:development, :test]
