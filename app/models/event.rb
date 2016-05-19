@@ -276,6 +276,12 @@ For reminders time zone usually does not matter'
         key :'$ref', :Participation
       end
     end
+    property :public do
+      key :type, :boolean
+      key :description, "Specifies event. If it's true so All family members should be able to modify all attributes
+of the event with the exception of changing the ‘Public’ / ‘Private’ setting"
+      key :default, true
+    end
   end # end swagger_schema :Event
 
   # swagger_schema :ArrayOfEvents
