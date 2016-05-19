@@ -35,6 +35,7 @@ class Event < AbstractModel
   validates :longitude, numericality: {only_integer: false, greater_than_or_equal_to: -180, less_than_or_equal_to: 180}, allow_blank: true
   validates :latitude, numericality: {only_integer: false, greater_than_or_equal_to: -90, less_than_or_equal_to: 90}, allow_blank: true
   validates :frequency, inclusion: {in: %w(once daily weekly monthly yearly)}
+  validates :image_url, length: {maximum: 2048}
 
   validate :dates_check
   validate :recurrency_check
@@ -95,11 +96,98 @@ private
     errors.add(:ends_at, I18n.t('events.start_date_more_than_end_date')) if ends_at.present? && starts_at.present? && (starts_at > ends_at)
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: model Event
-  # ================================================================================
+  swagger_schema :EventInput do
+    key :type, :object
+    property :title do
+      key :type, :string
+      key :description, "Event's title"
+    end
+    property :starts_at do
+      key :type, :string
+      key :format, 'date-time'
+      key :description, 'Start date and time for event'
+    end
+    property :ends_at do
+      key :type, :string
+      key :format, 'date-time'
+      key :description, 'End date and time for event'
+    end
+    property :all_day do
+      key :type, :boolean
+      key :description, "Specifies all-day event. If it's true so ends_at is being set to null"
+      key :default, false
+    end
+    property :notes do
+      key :type, :string
+      key :description, 'Additional notes'
+    end
+    property :timezone_name do
+      key :type, :string
+      key :description, 'Optional time zone to apply to starting and ending dates. For reminders time zone usually
+does not matter'
+    end
+    property :kind do
+      key :type, :integer
+      key :format, :int16
+      key :description, 'Enumeration specifies the type of event'
+      key :default, 0
+    end
+    property :latitude do
+      key :type, :number
+      key :format, :double
+      key :description, 'Location lattitude'
+    end
+    property :longitude do
+      key :type, :number
+      key :format, :double
+      key :description, 'Location longitude'
+    end
+    property :location_name do
+      key :type, :string
+      key :description, 'Location name. It might be city name, neighborhood name or anything else'
+    end
+    property :separation do
+      key :type, :number
+      key :default, 1
+      key :description, "The number of intervals at en event's frequency in between occurrences of
+the event. For instance, if an event occurs every other week, it has a
+frequency of weekly and a separation of 2 because there are 2 weeks in
+between occurrences. This property defaults to 1"
+    end
+    property :count do
+      key :type, :number
+      key :description, 'Specifies a limit number of times the event will occur. Set this property to
+NULL for no limit'
+    end
+    property :until do
+      key :type, :string
+      key :format, 'date-time'
+      key :description, 'Specifies a limiting date and time after which no recurrences will be
+generated for this event. Set this property to NULL for no limit'
+    end
+    property :frequency do
+      key :type, :string
+      key :description, "This property specifies the frequency at which this event recurs.
+Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'"
+    end
+    property :image_url do
+      key :type, :string
+      key :description, 'Contains link to event picture'
+      key :maxLength, 2048
+    end
+    property :event_recurrences_attributes do
+      key :type, :array
+      items do
+        key :'$ref', '#/definitions/EventReccurenceInput'
+      end
+    end
+    property :event_cancellations_attributes do
+      key :type, :array
+      items do
+        key :'$ref', :EventCancellationInput
+      end
+    end
+  end
 
   swagger_schema :Event do
     key :type, :object
@@ -162,6 +250,10 @@ For reminders time zone usually does not matter'
     property :muted do
       key :type, :boolean
       key :description, 'Shows whether user receives notifications related to this event'
+    end
+    property :image_url do
+      key :type, :string
+      key :description, 'Contains link to event picture'
     end
     property :event_recurrences_attributes do
       key :type, :array
@@ -263,93 +355,6 @@ For reminders time zone usually does not matter'
     end
   end # end swagger_schema :EventCancellation
 
-  # swagger_schema :EventInput
-  swagger_schema :EventInput do
-    key :type, :object
-    property :title do
-      key :type, :string
-      key :description, "Event's title"
-    end
-    property :starts_at do
-      key :type, :string
-      key :format, 'date-time'
-      key :description, 'Start date and time for event'
-    end
-    property :ends_at do
-      key :type, :string
-      key :format, 'date-time'
-      key :description, 'End date and time for event'
-    end
-    property :all_day do
-      key :type, :boolean
-      key :description, "Specifies all-day event. If it's true so ends_at is being set to null"
-      key :default, false
-    end
-    property :notes do
-      key :type, :string
-      key :description, 'Additional notes'
-    end
-    property :timezone_name do
-      key :type, :string
-      key :description, 'Optional time zone to apply to starting and ending dates. For reminders time zone usually
-does not matter'
-    end
-    property :kind do
-      key :type, :integer
-      key :format, :int16
-      key :description, 'Enumeration specifies the type of event'
-      key :default, 0
-    end
-    property :latitude do
-      key :type, :number
-      key :format, :double
-      key :description, 'Location lattitude'
-    end
-    property :longitude do
-      key :type, :number
-      key :format, :double
-      key :description, 'Location longitude'
-    end
-    property :location_name do
-      key :type, :string
-      key :description, 'Location name. It might be city name, neighborhood name or anything else'
-    end
-    property :separation do
-      key :type, :number
-      key :default, 1
-      key :description, "The number of intervals at en event's frequency in between occurrences of
-the event. For instance, if an event occurs every other week, it has a
-frequency of weekly and a separation of 2 because there are 2 weeks in
-between occurrences. This property defaults to 1"
-    end
-    property :count do
-      key :type, :number
-      key :description, 'Specifies a limit number of times the event will occur. Set this property to
-NULL for no limit'
-    end
-    property :until do
-      key :type, :string
-      key :format, 'date-time'
-      key :description, 'Specifies a limiting date and time after which no recurrences will be
-generated for this event. Set this property to NULL for no limit'
-    end
-    property :frequency do
-      key :type, :string
-      key :description, "This property specifies the frequency at which this event recurs.
-Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'"
-    end
-    property :event_recurrences_attributes do
-      key :type, :array
-      items do
-        key :'$ref', '#/definitions/EventReccurenceInput'
-      end
-    end
-    property :event_cancellations_attributes do
-      key :type, :array
-      items do
-        key :'$ref', :EventCancellationInput
-      end
-    end
-  end # end swagger_schema :EventInput
+
 
 end
