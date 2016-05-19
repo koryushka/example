@@ -10,6 +10,7 @@ module Recurrence
   end
 
   def manage_daily_event_recurrence
+    assign_event_frequency_attributes(nil, nil, nil)
   end
 
   def manage_weekly_event_recurrence

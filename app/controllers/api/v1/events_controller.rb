@@ -196,6 +196,7 @@ Examples:
   end
   def update
     @event.update(event_params)
+    @event.update_google_event if @event.etag
     MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
     render partial: 'event', locals: {event: @event }
   end
@@ -224,9 +225,9 @@ Examples:
     end
   end
   def destroy
-    @event.destroy #&& @event.etag
-    #   @event.destroy_from_google
-    # end
+    if @event.destroy && @event.etag
+      @event.destroy_from_google
+    end
     render nothing: true, status: :no_content
   end
 

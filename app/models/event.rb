@@ -52,6 +52,9 @@ class Event < AbstractModel
     end
   end
 
+  # after_destroy :destroy_from_google, if: :has_etag?
+  # after_update :update_google_event, if: :has_etag?
+
   ACTIVITY_TYPES = [UPDATED = 1]
   after_update do
     participations.where(status: Participation::ACCEPTED).each do |p|
@@ -63,13 +66,13 @@ class Event < AbstractModel
     me = muted_events.first
     me.present? && me.muted?
   end
-
-  def destroy
-    super
-    if self.etag
-      destroy_from_google
-    end
-  end
+  #
+  # def destroy
+  #   super
+  #   if self.etag
+  #     destroy_from_google
+  #   end
+  # end
 
   def destroy_from_google
     calendar = self.calendar
@@ -90,7 +93,42 @@ class Event < AbstractModel
     participation
   end
 
+  def update_google_event
+    calendar = self.calendar
+    google_access_token = GoogleAccessToken.find_by_account(calendar.account)
+    if google_access_token && calendar.should_be_synchronised?
+      authorize google_access_token
+      begin
+        google_event = @service.get_event(calendar.google_calendar_id, self.google_event_id)
+        google_event.update!(
+          start: {
+            date_time: self.starts_at.to_datetime,
+            time_zone: self.timezone_name
+          },
+          end:{
+            date_time: self.ends_at.to_datetime,
+            time_zone: self.timezone_name
+          },
+          # recurrence: count_google_recurrence,
+          location: self.location_name,
+          description: self.notes,
+          summary: self.title
+        )
+        updated_event = @service.update_event(calendar.google_calendar_id, self.google_event_id, google_event)
+        puts 'GOOGLE EVENT HAS BEEN UPDATED'
+        updated_event
+      rescue Google::Apis::ClientError => error
+        @update_errors << [error, google_event]
+      end
+    end
+  end
+
 private
+
+  def has_etag?
+    self.etag
+  end
+
   def recurrency_check
     if frequency == 'once' && event_recurrences.size > 0
       errors.add(:frequency, I18n.t('events.incorrect_once_event_reccurences'))

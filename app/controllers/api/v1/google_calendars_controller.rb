@@ -19,6 +19,7 @@ class Api::V1::GoogleCalendarsController < ApiController
         .pluck(:google_event_id)
       compare_events(local_events_ids, google_events_ids)
     end
+
     render json: {items: items}
   end
 
@@ -59,7 +60,7 @@ class Api::V1::GoogleCalendarsController < ApiController
   end
 
   def set_calendar
-    @calendar = Calendar.find_by(title: params[:calendar], account: params[:account])
+    @calendar = Calendar.find_by(title: params[:calendar], account: params[:account], user_id: current_user.id)
   end
 
   def account(access_token)
