@@ -28,13 +28,6 @@ class Api::V1::UsersController < ApiController
     render partial: 'user', locals: { user: current_user }
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Users
-  # ================================================================================
-
-  # swagger_path /users
   swagger_path '/users' do
     operation :post do
       key :summary, 'Registers user'

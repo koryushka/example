@@ -37,13 +37,6 @@ class Calendar < AbstractModel
     Event.where(id: nil)
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER SCHEMA: Model Calendar
-  # ================================================================================
-
-  # swagger_schema calendar
   swagger_schema :Calendar do
     key :type, :object
     property :id do
@@ -78,17 +71,15 @@ class Calendar < AbstractModel
       key :description, 'Specifies if calendar visible in UI'
       key :default, true
     end
-  end # end swagger_schema Calendar
+  end
 
-  # swagger_schema ArrayOfCalendars
   swagger_schema :ArrayOfCalendars do
     key :type, :array
     items do
       key :'$ref', :Calendar
     end
-  end # end swagger_schema :ArrayOfCalendars
+  end
 
-  # swagger_schema :CalendarInput
   swagger_schema :CalendarInput do
     key :type, :object
     property :title do
@@ -115,7 +106,7 @@ class Calendar < AbstractModel
       key :description, 'Specifies if calendar visible in UI'
       key :default, true
     end
-  end # end swagger_schema :CalendarInput
+  end
 
 end
 
