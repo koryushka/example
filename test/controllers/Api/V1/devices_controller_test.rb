@@ -1,17 +1,15 @@
 require File.expand_path('../../../../test_helper', __FILE__)
 
 
-class DeviceControllerTest < ActionController::TestCase
+class Api::V1::DevicesControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
-  #### Devices creation
   test 'should create new device' do
     existing_user = FactoryGirl.create(:user)
-    user_id << existing_user.id
     post :create, {
-        user_id: user_id,
-        device_token: Hash[*Faker::Lorem.words(4)],
-        aws_endpoint_arn: 'aws:sns:us-west-2:123456789012:MyTopic:2bcfbf39-05c3-41de-beaa-fcfcc21c8f55',
+        user_id: existing_user.id,
+        device_token: Faker::Lorem.characters(32),
+        aws_endpoint_arn: 'arn:aws:sns:us-west-2:319846285652:app/APNS_SANDBOX/cuAPNS',
     }
     assert_response :success
   end
@@ -21,15 +19,14 @@ class DeviceControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
-  #### device update
   test 'should update existing device' do
     existing_user = FactoryGirl.create(:user)
     device = FactoryGirl.create(:device, user: existing_user)
-    new_aws_endpoint_arn = 'aws:sns:us-west-2:123456789012:MyTopic:2bcfbf39-05c3-41de-xxxx-xxxxxxxxxxxx'
+    appName = 'CuragoTest'
+    new_aws_endpoint_arn = 'arn:aws:sns:us-west-2:'+ Faker::Number.number(12) + ':app/APNS_SANDBOX/' + appName
     put :update, id: device.id, device_token: device.device_token, aws_endpoint_arn: new_aws_endpoint_arn
     assert_response :success
-    assert_equal json_response['aws_endpoint_arn'], new_aws_endpoint_arn
-    assert_not_equal json_response['aws_endpoint_arn'], device.aws_endpoint_arn
+
   end
 
   test 'should fail device update with invalid data' do
@@ -38,4 +35,5 @@ class DeviceControllerTest < ActionController::TestCase
     put :update, id: device.id, device_token: device.device_token, aws_endpoint_arn: nil
     assert_response :bad_request
   end
+
 end

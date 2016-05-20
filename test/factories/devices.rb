@@ -8,14 +8,9 @@ FactoryGirl.define do
   kind integer NOT NULL DEFAULT 0,
   visible boolean NOT NULL DEFAULT true
 =end
-    user nil
-    user_id rand(1000)
+    user_id Faker::Number.between(1, 1000)
     device_token Hash[*Faker::Lorem.words(4)]
-    aws_endpoint_arn 'aws:sns:us-west-2:'+ Faker::Number.number(12) + ':' + 'MyTests:' +
-                         Faker::Number.hexadecimal(8) + '-' +
-                         Faker::Number.hexadecimal(4) + '-' +
-                         Faker::Number.hexadecimal(4) + '-' +
-                         Faker::Number.hexadecimal(4) + '-' +
-                         Faker::Number.hexadecimal(12)
+    appName = 'CuragoTest'
+    aws_endpoint_arn 'arn:aws:sns:us-west-2:'+ Faker::Number.number(12) + ':app/APNS_SANDBOX/' + appName
   end
 end

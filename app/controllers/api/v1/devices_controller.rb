@@ -61,7 +61,7 @@ class Api::V1::DevicesController < ApiController
       @device.aws_endpoint_arn = sns_response.endpoint_arn
       raise InternalServerErrorException unless @device.save
     end
-    render nothing: true
+    render nothing: true, status: :created
   end
 
 
@@ -110,7 +110,8 @@ class Api::V1::DevicesController < ApiController
   end # end swagger_path /device/{id}
   def update
     @device.assign_attributes(device_params)
-    @sns.delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
+    delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
+
     sns_response = insert_token(@device.aws_endpoint_arn)
     if sns_response.present? && sns_response.http_response.status == 200
       # save new endpoint
@@ -145,7 +146,7 @@ class Api::V1::DevicesController < ApiController
     end # end operation :delete
   end
   def destroy
-    @sns.delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
+    delete_endpoint({endpoint_arn: @device.aws_endpoint_arn})
     @device.destroy
     render nothing: true, status: :no_content
   end
@@ -159,15 +160,20 @@ private
 
   # Insert device token to SNS
   def insert_token(device_token)
-    @sns.create_platform_endpoint(
-        platform_application_arn: "iOS",
-        token: device_token,
-    )
+    begin
+      @@sns.create_platform_endpoint(
+          platform_application_arn: @device.aws_endpoint_arn,
+          token: device_token,
+          )
+    rescue => e
+      puts e.to_s
+      raise InternalServerErrorException, status: :bad_request
+    end
   end
 
   # Remove end_point from SNS
   def delete_endpoint(end_point)
-    @sns.delete_endpoint(endpoint_arn: end_point)
+    @@sns.delete_endpoint(endpoint_arn: end_point)
   end
 
 end
