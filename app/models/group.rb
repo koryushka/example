@@ -22,7 +22,7 @@ class Group < AbstractModel
                                                status: Participation::FAILED).first
     # if invitation was failed for other group and it does not exist for current croup
     # we need to create failed participation for current group
-    if participation && failed_participation.nil?
+    if (participation || user.family.present?) && failed_participation.nil?
       Participation.create(user: user,
                            participationable: self,
                            sender: sender,
