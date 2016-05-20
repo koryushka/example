@@ -14,6 +14,8 @@ class Event < AbstractModel
   has_many :muted_events
   has_many :participations, as: :participationable, dependent: :destroy
   has_many :activities, as: :notificationable, dependent: :destroy
+  has_many :child_events, class_name: 'Event', foreign_key: 'recurring_event_id'
+  belongs_to :parent_event, class_name: 'Event'
 
   scope :with_muted, -> (user_id){includes(:muted_events)
                                       .references(:muted_events)
@@ -32,7 +34,7 @@ class Event < AbstractModel
   validates :separation, numericality: { only_integer: true, greater_than: 0 }, allow_blank: true
   validates :count, numericality: { only_integer: true }, allow_blank: true
   validates :until, date: true, allow_blank: true
-  validates :notes, length: {maximum: 2048}
+  # validates :notes, length: {maximum: 2048}
   validates :kind, allow_blank: true, numericality: {only_integer: true}
   validates :longitude, numericality: {only_integer: false, greater_than_or_equal_to: -180, less_than_or_equal_to: 180}, allow_blank: true
   validates :latitude, numericality: {only_integer: false, greater_than_or_equal_to: -90, less_than_or_equal_to: 90}, allow_blank: true
@@ -98,32 +100,41 @@ class Event < AbstractModel
     google_access_token = GoogleAccessToken.find_by_account(calendar.account)
     if google_access_token && calendar.should_be_synchronised?
       authorize google_access_token
+      params = {
+        start: {
+          date_time: self.starts_at.to_datetime,
+          time_zone: self.timezone_name
+        },
+        end:{
+          date_time: self.ends_at.to_datetime,
+          time_zone: self.timezone_name
+        },
+        # recurrence: count_google_recurrence,
+        location: self.location_name,
+        description: self.notes,
+        summary: self.title
+      }
       begin
         google_event = @service.get_event(calendar.google_calendar_id, self.google_event_id)
-        google_event.update!(
-          start: {
-            date_time: self.starts_at.to_datetime,
-            time_zone: self.timezone_name
-          },
-          end:{
-            date_time: self.ends_at.to_datetime,
-            time_zone: self.timezone_name
-          },
-          # recurrence: count_google_recurrence,
-          location: self.location_name,
-          description: self.notes,
-          summary: self.title
-        )
+        google_event.update!(params)
         updated_event = @service.update_event(calendar.google_calendar_id, self.google_event_id, google_event)
         puts 'GOOGLE EVENT HAS BEEN UPDATED'
+        self.update_column(:etag, updated_event.etag)
         updated_event
       rescue Google::Apis::ClientError => error
-        @update_errors << [error, google_event]
       end
     end
   end
 
 private
+
+  def count_google_recurrence
+
+  end
+
+  # def formatted_date(date)
+  #   date.to_datetime.strftime("%FT%T%:z") if date
+  # end
 
   def has_etag?
     self.etag

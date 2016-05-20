@@ -4,6 +4,7 @@ class Api::V1::GoogleCalendarsController < ApiController
   before_action :check_for_params, only: [:unsync_calendar, :sync_calendar]
   before_action :set_calendar, only: [:unsync_calendar, :sync_calendar]
 
+  # action should be removed from controller
   def sync
     items = []
     google_events_ids = []

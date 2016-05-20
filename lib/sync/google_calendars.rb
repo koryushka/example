@@ -31,41 +31,30 @@ class GoogleCalendars
 
   def parse_events_from_calendar
     @google_calendar_events = @service.list_events(@calendar.google_calendar_id).items
-    items_count = @service.list_events(@calendar.google_calendar_id).items.length
+    parent_events = @google_calendar_events.select {|x| !cancelled?(x) && !x.recurring_event_id}
+    cancelled_events = @google_calendar_events.select {|x| x.recurring_event_id && cancelled?(x)}
+    recurring_events = @google_calendar_events.select {|x| x.recurring_event_id && !cancelled?(x)}
+    # items_count = @google_calendar_events.length
+
     @i ||= 0
     event_cancellations = []
-    @google_calendar_events.each_with_index do |item, index|
-      @i += 1
-      puts "#{@i} - EVENT #{item.summary} - ID #{item.id}"
+    #manage parent events
+    parent_events.each do |item|
+      remove_frequency
       @items << item
-      get_frequency item
-      if !item.recurring_event_id && !cancelled?(item)
-        @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid) do |event|
-          event.google_event_id = item.id
-          event.calendar_id = @calendar.id
-          event.etag = item.etag
-          event.starts_at = start_date item
-          event.ends_at = end_date item
-          event.title = title item
-          event.user_id = @current_user.id
-          event.location_name = item.location
-          event.frequency = @frequency
-          event.notes = item.description
-        end
-      elsif item.recurring_event_id && cancelled?(item)
-        @event = Event.find_by_google_event_id(item.recurring_event_id)
-        event_cancellations << item
-        if items_count == index + 1
-          manage_events_cancellations(event_cancellations)
-        end
-        @frequence = nil if @frequence
-        next
-      elsif item.recurring_event_id && !cancelled?(item)
-        #TODO compare with parent event to create single event(as a part of recurring events)
-        @frequence = nil if @frequence
-        next
+      @frequency = get_frequency item
+      @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid) do |event|
+        event.google_event_id = item.id
+        event.calendar_id = @calendar.id
+        event.etag = item.etag
+        event.starts_at = start_date item
+        event.ends_at = end_date item
+        event.title = title item
+        event.user_id = @current_user.id
+        event.location_name = item.location
+        event.frequency = @frequency
+        event.notes = item.description
       end
-
       if @event.new_record?
         assign_event_frequency_attributes if @frequence
         @event.save
@@ -74,22 +63,124 @@ class GoogleCalendars
         next if user_is_not_creator(item)
         next unless synchronize_event(item)
       end
-      @frequence = nil if @frequence
+    end
+
+    #for debugging
+    cancelled_events.each do |item|
+      @items << item
+    end
+
+    #manage event cancellations
+    cancelled_events.group_by(&:recurring_event_id).each do |recurring_event_id, group|
+      @event = Event.find_by_google_event_id(recurring_event_id)
+      group.each do |event_cancellation|
+        create_event_cancellation(event_cancellation) if @event
+      end
+    end
+
+    #manage recurring events(children)
+    recurring_events.group_by(&:recurring_event_id).each do |recurring_event_id, group|
+      @event = Event.find_by_google_event_id(recurring_event_id)
+      group.each do |child_event|
+        unless parent_event_equal_to? child_event
+          @child = Event.find_or_initialize_by(google_event_id: child_event.id) do |event|
+            event.recurring_event_id = @event.id
+            event.user_id = @current_user.id
+            event.title = child_event.summary
+            event.starts_at = @s_date
+            event.ends_at = @e_date
+            event.frequency = 'once'
+          end
+          if @child.new_record?
+            @child.save
+          else
+            update_changed_attributes(child_event)
+            # @child.update_attributes(title: child_event.summary, starts_at: s_date, ends_at: e_date)
+          end
+        end
+      end
+
+    end
+    recurring_events.each do |item|
+      @items << item
     end
   end
 
-  def manage_events_cancellations(event_cancellations)
-    new_event_cancellations = []
-    event_cancellations.each do |event_cancellation|
-      event = Event.find_by_google_event_id(event_cancellation.recurring_event_id)
-      puts "EVENT CANCELLATIONS ID #{event_cancellation}"
-      new_event_cancellations << EventCancellation.new(date: get_event_cancellation_date(event_cancellation), event_id: event.id)
+  def update_changed_attributes(child_event)
+    if attributes_were_changed?(child_event)
+      @child.update_attributes(@changed_attributes)
     end
-    new_event_cancellations.group_by(&:event_id).each do |event_id, ec|
-      Event.find(event_id).event_cancellations.destroy_all
-      ec.each {|e| e.save}
-    end
-    puts "EVENT CANCELLATIONS #{new_event_cancellations}"
+  end
+
+  def attributes_were_changed?(child_event)
+    @changed_attributes = {}
+    @changed_attributes[:title] = child_event.summary if (child_event.summary != @child.title)
+    @changed_attributes[:starts_at] = @s_date if (@s_date != @child.starts_at)
+    @changed_attributes[:ends_at] = @e_date if (@e_date != @child.ends_at)
+    !@changed_attributes.empty?
+  end
+
+  #   @google_calendar_events.each_with_index do |item, index|
+  #     @i += 1
+  #     puts "#{@i} - EVENT #{item.summary} - ID #{item.id}"
+  #     @items << item
+  #     get_frequency item
+  #     if !item.recurring_event_id && !cancelled?(item)
+  #       @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid) do |event|
+  #         event.google_event_id = item.id
+  #         event.calendar_id = @calendar.id
+  #         event.etag = item.etag
+  #         event.starts_at = start_date item
+  #         event.ends_at = end_date item
+  #         event.title = title item
+  #         event.user_id = @current_user.id
+  #         event.location_name = item.location
+  #         event.frequency = @frequency
+  #         event.notes = item.description
+  #       end
+  #     elsif item.recurring_event_id && cancelled?(item)
+  #       @event = Event.find_by_google_event_id(item.recurring_event_id)
+  #       event_cancellations << item
+  #       if items_count == index + 1
+  #         manage_events_cancellations(event_cancellations)
+  #       end
+  #       @frequence = nil if @frequence
+  #       next
+  #     elsif item.recurring_event_id && !cancelled?(item)
+  #       #TODO compare with parent event to create single event(as a part of recurring events)
+  #       @frequence = nil if @frequence
+  #       next
+  #     end
+  #
+  #     if @event.new_record?
+  #       assign_event_frequency_attributes if @frequence
+  #       @event.save
+  #       calculate_event_recurrence if @frequence
+  #     else
+  #       next if user_is_not_creator(item)
+  #       next unless synchronize_event(item)
+  #     end
+  #     @frequence = nil if @frequence
+  #   end
+  # end
+
+  # def manage_events_cancellations(event_cancellations)
+  #   new_event_cancellations = []
+  #   event_cancellations.each do |event_cancellation|
+  #     event = Event.find_by_google_event_id(event_cancellation.recurring_event_id)
+  #     new_event_cancellations << EventCancellation.new(date: get_event_cancellation_date(event_cancellation), event_id: event.id)
+  #   end
+  #   new_event_cancellations.group_by(&:event_id).each do |event_id, ec|
+  #     Event.find(event_id).event_cancellations.destroy_all
+  #     ec.each {|e| e.save}
+  #   end
+  # end
+
+  def parent_event_equal_to?(child_event)
+    @s_date = start_date child_event
+    @e_date = end_date child_event
+    puts "COMAPRE #{(child_event.summary == @event.title) || (@s_date == @event.starts_at) || (@e_date == @event.ends_at)}"
+    (child_event.summary == @event.title) && (@s_date == @event.starts_at) && (@e_date == @event.ends_at)
   end
 
   def synchronize_event(item)
@@ -122,66 +213,65 @@ class GoogleCalendars
       user_id: @current_user.id,
       google_event_id: item.id,
       location_name: item.location,
-      etag: item.etag,
-      notes: item.description
+      etag: item.etag
     )
     calculate_event_recurrence if @frequence
     puts 'LOCAL EVENT HAS BEEN UPDATED'
   end
 
-  def update_google_event(item)
-    @update_errors = []
-    begin
-      google_event = @service.get_event(@calendar.google_calendar_id, @event.google_event_id)
-      google_event.update!(
-        start: {
-          date_time: formatted_date(@event.starts_at) ,
-          time_zone: @event.timezone_name
-        },
-        end:{
-          date_time: formatted_date(@event.ends_at) ,
-          time_zone: @event.timezone_name
-        },
-        # recurrence: count_google_recurrence,
-        location: @event.location_name,
-        description: @event.notes,
-        summary: @event.title
-      )
-      updated_event = @service.update_event(@calendar.google_calendar_id, @event.google_event_id, google_event)
-      puts 'GOOGLE EVENT HAS BEEN UPDATED'
-      updated_event
-    rescue Google::Apis::ClientError => error
-      @update_errors << [error, google_event]
-    end
-  end
+  # def update_google_event(item)
+  #   @update_errors = []
+  #   begin
+  #     google_event = @service.get_event(@calendar.google_calendar_id, @event.google_event_id)
+  #     google_event.update!(
+  #       start: {
+  #         date_time: formatted_date(@event.starts_at) ,
+  #         time_zone: @event.timezone_name
+  #       },
+  #       end:{
+  #         date_time: formatted_date(@event.ends_at) ,
+  #         time_zone: @event.timezone_name
+  #       },
+  #       # recurrence: count_google_recurrence,
+  #       location: @event.location_name,
+  #       description: @event.notes,
+  #       summary: @event.title
+  #     )
+  #     updated_event = @service.update_event(@calendar.google_calendar_id, @event.google_event_id, google_event)
+  #     puts 'GOOGLE EVENT HAS BEEN UPDATED'
+  #     updated_event
+  #   rescue Google::Apis::ClientError => error
+  #     @update_errors << [error, google_event]
+  #   end
+  # end
 
   def google_event_was_updated?(item)
     @event.etag != item.etag
   end
 
   def destroy_event_reccurences
-    @event.event_recurrences.destroy_all
+    @event.event_recurrences.destroy_all if @event && @event.event_recurrences
   end
 
   def destroy_event_cancellations
-    @event.event_cancellations.destroy_all
+    @event.event_cancellations.destroy_all if @event && @event.event_cancellations
   end
 
-  def single_event_has_recurrences(item)
-    (!item.recurrence) && @event.event_recurrences
-  end
+  # def single_event_has_recurrences(item)
+  #   (!item.recurrence) && @event.event_recurrences
+  # end
 
-  def formatted_date(date)
-    date.to_datetime.strftime("%FT%T%:z") if date
-  end
+  # def formatted_date(date)
+  #   date.to_datetime.strftime("%FT%T%:z") if date
+  # end
 
   def user_is_not_creator(item)
     item.creator.email != @account
   end
 
-  def public_event(item)
-    item.visibility == 'public'
-  end
+  # def public_event(item)
+  #   item.visibility == 'public'
+  # end
 
   def create_event_cancellation(item)
     EventCancellation.find_or_create_by(
@@ -194,18 +284,20 @@ class GoogleCalendars
     start_time = item.original_start_time
     date_time = start_time.date_time
     date = start_time.date
-    puts "datetime: #{date_time}"
-    puts "date #{date}"
-    result = date_time ? date_time.to_datetime : date.to_datetime
-    result
+    date_time ? date_time.to_datetime : date.to_datetime
+  end
+
+  def remove_frequency
+    @frequence = nil if @frequence
+    @frequency = nil if @frequency
   end
 
   def get_frequency(item)
     if item.recurrence
       @frequence = count_frequency(item.recurrence[0])
-      @frequency = @frequence[:FREQ].downcase
+      @frequence[:FREQ].downcase
     else
-      @frequency ='once'
+      'once'
     end
   end
 
