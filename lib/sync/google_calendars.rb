@@ -90,6 +90,7 @@ class GoogleCalendars
             event.starts_at = @s_date
             event.ends_at = @e_date
             event.frequency = 'once'
+            event.calendar_id = @event.calendar_id
           end
           if @child.new_record?
             @child.save
@@ -97,7 +98,14 @@ class GoogleCalendars
             update_changed_attributes(child_event)
             # @child.update_attributes(title: child_event.summary, starts_at: s_date, ends_at: e_date)
           end
+          #TODO case when edited recurring event(child event, google) was deleted(google)
+          # local_events_ids = Event.where('google_event_id IS NOT NULL AND recurring_event_id is not null AND events.user_id = ?', current_user.id)
+          #   .includes(:calendar)
+          #   .where(calendars: {sync_with_google: true})
+          #   .pluck(:google_event_id)
         end
+
+
       end
 
     end
