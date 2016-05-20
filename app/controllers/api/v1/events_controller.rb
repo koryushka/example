@@ -275,7 +275,6 @@ Examples:\n
     render 'index'
   end
 
-  # swagger_path /events/{id}/mute
   swagger_path '/events/{id}/mute' do
     operation :post do
       key :summary, 'Stops sending notifications for specified event'
@@ -298,9 +297,7 @@ Examples:\n
       end # end response :default
       key :tags, ['Notifications', 'Events']
     end # end operation :post
-  end # end swagger_path /events/{id}/mute
-
-  # swagger_path /events/{id}/unmute
+  end
   def mute
     me = @event.muted_events.where(muted_events: {user_id: current_user.id}).first
     if me.present? && !me.muted?
@@ -335,7 +332,7 @@ Examples:\n
       end # end response :default
       key :tags, ['Notifications', 'Events']
     end # end operation :delete
-  end # end swagger_path /events/{id}/unmute
+  end
   def unmute
     me = @event.muted_events.where(muted_events: {user_id: current_user.id}).first
     if me.present? && me.muted?
@@ -350,7 +347,7 @@ private
   def event_params
     params.permit(:title, :starts_at, :ends_at, :all_day, :notes,
                   :kind, :latitude, :longitude, :location_name, :separation,
-                  :count, :until, :timezone_name, :frequency,
+                  :count, :until, :timezone_name, :frequency, :image_url, :public,
                   event_recurrences_attributes: [:day, :week, :month],
                   event_cancelations_attributes: [:date])
   end
