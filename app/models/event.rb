@@ -172,6 +172,12 @@ Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'"
       key :description, 'Contains link to event picture'
       key :maxLength, 2048
     end
+    property :public do
+      key :type, :boolean
+      key :description, "Specifies event. If it's true so All family members should be able to modify all attributes
+of the event with the exception of changing the ‘Public’ / ‘Private’ setting"
+      key :default, true
+    end
     property :event_recurrences_attributes do
       key :type, :array
       items do

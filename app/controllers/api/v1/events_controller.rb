@@ -356,14 +356,6 @@ private
     params.permit(:since)
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Event
-  # ================================================================================
-
-
-  # swagger_path /events/{id}/cancellations
   swagger_path '/events/{id}/cancellations' do
     operation :post do
       key :summary, 'Cancels event for a specific date'
