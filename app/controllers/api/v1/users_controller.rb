@@ -127,7 +127,7 @@ after visiting the link contained in the email.'
       key :summary, "Updates user's password and finishes password resetting process"
       key :description, "This method changes user's password. It requires values of params:
 client_id, token and uid. These params can be obtained when user
-clicks on link which were sent after /users/password calling"
+clicks on link which is being sent after /users/password calling"
       parameter do
         key :name, 'client'
         key :description, 'Value of cleint_id query param should be placed here'

@@ -42,6 +42,7 @@ class Event < AbstractModel
   default :notes, ''
   default :kind, 0
   default :all_day, false
+  default :public, true
 
   before_save do
     assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
