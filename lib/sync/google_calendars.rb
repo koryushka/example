@@ -183,11 +183,9 @@ class GoogleCalendars
   # end
 
   def parent_event_equal_to?(child_event)
-    if @event
       @s_date = start_date child_event
       @e_date = end_date child_event
       (child_event.summary == @event.title) && (@s_date == @event.starts_at) && (@e_date == @event.ends_at)
-    end
   end
 
   def synchronize_event(item)

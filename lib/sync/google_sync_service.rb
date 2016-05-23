@@ -27,9 +27,7 @@ class GoogleSyncService
         parser = GoogleCalendars.new(user, service, account)
         parser.import_calendars
         # items << parser.items
-        #TODO check this method!!!!!
-        # manage_deleted_events(parser.items, user)
-
+        manage_deleted_events(parser.items, user)
       end
   end
 
@@ -45,7 +43,7 @@ class GoogleSyncService
   end
 
   def compare_google_events_ids_with(local_events_ids)
-    result = local_events_ids - @google_events_ids
+    result = @google_events_ids - local_events_ids
     Event.where('google_event_id in (?)', result).destroy_all
   end
 
