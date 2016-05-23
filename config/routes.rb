@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
   namespace :admin do
     #mount_devise_token_auth_for 'Admin', at: 'auth'
     root to: 'home#index'

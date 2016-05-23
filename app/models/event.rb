@@ -14,8 +14,8 @@ class Event < AbstractModel
   has_many :muted_events
   has_many :participations, as: :participationable, dependent: :destroy
   has_many :activities, as: :notificationable, dependent: :destroy
-  has_many :child_events, class_name: 'Event', foreign_key: 'recurring_event_id'
-  belongs_to :parent_event, class_name: 'Event'
+  has_many :child_events, class_name: 'Event', foreign_key: 'recurring_event_id', dependent: :destroy
+  belongs_to :parent_event, class_name: 'Event', foreign_key: 'recurring_event_id'
 
   scope :with_muted, -> (user_id){includes(:muted_events)
                                       .references(:muted_events)
@@ -75,6 +75,8 @@ class Event < AbstractModel
   #     destroy_from_google
   #   end
   # end
+
+
 
   def destroy_from_google
     calendar = self.calendar

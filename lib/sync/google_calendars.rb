@@ -30,10 +30,10 @@ class GoogleCalendars
   private
 
   def parse_events_from_calendar
-    @google_calendar_events = @service.list_events(@calendar.google_calendar_id).items
-    parent_events = @google_calendar_events.select {|x| !cancelled?(x) && !x.recurring_event_id}
-    cancelled_events = @google_calendar_events.select {|x| x.recurring_event_id && cancelled?(x)}
-    recurring_events = @google_calendar_events.select {|x| x.recurring_event_id && !cancelled?(x)}
+    google_calendar_events = @service.list_events(@calendar.google_calendar_id).items
+    parent_events = google_calendar_events.select {|x| !cancelled?(x) && !x.recurring_event_id}
+    cancelled_events = google_calendar_events.select {|x| x.recurring_event_id && cancelled?(x)}
+    recurring_events = google_calendar_events.select {|x| x.recurring_event_id && !cancelled?(x)}
     # items_count = @google_calendar_events.length
 
     @i ||= 0
@@ -43,14 +43,13 @@ class GoogleCalendars
       remove_frequency
       @items << item
       @frequency = get_frequency item
-      @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid) do |event|
+      @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid, user_id: @current_user.id) do |event|
         event.google_event_id = item.id
         event.calendar_id = @calendar.id
         event.etag = item.etag
         event.starts_at = start_date item
         event.ends_at = end_date item
         event.title = title item
-        event.user_id = @current_user.id
         event.location_name = item.location
         event.frequency = @frequency
         event.notes = item.description
@@ -73,8 +72,9 @@ class GoogleCalendars
     #manage event cancellations
     cancelled_events.group_by(&:recurring_event_id).each do |recurring_event_id, group|
       @event = Event.find_by_google_event_id(recurring_event_id)
+      # @event.child_events.where('')
       group.each do |event_cancellation|
-        create_event_cancellation(event_cancellation) if @event
+          create_event_cancellation(event_cancellation) if @event
       end
     end
 
@@ -90,12 +90,12 @@ class GoogleCalendars
             event.starts_at = @s_date
             event.ends_at = @e_date
             event.frequency = 'once'
+            event.calendar_id = @event.calendar_id
           end
           if @child.new_record?
             @child.save
           else
             update_changed_attributes(child_event)
-            # @child.update_attributes(title: child_event.summary, starts_at: s_date, ends_at: e_date)
           end
         end
       end
@@ -107,17 +107,16 @@ class GoogleCalendars
   end
 
   def update_changed_attributes(child_event)
-    if attributes_were_changed?(child_event)
-      @child.update_attributes(@changed_attributes)
-    end
+    attributes = build_changed_attributes(child_event)
+    @child.update_attributes(attributes) if attributes.presence
   end
 
-  def attributes_were_changed?(child_event)
-    @changed_attributes = {}
-    @changed_attributes[:title] = child_event.summary if (child_event.summary != @child.title)
-    @changed_attributes[:starts_at] = @s_date if (@s_date != @child.starts_at)
-    @changed_attributes[:ends_at] = @e_date if (@e_date != @child.ends_at)
-    !@changed_attributes.empty?
+  def build_changed_attributes(child_event)
+    changed_attributes = {}
+    changed_attributes[:title] = child_event.summary if (child_event.summary != @child.title)
+    changed_attributes[:starts_at] = @s_date if (@s_date != @child.starts_at)
+    changed_attributes[:ends_at] = @e_date if (@e_date != @child.ends_at)
+    changed_attributes
   end
 
   #   @google_calendar_events.each_with_index do |item, index|
@@ -177,16 +176,17 @@ class GoogleCalendars
   # end
 
   def parent_event_equal_to?(child_event)
-    @s_date = start_date child_event
-    @e_date = end_date child_event
-    puts "COMAPRE #{(child_event.summary == @event.title) || (@s_date == @event.starts_at) || (@e_date == @event.ends_at)}"
-    (child_event.summary == @event.title) && (@s_date == @event.starts_at) && (@e_date == @event.ends_at)
+    if @event
+      @s_date = start_date child_event
+      @e_date = end_date child_event
+      (child_event.summary == @event.title) && (@s_date == @event.starts_at) && (@e_date == @event.ends_at)
+    end
   end
 
   def synchronize_event(item)
-    puts
-    puts "EVENT UPDATED AT #{@event.try(:updated_at)}"
-    puts "ITEM UPDATED AT #{item.try(:updated)} - CALENDAR_ID - #{@calendar.title}- ID #{item.id} title #{item.summary}"
+    # puts
+    # puts "EVENT UPDATED AT #{@event.try(:updated_at)}"
+    # puts "ITEM UPDATED AT #{item.try(:updated)} - CALENDAR_ID - #{@calendar.title}- ID #{item.id} title #{item.summary}"
     if google_event_was_updated?(item)
       update_local_event(item)
     # else
@@ -274,10 +274,16 @@ class GoogleCalendars
   # end
 
   def create_event_cancellation(item)
-    EventCancellation.find_or_create_by(
+    event = EventCancellation.find_or_create_by(
       event_id: @event.id,
       date: get_event_cancellation_date(item)
     )
+    remove_cancelled_event(event)
+  end
+
+  def remove_cancelled_event(event)
+    event_to_delete = Event.find_by('recurring_event_id = ? AND date(starts_at) = ?', @event.id, event.date)
+    event_to_delete.destroy if event_to_delete
   end
 
   def get_event_cancellation_date(item)
@@ -326,7 +332,7 @@ class GoogleCalendars
   end
 
   def title(item)
-    puts "ITEM #{item.inspect}"
+    # puts "ITEM #{item.inspect}"
     if cancelled?(item)
       Event.find_by_google_event_id(item.recurring_event_id).title
     else

@@ -25,7 +25,7 @@ class Api::V1::GoogleCalendarsController < ApiController
   end
 
   def remove_calendars(account)
-    google_access_token = GoogleAccessToken.find_by_account account
+    google_access_token = GoogleAccessToken.find_by(account: account, user_id: current_user.id)
     authorize google_access_token
     calendars_list = @service.list_calendar_lists.items.map {|calendar| calendar.id}
     calendars = Calendar.where('google_calendar_id in (?) AND account = ?', calendars_list, account)

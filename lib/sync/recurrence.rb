@@ -38,10 +38,10 @@ module Recurrence
 
   end
 
-  def assign_event_frequency_attributes(util_date = @frequence[:UNTIL],
+  def assign_event_frequency_attributes(u_date = @frequence[:UNTIL],
                                         count =     @frequence[:COUNT],
                                         interval =  @frequence[:INTERVAL] || 1)
-    @event.until      = until_date(util_date)
+    @event.until      = until_date(u_date)
     @event.count      = count
     @event.separation = interval
   end

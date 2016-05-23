@@ -81,6 +81,7 @@ Examples:
     @events = current_user.events.with_muted(current_user.id)
                   .includes(:event_cancellations,
                             :event_recurrences,
+                            :list,
                             participations: {
                                 user: :profile,
                                 sender: :profile
@@ -225,8 +226,9 @@ Examples:
       key :tags, ['Events']
     end
   end
+
   def destroy
-    if @event.destroy && @event.etag
+    if @event.destroy && @event.google_event_id
       @event.destroy_from_google
     end
     render nothing: true, status: :no_content

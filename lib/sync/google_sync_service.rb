@@ -2,23 +2,35 @@ class GoogleSyncService
   include Googleable
 
   def rake_sync
-    users = User.all
-    users.each do |user|
-      @accounts = []
+    users = User.all.pluck :id
+    # users.each_slice(5) do |ids|
+    #   GoogleWorker.perform_async ids
+    # end
+    users.each do |id|
+      GoogleWorker.perform_async id
+      # sync id
+    end
+
+  end
+
+  def sync(user_id)
+      user = User.find_by_id(user_id)
+      puts "USER_ID #{user_id}"
+      accounts = []
       @google_events_ids = []
       user.google_access_tokens.where('deleted IS NOT true').each do |google_access_token|
         authorize google_access_token
-        @accounts << @service
+        accounts << @service
       end
-      @accounts.each do |service|
+      accounts.each do |service|
         account = account(service.authorization.access_token)
         parser = GoogleCalendars.new(user, service, account)
         parser.import_calendars
         # items << parser.items
-        manage_deleted_events(parser.items, user)
+        #TODO check this method!!!!!
+        # manage_deleted_events(parser.items, user)
 
       end
-    end
   end
 
   private

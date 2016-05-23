@@ -51,7 +51,7 @@ class Api::V1::GoogleOauthController < ApiController
       if google_access_token = GoogleAccessToken.find_by(account: response['email'])
         GoogleAccessToken.new(google_access_token
                               .attributes
-                              .except('id', 'created_at', 'updated_at')
+                              .except('id', 'created_at', 'updated_at', 'deleted')
                               .merge({user_id: current_user.id}))
                               .save
       else

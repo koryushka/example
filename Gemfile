@@ -17,6 +17,8 @@ gem 'devise_token_auth'
 gem 'doorkeeper'
 
 gem 'google-api-client', '~> 0.9', require: 'google/apis/calendar_v3'
+gem 'sidekiq', '~> 4.1', '>= 4.1.2'
+gem 'sinatra', :require => nil
 
 gem 'validates_email_format_of'
 gem 'date_validator'
