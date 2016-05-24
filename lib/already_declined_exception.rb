@@ -1,5 +1,5 @@
 class AlreadyDeclinedException < AppException
   def initialize
-    super(6, 'This invitation is alredy declined', nil, :not_acceptable)
+    super(6, 'This invitation is already declined', nil, :not_acceptable)
   end
 end

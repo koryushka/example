@@ -9,6 +9,9 @@ class Ability
     can :leave, Group do |group|
       group.members.exists?(users: {id: user.id})
     end
+    can :destroy, Device do |device|
+      user.devices.exists?(device_token: device.device_token)
+    end
     #Define abilities for the passed in user here. For example:
     # if user
     #   user.roles.includes(:permissions).each do |role|

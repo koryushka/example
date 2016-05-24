@@ -5,11 +5,9 @@ class Api::V1::DevicesControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
   test 'should create new device' do
-    existing_user = FactoryGirl.create(:user)
     post :create, {
-        user_id: existing_user.id,
-        device_token: Faker::Lorem.characters(32),
-        aws_endpoint_arn: 'arn:aws:sns:us-west-2:319846285652:app/APNS_SANDBOX/cuAPNS',
+        device_token: Faker::Number.hexadecimal(64),
+        # aws_endpoint_arn: ENV['AWS_APP_ARN']
     }
     assert_response :success
   end
@@ -19,21 +17,12 @@ class Api::V1::DevicesControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
-  test 'should update existing device' do
-    existing_user = FactoryGirl.create(:user)
-    device = FactoryGirl.create(:device, user: existing_user)
-    appName = 'CuragoTest'
-    new_aws_endpoint_arn = 'arn:aws:sns:us-west-2:'+ Faker::Number.number(12) + ':app/APNS_SANDBOX/' + appName
-    put :update, id: device.id, device_token: device.device_token, aws_endpoint_arn: new_aws_endpoint_arn
-    assert_response :success
-
+  test 'should destroy existing device' do
+    device = FactoryGirl.create(:device)
+    delete :destroy, device_token: device.device_token
+    assert_response :no_content
+    # assert_raises ActiveRecord::RecordNotFound do
+    #   device.find(device.id)
+    # end
   end
-
-  test 'should fail device update with invalid data' do
-    existing_user = FactoryGirl.create(:user)
-    device = FactoryGirl.create(:device, user: existing_user)
-    put :update, id: device.id, device_token: device.device_token, aws_endpoint_arn: nil
-    assert_response :bad_request
-  end
-
 end

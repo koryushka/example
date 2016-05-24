@@ -1,4 +1,10 @@
+require 'helpers/configuration'
+
 module ApiHelper
+  extend Configuration
+
+  define_setting :aws_app_arn
+
   # Send push notification
   def self.send(user_id , payload)
     notification_object = { object: payload }
@@ -21,6 +27,27 @@ module ApiHelper
             target_arn: device.aws_endpoint_arn,
             message: message.to_json,
             message_structure: 'json')
+    end
+  end
+
+  # Insert device token to SNS
+  def insert_token(device_token)
+    begin
+      @sns.create_platform_endpoint(
+          platform_application_arn: :aws_app_arn,
+          token: device_token,
+      )
+    rescue
+      raise InternalServerErrorException, status: :bad_request
+    end
+  end
+
+  # Remove end_point from SNS
+  def delete_endpoint(end_point)
+    begin
+      @sns.delete_endpoint(endpoint_arn: end_point)
+    rescue
+      raise InternalServerErrorException, status: :bad_request
     end
   end
 end

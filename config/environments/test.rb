@@ -48,6 +48,10 @@ Rails.application.configure do
     }
   end
 
+  ApiHelper.configuration do |config|
+    config.aws_app_arn = ENV['AWS_APP_ARN']
+  end
+
   config.after_initialize do
     Bullet.enable = true
     Bullet.bullet_logger = true
