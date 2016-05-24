@@ -32,7 +32,7 @@ module Googleable
   def authorize(google_access_token)
     refresh_token google_access_token if google_access_token.expired?
     @client = Signet::OAuth2::Client.new(access_token: google_access_token.token)
-    @service ||= Google::Apis::CalendarV3::CalendarService.new
+    @service = Google::Apis::CalendarV3::CalendarService.new
     @service.authorization = @client
   end
 end

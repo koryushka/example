@@ -96,6 +96,7 @@ GEM
       timers (>= 4.1.1)
     celluloid-supervision (0.20.5)
       timers (>= 4.1.1)
+    chronic (0.10.2)
     code_analyzer (0.4.5)
       sexp_processor
     codeclimate-engine-rb (0.3.1)
@@ -477,6 +478,8 @@ GEM
       equalizer (~> 0.0, >= 0.0.9)
     warden (1.2.6)
       rack (>= 1.0)
+    whenever (0.9.4)
+      chronic (>= 0.6.3)
     xml-simple (1.1.5)
 
 PLATFORMS
@@ -519,6 +522,7 @@ DEPENDENCIES
   swagger-blocks
   tzinfo-data
   validates_email_format_of
+  whenever
 
 BUNDLED WITH
    1.11.2

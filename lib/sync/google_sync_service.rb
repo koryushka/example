@@ -17,7 +17,6 @@ class GoogleSyncService
       user = User.find_by_id(user_id)
       puts "USER_ID #{user_id}"
       accounts = []
-      @google_events_ids = []
       user.google_access_tokens.where('deleted IS NOT true').each do |google_access_token|
         authorize google_access_token
         accounts << @service
@@ -26,24 +25,28 @@ class GoogleSyncService
         account = account(service.authorization.access_token)
         parser = GoogleCalendars.new(user, service, account)
         parser.import_calendars
-        # items << parser.items
-        manage_deleted_events(parser.items, user)
+        # manage_deleted_events(parser.items, user_id, account)
+        google_events_ids = get_google_events_ids(parser.items)
+        local_events_ids = get_local_event_ids(user_id, account)
+        compare_ids(google_events_ids, local_events_ids)
       end
   end
 
   private
 
-  def manage_deleted_events(items, user)
-    items.each { |item| @google_events_ids << item.id }
-    local_events_ids = Event.where('google_event_id IS NOT NULL AND events.user_id = ?', user.id)
-      .includes(:calendar)
-      .where(calendars: {sync_with_google: true})
-      .pluck(:google_event_id)
-    compare_google_events_ids_with(local_events_ids)
+  def get_google_events_ids(items)
+    items.map { |item| item.id }
   end
 
-  def compare_google_events_ids_with(local_events_ids)
-    result = @google_events_ids - local_events_ids
+  def get_local_event_ids(user_id, account)
+    Event.where('google_event_id IS NOT NULL AND events.user_id = ?', user_id)
+      .includes(:calendar)
+      .where(calendars: {sync_with_google: true, account: account})
+      .pluck(:google_event_id)
+  end
+
+  def compare_ids(google_events_ids, local_events_ids)
+    result =  local_events_ids - google_events_ids
     Event.where('google_event_id in (?)', result).destroy_all
   end
 
