@@ -4,7 +4,6 @@ class Event < AbstractModel
   belongs_to :user
   has_and_belongs_to_many :calendars
   has_and_belongs_to_many :documents
-  has_one :notifications_preference
   has_many :complex_events, foreign_key: 'id'
   has_many :event_recurrences, dependent: :destroy
   has_many :event_cancellations, dependent: :destroy
@@ -12,10 +11,10 @@ class Event < AbstractModel
   has_many :muted_events
   has_many :participations, as: :participationable, dependent: :destroy
   has_many :activities, as: :notificationable, dependent: :destroy
+  has_one :muted_event, -> (user) {where(user_id: user.id)}
 
-  scope :with_muted, -> (user_id){includes(:muted_events)
-                                      .references(:muted_events)
-                                      .where('"muted_events"."user_id" IS NULL OR "muted_events"."user_id" = :user_id', user_id: user_id)}
+  # TODO: must optimise this scope
+  scope :with_muted, -> (user_id){joins("LEFT JOIN muted_events ON muted_events.event_id = events.id AND muted_events.user_id = #{user_id}")}
 
   accepts_nested_attributes_for :event_recurrences
   accepts_nested_attributes_for :event_cancellations
@@ -54,6 +53,12 @@ class Event < AbstractModel
     participations.where(status: Participation::ACCEPTED).each do |p|
       Activity.create(notificationable: self, user: p.user, activity_type: UPDATED)
     end
+  end
+
+  def self.all_of_user(user_id, range_start, range_end, time_zone)
+    sql = send(:sanitize_sql, ["(SELECT * FROM recurring_events_for(%i, '%s', '%s', '%s')) events",
+                               user_id, range_start, range_end, time_zone])
+    from(sql)
   end
 
   def muted

@@ -13,12 +13,34 @@ class Api::V1::EventsController < ApiController
   authorize_resource
   check_authorization
 
-  # swagger_path /events
   swagger_path '/events' do
     operation :get do
       key :summary, 'Current user calendar items'
       key :description, 'Returns all calendar items created by current user or shared with him'
-      # responses
+      parameter do
+        key :name, 'range_start'
+        key :description, 'Begining date for events range. Default value is the begining of current month'
+        key :in, 'query'
+        key :required, false
+        key :type, :string
+        key :format, 'date-time'
+      end
+      parameter do
+        key :name, 'range_end'
+        key :description, 'End date for events range. Default value is the end of current month'
+        key :in, 'query'
+        key :required, false
+        key :type, :string
+        key :format, 'date-time'
+      end
+      parameter do
+        key :name, 'time_zone'
+        key :description, 'End date for events range. Default value is the end of current month'
+        key :in, 'query'
+        key :required, false
+        key :type, :string
+        key :default, 'UTC'
+      end
       response 200 do
         key :description, 'OK'
         schema do
@@ -33,6 +55,47 @@ class Api::V1::EventsController < ApiController
       end # end response :default
       key :tags, ['Events']
     end # end operation :get
+    # end operation :post
+  end
+  def index
+    # TODO: must to avoid N+1 query
+    @events = current_user.all_events(query_params.fetch(:range_start, Date.today.beginning_of_month),
+                                      query_params.fetch(:range_end, Date.today.end_of_month),
+                                      query_params.fetch(:time_zone, 'UTC'))
+  end
+
+  swagger_path '/events/{id}' do
+    operation :get do
+      key :summary, 'Returns event'
+      parameter do
+        key :name, 'id'
+        key :description, "Calendar's ID"
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      # responses
+      response 200 do
+        key :description, 'OK'
+        schema do
+          key :'$ref', '#/definitions/Event'
+        end
+      end # end response 200
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :ErrorsContainer
+        end
+      end # end response :default
+      key :tags, ['Events']
+    end
+  end
+
+  def show
+    render partial: 'event', locals: {event: @event}
+  end
+
+  swagger_path '/events' do
     operation :post do
       key :summary, 'Create calendar item'
       key :description, 'Creates new calendar item.
@@ -75,89 +138,9 @@ Examples:
         end
       end # end response :default
       key :tags, ['Events']
-    end # end operation :post
-  end # end swagger_path /events
-  def index
-    @events = current_user.events.with_muted(current_user.id)
-                  .includes(:event_cancellations,
-                            :event_recurrences,
-                            participations: {
-                                user: :profile,
-                                sender: :profile
-                            })
-  end
-
-  swagger_path '/events/{id}' do
-    operation :get do
-      key :summary, 'Returns event'
-      parameter do
-        key :name, 'id'
-        key :description, "Calendar's ID"
-        key :in, 'path'
-        key :required, true
-        key :type, :integer
-      end
-      # responses
-      response 200 do
-        key :description, 'OK'
-        schema do
-          key :'$ref', '#/definitions/Event'
-        end
-      end # end response 200
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', :ErrorsContainer
-        end
-      end # end response :default
-      key :tags, ['Events']
     end
   end
-  def show
-    render partial: 'event', locals: {event: @event }
-  end
 
-  swagger_path '/events' do
-    operation :post do
-      key :summary, 'Creates new event'
-      key :description, "Creates new calendar item.\n
-Examples:\n
-**E.B. choir practice weekdays at 5:30pm:**\n
-*Event object properties:*
-- **title**: E.B. choir practice
-- **starts_at:** 5:30pm with date
-- **event_recurrences_attributes**: array of EventReccurenceInput objects\n
-  with following day property values: 1, 2, 3, 4, 5"
-      parameter do
-        key :name, 'data'
-        key :in, 'body'
-        key :required, true
-        schema do
-          key :'$ref', :EventInput
-        end
-      end
-      # responses
-      response 201 do
-        key :description, 'Created'
-        schema do
-          key :'$ref', :Event
-        end
-      end
-      response 400 do
-        key :description, 'Validation errors'
-        schema do
-          key :'$ref', :ValidationErrorsContainer
-        end
-      end
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', :ErrorsContainer
-        end
-      end # end response :default
-      key :tags, ['Events']
-    end
-  end
   def create
     @event = Event.new(event_params)
     @event.user = current_user
@@ -165,7 +148,7 @@ Examples:\n
     raise InternalServerErrorException unless @event.save
 
     MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
-    render partial: 'event', locals: {event: @event }, status: :created
+    render partial: 'event', locals: {event: @event}, status: :created
   end
 
   swagger_path '/events/{id}' do
@@ -207,10 +190,11 @@ Examples:\n
       key :tags, ['Events']
     end
   end
+
   def update
     @event.update(event_params)
     MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
-    render partial: 'event', locals: {event: @event }
+    render partial: 'event', locals: {event: @event}
   end
 
   swagger_path '/events/{id}' do
@@ -236,6 +220,7 @@ Examples:\n
       key :tags, ['Events']
     end
   end
+
   def destroy
     @event.destroy
     render nothing: true, status: :no_content
@@ -298,6 +283,7 @@ Examples:\n
       key :tags, ['Notifications', 'Events']
     end # end operation :post
   end
+
   def mute
     me = @event.muted_events.where(muted_events: {user_id: current_user.id}).first
     if me.present? && !me.muted?
@@ -333,6 +319,7 @@ Examples:\n
       key :tags, ['Notifications', 'Events']
     end # end operation :delete
   end
+
   def unmute
     me = @event.muted_events.where(muted_events: {user_id: current_user.id}).first
     if me.present? && me.muted?
@@ -343,7 +330,7 @@ Examples:\n
     render nothing: true
   end
 
-private
+  private
   def event_params
     params.permit(:title, :starts_at, :ends_at, :all_day, :notes,
                   :kind, :latitude, :longitude, :location_name, :separation,
@@ -353,7 +340,7 @@ private
   end
 
   def query_params
-    params.permit(:since)
+    params.permit(:since, :range_start, :range_end, :time_zone)
   end
 
   swagger_path '/events/{id}/cancellations' do
@@ -396,9 +383,8 @@ private
       end # end response :default
       key :tags, ['Events', 'Event Cancellations']
     end # end operation :post
-  end # end swagger_path /events/{id}/cancellations
+  end
 
-  # swagger_path /events/{id}/notifications
   swagger_path '/events/{id}/notifications' do
     operation :get do
       key :summary, 'Returns notifications preferences for calendar item'
@@ -424,10 +410,9 @@ private
       end # end response :default
       key :tags, ['Notifications', 'Events']
     end # end operation :get
-     # end operation :post
-  end # end swagger_path /events/{id}/notifications
+    # end operation :post
+  end
 
-  # swagger_path /events/{event_id}/lists/{list_id}
   swagger_path '/events/{event_id}/lists/{list_id}' do
     operation :post do
       key :summary, 'Assigns specified list to specified event'
@@ -484,9 +469,8 @@ private
       end # end response :default
       key :tags, ['Events']
     end # end operation :delete
-  end # end swagger_path /events/{event_id}/lists/{list_id}
+  end
 
-  # swagger_path /events/{id}/notifications
 
 
 end
