@@ -475,11 +475,4 @@ Examples:
       key :tags, ['Events']
     end # end operation :delete
   end
-
-<<<<<<< HEAD
-  # swagger_path /events/{id}/notifications
-=======
-
-
->>>>>>> 829f04b54b2e20c15fa1467187e43560664ae900
 end
