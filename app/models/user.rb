@@ -42,6 +42,15 @@ class User < ActiveRecord::Base
     groups.includes(participations: [:user, :sender]).first
   end
 
+  def all_events(range_start, range_end, time_zone)
+    Event.all_of_user(id, range_start, range_end, time_zone)
+        .with_muted(id)
+        .includes(:list, participations: [
+            {user: :profile},
+            {sender: :profile}
+        ])
+  end
+
   swagger_schema :User do
     key :type, :object
     property :id do

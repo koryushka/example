@@ -6,7 +6,6 @@ class Event < AbstractModel
   belongs_to :calendar
   has_and_belongs_to_many :calendars
   has_and_belongs_to_many :documents
-  has_one :notifications_preference
   has_many :complex_events, foreign_key: 'id'
   has_many :event_recurrences, dependent: :destroy
   has_many :event_cancellations, dependent: :destroy
@@ -16,15 +15,14 @@ class Event < AbstractModel
   has_many :activities, as: :notificationable, dependent: :destroy
   has_many :child_events, class_name: 'Event', foreign_key: 'recurring_event_id', dependent: :destroy
   belongs_to :parent_event, class_name: 'Event', foreign_key: 'recurring_event_id'
+  has_one :muted_event, -> (user) {where(user_id: user.id)}
 
-  scope :with_muted, -> (user_id){includes(:muted_events)
-                                      .references(:muted_events)
-                                      .where('"muted_events"."user_id" IS NULL OR "muted_events"."user_id" = :user_id', user_id: user_id)}
+
+  # TODO: must optimise this scope
+  scope :with_muted, -> (user_id){joins("LEFT JOIN muted_events ON muted_events.event_id = events.id AND muted_events.user_id = #{user_id}")}
 
   accepts_nested_attributes_for :event_recurrences
   accepts_nested_attributes_for :event_cancellations
-
-  attr_accessor :all_day
 
   validates :title, length: {maximum: 128}, presence: true
   validates :starts_at, date: true, allow_blank: true
@@ -39,6 +37,7 @@ class Event < AbstractModel
   validates :longitude, numericality: {only_integer: false, greater_than_or_equal_to: -180, less_than_or_equal_to: 180}, allow_blank: true
   validates :latitude, numericality: {only_integer: false, greater_than_or_equal_to: -90, less_than_or_equal_to: 90}, allow_blank: true
   validates :frequency, inclusion: {in: %w(once daily weekly monthly yearly)}
+  validates :image_url, length: {maximum: 2048}
 
   validate :dates_check
   validate :recurrency_check
@@ -46,12 +45,12 @@ class Event < AbstractModel
   default :separation, 1
   default :notes, ''
   default :kind, 0
+  default :all_day, false
+  default :public, true
 
   before_save do
-    unless all_day.nil?
-      assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
-      assign_attributes(starts_on: nil, ends_on: nil) unless all_day
-    end
+    assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
+    assign_attributes(starts_on: nil, ends_on: nil) unless all_day
   end
 
   # after_destroy :destroy_from_google, if: :has_etag?
@@ -62,6 +61,12 @@ class Event < AbstractModel
     participations.where(status: Participation::ACCEPTED).each do |p|
       Activity.create(notificationable: self, user: p.user, activity_type: UPDATED)
     end
+  end
+
+  def self.all_of_user(user_id, range_start, range_end, time_zone)
+    sql = send(:sanitize_sql, ["(SELECT * FROM recurring_events_for(%i, '%s', '%s', '%s')) events",
+                               user_id, range_start, range_end, time_zone])
+    from(sql)
   end
 
   def muted
@@ -167,11 +172,104 @@ private
     errors.add(:ends_at, I18n.t('events.start_date_more_than_end_date')) if ends_at.present? && starts_at.present? && (starts_at > ends_at)
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: model Event
-  # ================================================================================
+  swagger_schema :EventInput do
+    key :type, :object
+    property :title do
+      key :type, :string
+      key :description, "Event's title"
+    end
+    property :starts_at do
+      key :type, :string
+      key :format, 'date-time'
+      key :description, 'Start date and time for event'
+    end
+    property :ends_at do
+      key :type, :string
+      key :format, 'date-time'
+      key :description, 'End date and time for event'
+    end
+    property :all_day do
+      key :type, :boolean
+      key :description, "Specifies all-day event. If it's true so ends_at is being set to null"
+      key :default, false
+    end
+    property :notes do
+      key :type, :string
+      key :description, 'Additional notes'
+    end
+    property :timezone_name do
+      key :type, :string
+      key :description, 'Optional time zone to apply to starting and ending dates. For reminders time zone usually
+does not matter'
+    end
+    property :kind do
+      key :type, :integer
+      key :format, :int16
+      key :description, 'Enumeration specifies the type of event'
+      key :default, 0
+    end
+    property :latitude do
+      key :type, :number
+      key :format, :double
+      key :description, 'Location lattitude'
+    end
+    property :longitude do
+      key :type, :number
+      key :format, :double
+      key :description, 'Location longitude'
+    end
+    property :location_name do
+      key :type, :string
+      key :description, 'Location name. It might be city name, neighborhood name or anything else'
+    end
+    property :separation do
+      key :type, :number
+      key :default, 1
+      key :description, "The number of intervals at en event's frequency in between occurrences of
+the event. For instance, if an event occurs every other week, it has a
+frequency of weekly and a separation of 2 because there are 2 weeks in
+between occurrences. This property defaults to 1"
+    end
+    property :count do
+      key :type, :number
+      key :description, 'Specifies a limit number of times the event will occur. Set this property to
+NULL for no limit'
+    end
+    property :until do
+      key :type, :string
+      key :format, 'date-time'
+      key :description, 'Specifies a limiting date and time after which no recurrences will be
+generated for this event. Set this property to NULL for no limit'
+    end
+    property :frequency do
+      key :type, :string
+      key :description, "This property specifies the frequency at which this event recurs.
+Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'"
+    end
+    property :image_url do
+      key :type, :string
+      key :description, 'Contains link to event picture'
+      key :maxLength, 2048
+    end
+    property :public do
+      key :type, :boolean
+      key :description, "Specifies event. If it's true so All family members should be able to modify all attributes
+of the event with the exception of changing the ‘Public’ / ‘Private’ setting"
+      key :default, true
+    end
+    property :event_recurrences_attributes do
+      key :type, :array
+      items do
+        key :'$ref', '#/definitions/EventReccurenceInput'
+      end
+    end
+    property :event_cancellations_attributes do
+      key :type, :array
+      items do
+        key :'$ref', :EventCancellationInput
+      end
+    end
+  end
 
   swagger_schema :Event do
     key :type, :object
@@ -235,6 +333,10 @@ For reminders time zone usually does not matter'
       key :type, :boolean
       key :description, 'Shows whether user receives notifications related to this event'
     end
+    property :image_url do
+      key :type, :string
+      key :description, 'Contains link to event picture'
+    end
     property :event_recurrences_attributes do
       key :type, :array
       items do
@@ -255,6 +357,12 @@ For reminders time zone usually does not matter'
       items do
         key :'$ref', :Participation
       end
+    end
+    property :public do
+      key :type, :boolean
+      key :description, "Specifies event. If it's true so All family members should be able to modify all attributes
+of the event with the exception of changing the ‘Public’ / ‘Private’ setting"
+      key :default, true
     end
   end # end swagger_schema :Event
 
@@ -335,93 +443,6 @@ For reminders time zone usually does not matter'
     end
   end # end swagger_schema :EventCancellation
 
-  # swagger_schema :EventInput
-  swagger_schema :EventInput do
-    key :type, :object
-    property :title do
-      key :type, :string
-      key :description, "Event's title"
-    end
-    property :starts_at do
-      key :type, :string
-      key :format, 'date-time'
-      key :description, 'Start date and time for event'
-    end
-    property :ends_at do
-      key :type, :string
-      key :format, 'date-time'
-      key :description, 'End date and time for event'
-    end
-    property :all_day do
-      key :type, :boolean
-      key :description, "Specifies all-day event. If it's true so ends_at is being set to null"
-      key :default, false
-    end
-    property :notes do
-      key :type, :string
-      key :description, 'Additional notes'
-    end
-    property :timezone_name do
-      key :type, :string
-      key :description, 'Optional time zone to apply to starting and ending dates. For reminders time zone usually
-does not matter'
-    end
-    property :kind do
-      key :type, :integer
-      key :format, :int16
-      key :description, 'Enumeration specifies the type of event'
-      key :default, 0
-    end
-    property :latitude do
-      key :type, :number
-      key :format, :double
-      key :description, 'Location lattitude'
-    end
-    property :longitude do
-      key :type, :number
-      key :format, :double
-      key :description, 'Location longitude'
-    end
-    property :location_name do
-      key :type, :string
-      key :description, 'Location name. It might be city name, neighborhood name or anything else'
-    end
-    property :separation do
-      key :type, :number
-      key :default, 1
-      key :description, "The number of intervals at en event's frequency in between occurrences of
-the event. For instance, if an event occurs every other week, it has a
-frequency of weekly and a separation of 2 because there are 2 weeks in
-between occurrences. This property defaults to 1"
-    end
-    property :count do
-      key :type, :number
-      key :description, 'Specifies a limit number of times the event will occur. Set this property to
-NULL for no limit'
-    end
-    property :until do
-      key :type, :string
-      key :format, 'date-time'
-      key :description, 'Specifies a limiting date and time after which no recurrences will be
-generated for this event. Set this property to NULL for no limit'
-    end
-    property :frequency do
-      key :type, :string
-      key :description, "This property specifies the frequency at which this event recurs.
-Possible values are 'once', 'daily', 'weekly', 'monthly', and 'yearly'"
-    end
-    property :event_recurrences_attributes do
-      key :type, :array
-      items do
-        key :'$ref', '#/definitions/EventReccurenceInput'
-      end
-    end
-    property :event_cancellations_attributes do
-      key :type, :array
-      items do
-        key :'$ref', :EventCancellationInput
-      end
-    end
-  end # end swagger_schema :EventInput
+
 
 end
