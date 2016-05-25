@@ -1,5 +1,5 @@
 class Event < AbstractModel
-  include Googleable
+  include GoogleAuth
   include Swagger::Blocks
 
   belongs_to :user

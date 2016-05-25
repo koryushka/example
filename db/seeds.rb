@@ -5,7 +5,7 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-100.times do |i|
-  user = User.create!(email: "fake_user#{i}@email.com", password: "password")
+%w(kkaretnikov@weezlabs.com karetnikov.kirill@gmail.com).each do |user|
+  user = User.create!(email: user, password: "password")
   puts "#{user.email} created!"
 end

@@ -62,7 +62,6 @@ class Api::V1::EventsController < ApiController
     @events = current_user.all_events(query_params.fetch(:range_start, Date.today.beginning_of_month),
                                       query_params.fetch(:range_end, Date.today.end_of_month),
                                       query_params.fetch(:time_zone, 'UTC'))
-
   end
 
   swagger_path '/events/{id}' do

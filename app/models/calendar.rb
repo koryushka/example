@@ -2,6 +2,7 @@ class Calendar < AbstractModel
   include Swagger::Blocks
 
   belongs_to :user
+  belongs_to :google_access_token
   # has_and_belongs_to_many :events
   has_many :events, dependent: :destroy
   # has_and_belongs_to_many :calendars_groups

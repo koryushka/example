@@ -1,51 +1,49 @@
 class GoogleCalendars
-  include Recurrence
-  include Googleable
+  include GoogleAuth
   attr_accessor :items
 
   def initialize(current_user, service, account)
-    @current_user, @service, @account = current_user, service, account
+    @current_user, @service, @account, @gat = current_user, service[0], account, service[1]
     @items = []
   end
 
   def import_calendars
-    @calendar_list = @service.list_calendar_lists
+    calendar_list = @service.list_calendar_lists
     calendars = []
-    @calendar_list.items.each do |item|
-      @calendar = Calendar.find_or_create_by(
+    calendar_list.items.each do |item|
+      google_calendar = Calendar.find_or_create_by(
         google_calendar_id: item.id,
-        user_id: @current_user.id,
+        google_access_token_id: @gat.id
 
       ) do |calendar|
         calendar.title = item.summary
         calendar.account = @account
+        calendar.user_id = @current_user.id
       end
 
-      if @calendar.should_be_synchronised?
-        parse_events_from_calendar
+      if google_calendar.should_be_synchronised?
+        parse_events_from_calendar(google_calendar)
       end
     end
   end
 
   private
 
-  def parse_events_from_calendar
-    google_calendar_events = @service.list_events(@calendar.google_calendar_id).items
+  def parse_events_from_calendar(google_calendar)
+    google_calendar_events = @service.list_events(google_calendar.google_calendar_id).items
+    @items += google_calendar_events
     parent_events = google_calendar_events.select {|x| !cancelled?(x) && !x.recurring_event_id}
     cancelled_events = google_calendar_events.select {|x| x.recurring_event_id && cancelled?(x)}
     recurring_events = google_calendar_events.select {|x| x.recurring_event_id && !cancelled?(x)}
-    # items_count = @google_calendar_events.length
 
-    @i ||= 0
     event_cancellations = []
     #manage parent events
     parent_events.each do |item|
       remove_frequency
-      @items << item
       @frequency = get_frequency item
       @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid, user_id: @current_user.id) do |event|
         event.google_event_id = item.id
-        event.calendar_id = @calendar.id
+        event.calendar_id = google_calendar.id
         event.etag = item.etag
         event.starts_at = start_date item
         event.ends_at = end_date item
@@ -64,15 +62,9 @@ class GoogleCalendars
       end
     end
 
-    #for debugging
-    cancelled_events.each do |item|
-      @items << item
-    end
-
     #manage event cancellations
     cancelled_events.group_by(&:recurring_event_id).each do |recurring_event_id, group|
       @event = Event.find_by(google_event_id: recurring_event_id, user_id: @current_user.id)
-      # @event.child_events.where('')
       group.each do |event_cancellation|
           create_event_cancellation(event_cancellation) if @event
       end
@@ -102,9 +94,6 @@ class GoogleCalendars
       end
 
     end
-    recurring_events.each do |item|
-      @items << item
-    end
   end
 
   def update_changed_attributes(child_event)
@@ -124,7 +113,8 @@ class GoogleCalendars
   def parent_event_equal_to?(child_event)
       @s_date = start_date child_event
       @e_date = end_date child_event
-      (child_event.summary == @event.title) && (@s_date == @event.starts_at) && (@e_date == @event.ends_at) && (child_event.description == @event.notes)
+      (child_event.summary == @event.title) && (@s_date == @event.starts_at) &&
+      (@e_date == @event.ends_at) && (child_event.description == @event.notes)
   end
 
   def synchronize_event(item)
@@ -148,7 +138,7 @@ class GoogleCalendars
       etag: item.etag
     )
     calculate_event_recurrence if @frequence
-    puts 'LOCAL EVENT HAS BEEN UPDATED'
+    puts 'LOCAL EVENT HAS BEEN UPDATED ' + @event.title
   end
 
   # def update_google_event(item)
@@ -263,4 +253,98 @@ class GoogleCalendars
     item.status == 'cancelled'
   end
 
+  #Recurrence
+
+  def calculate_event_recurrence
+    case @frequence[:FREQ]
+      when 'DAILY'  then manage_daily_event_recurrence
+      when 'WEEKLY' then manage_weekly_event_recurrence
+      when 'MONTHLY'then manage_monthly_event_recurrence
+      when 'YEARLY' then manage_yearly_event_recurrence
+    end
+  end
+
+  def manage_daily_event_recurrence
+    assign_event_frequency_attributes(nil, nil, nil)
+  end
+
+  def manage_weekly_event_recurrence
+    days = @frequence[:BYDAY].split(',')
+    days.map do |day|
+      find_or_create_event_recurrence(nil, nil, get_day(day))
+    end
+  end
+
+  def manage_monthly_event_recurrence
+    if byday = @frequence[:BYDAY]
+      days = byday.split(',')
+      days.map do |day|
+        day.squish!
+        find_or_create_event_recurrence(nil, get_week(day), get_day(day))
+      end
+    else
+      find_or_create_event_recurrence(nil, nil, @event.starts_at.day)
+    end
+  end
+
+  def manage_yearly_event_recurrence
+    date = @event.starts_at.to_date
+    find_or_create_event_recurrence(date.month, nil, date.day)
+
+  end
+
+  def assign_event_frequency_attributes(u_date = @frequence[:UNTIL],
+                                        count =     @frequence[:COUNT],
+                                        interval =  @frequence[:INTERVAL] || 1)
+    @event.until      = until_date(u_date)
+    @event.count      = count
+    @event.separation = interval
+  end
+
+  def until_date(date=nil)
+    date.to_date if date
+  end
+
+  def find_or_create_event_recurrence(month, week, day)
+    EventRecurrence.find_or_create_by(
+      event_id: @event.id,
+      month: month,
+      week: week,
+      day: day
+    )
+  end
+
+  def get_day(day)
+   day = day.slice(-2..-1)
+   week = {
+      'SU' => 0,'MO' => 1,'TU' => 2,'WE' => 3,'TH' => 4,'FR' => 5,'SA' => 6
+    }
+    week[day]
+  end
+
+  def get_week(day)
+    @day = day
+    @day.start_with?('-') ? slice_day(0..1) : slice_day(1)
+  end
+
+  def slice_day(range)
+    @day.slice(range).to_i
+  end
+
+  #Google
+
+  # def count_google_recurrence
+  #   recurrences = @event.event_recurrences
+  #   if recurrences
+  #     get_recurrences(recurrences)
+  #   else
+  #
+  #   end
+  # end
+  #
+  # def get_recurrences(recurrences)
+  #   %w(month week day).each do |period|
+  #     instance_variable_set("@#{period}s", recurrences.pluck(period.to_sym))
+  #   end
+  # end
 end
