@@ -2,6 +2,7 @@ class Api::V1::DevicesController < ApiController
   include Swagger::Blocks
 
   before_filter :find_entity, except: [:create]
+
   authorize_resource
   check_authorization
 
@@ -41,9 +42,11 @@ class Api::V1::DevicesController < ApiController
     end # end operation post
   end # end swagger_path :Devices
   def create
+    sns = ApiHelper::Sns.new
     @device = Device.find_by(device_token: device_params[:device_token])
     if @device
-        endpoint_response = delete_endpoint(@device.aws_endpoint_arn)
+        endpoint_response = sns.delete_endpoint(@device.aws_endpoint_arn)
+        # endpoint_response = delete_endpoint(@device.aws_endpoint_arn)
         if endpoint_response.present? && endpoint_response.successful?
           raise InternalServerErrorException unless @device.destroy
         end
@@ -52,13 +55,13 @@ class Api::V1::DevicesController < ApiController
     @device = Device.new(device_params)
     return render json: :ValidationErrorsContainer, status: :bad_request if @device.invalid?
 
-    sns_response = insert_token(@device.device_token)
+    sns_response = sns.insert_token(@device.device_token)
+    # sns_response = insert_token(@device.device_token)
     if sns_response.present? && sns_response.successful?
       @device.aws_endpoint_arn = sns_response.endpoint_arn
       raise InternalServerErrorException unless @device.save
     else
-      #  TODO: write exception
-      puts 'error'
+      raise SnsUnsuccessfulException, status :bad_request
     end
     render nothing: true, status: :created
   end
@@ -149,8 +152,14 @@ class Api::V1::DevicesController < ApiController
     end # end operation :delete
   end
   def destroy
-    delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
-    @device.destroy
+    sns = ApiHelper::Sns.new
+    sns_response = sns.delete_endpoint(@device.aws_endpoint_arn)
+    if sns_response.present? && sns_response.successful?
+    # delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
+      raise InternalServerErrorException unless@device.destroy
+    else
+      raise SnsUnsuccessfulException, status :bad_request
+    end
     render nothing: true, status: :no_content
   end
 
