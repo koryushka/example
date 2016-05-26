@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   has_many :sent_paticipations, class_name: 'Participation', foreign_key: 'sender_id'
   has_many :participations
   has_many :devices, dependent: :destroy
+  has_many :google_access_tokens, dependent: :destroy
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

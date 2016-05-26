@@ -84,7 +84,6 @@ private
     entity_class_name = (type.nil? ? controller_name : type.to_s).classify
     entity_class = entity_class_name.constantize
     relation = condition.nil? ? entity_class : entity_class.where(condition)
-
     # loading entity
     entity_id = params[id_param]
     entity = relation.where(id: entity_id).first
