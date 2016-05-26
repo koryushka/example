@@ -3,6 +3,9 @@ class Api::V1::DevicesController < ApiController
 
   before_filter :find_entity, except: [:create]
 
+  authorize_resource
+  check_authorization
+
   # swagger_path /device
   swagger_path '/devices' do
     operation :post do
@@ -39,88 +42,29 @@ class Api::V1::DevicesController < ApiController
     end # end operation post
   end # end swagger_path :Devices
   def create
+    sns = ApiHelper::Sns.new
     @device = Device.find_by(device_token: device_params[:device_token])
-    # Check if device is exists
     if @device
-      # Delete if exists
-        endpoint_response = delete_endpoint(@device.aws_endpoint_arn)
-        if endpoint_response.present? && endpoint_response.http_response.status == 200
+        endpoint_response = sns.delete_endpoint(@device.aws_endpoint_arn)
+        if endpoint_response.present? && endpoint_response.successful?
           raise InternalServerErrorException unless @device.destroy
         end
     end
 
     @device = Device.new(device_params)
+    return render json: :ValidationErrorsContainer, status: :bad_request if @device.invalid?
 
-    sns_response = insert_token(@device.device_token)
-    if sns_response.present? && sns_response.http_response.status == 200
-      Device.where(user_id: current_user).each do |device|
-        endpoint_response = delete_endpoint(device.aws_endpoint_arn)
-        next if endpoint_response.nil? || endpoint_response.http_response.status != 200
-        raise InternalServerErrorException unless device.destroy
-      end
+    sns_response = sns.insert_token(@device.device_token)
+    if sns_response.present? && sns_response.successful?
       @device.aws_endpoint_arn = sns_response.endpoint_arn
       raise InternalServerErrorException unless @device.save
+    else
+      raise SnsUnsuccessfulException
     end
-    render nothing: true
+    render nothing: true, status: :created
   end
 
-
-  # swagger_path device/{id}
-  swagger_path '/device/{id}' do
-    operation :put do
-      key :summary, 'Update device'
-      key :description, 'Updates device information by ID'
-      parameter do
-        key :name, 'id'
-        key :description, 'Device ID'
-        key :in, 'path'
-        key :required, true
-        key :type, :integer
-      end
-      parameter do
-        key :name, 'device'
-        key :in, 'body'
-        key :required, true
-        schema do
-          key :'$ref', :DeviceInput
-        end
-      end
-      # responses
-      response 201 do
-        key :description, 'Updated'
-        schema do
-          key :'$ref', :DeviceInput
-        end
-      end # end response OK
-      response 400 do
-        key :description, 'Validation errors'
-        schema do
-          key :'$ref', :ValidationErrorsContainer
-        end
-      end
-      # response Default
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', :Error
-        end
-      end # end response Default
-      key :tags, ['Devices']
-    end # end operation :put
-  end # end swagger_path /device/{id}
-  def update
-    @device.assign_attributes(device_params)
-    @sns.delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
-    sns_response = insert_token(@device.aws_endpoint_arn)
-    if sns_response.present? && sns_response.http_response.status == 200
-      # save new endpoint
-      @device.aws_endpoint_arn = sns_response.endpoint_arn
-      raise InternalServerErrorException unless @device.save
-    end
-    render nothing: true
-  end
-
-  # TODO: add to swagger_path
+  # swagger_path /device/{id}
   swagger_path '/device/{id}' do
     operation :delete do
       key :summary, 'Delete device'
@@ -145,29 +89,18 @@ class Api::V1::DevicesController < ApiController
     end # end operation :delete
   end
   def destroy
-    @sns.delete_endpoint(endpoint_arn: @device.aws_endpoint_arn)
-    @device.destroy
+    sns = ApiHelper::Sns.new
+    sns_response = sns.delete_endpoint(@device.aws_endpoint_arn)
+    if sns_response.present? && sns_response.successful?
+      raise InternalServerErrorException unless@device.destroy
+    else
+      raise SnsUnsuccessfulException
+    end
     render nothing: true, status: :no_content
   end
 
 private
   def device_params
-    params.permit(:user_id,
-    :device_token,
-    :aws_endpoint_arn)
+    params.permit(:user_id, :device_token, :aws_endpoint_arn)
   end
-
-  # Insert device token to SNS
-  def insert_token(device_token)
-    @sns.create_platform_endpoint(
-        platform_application_arn: "iOS",
-        token: device_token,
-    )
-  end
-
-  # Remove end_point from SNS
-  def delete_endpoint(end_point)
-    @sns.delete_endpoint(endpoint_arn: end_point)
-  end
-
 end
