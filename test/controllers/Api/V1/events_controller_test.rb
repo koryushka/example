@@ -177,7 +177,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_not_nil json_response['items']
     assert_not_nil json_response['shared_items']
     count = json_response['items'].size + json_response['shared_items'].size
-    assert count == 2, "Expected 2 updated events, #{count} given"
+    assert_equal 2, count
   end
 
   #### lists group
