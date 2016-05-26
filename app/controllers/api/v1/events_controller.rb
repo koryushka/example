@@ -61,20 +61,8 @@ class Api::V1::EventsController < ApiController
     # TODO: must avoid N+1 query
     @events = current_user.all_events(query_params.fetch(:range_start, Date.today.beginning_of_month),
                                       query_params.fetch(:range_end, Date.today.end_of_month),
-                                      query_params.fetch(:time_zone, 'UTC'))
-
-    if query_params[:filter].present?
-      user_id = nil
-      if query_params[:filter].is_a? Numeric
-        user_id = query_params[:filter]
-      elsif query_params[:filter] == 'me'
-        user_id = current_user.id
-      end
-      @events = @events.where(events: {user_id: user_id}) if user_id.present?
-      if query_params[:filter] == 'family'
-        #@events = @events.where(participations: {user_id:})
-      end
-    end
+                                      query_params.fetch(:time_zone, 'UTC'),
+                                      query_params.fetch(:filter, nil))
   end
 
   swagger_path '/events/{id}' do

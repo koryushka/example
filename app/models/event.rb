@@ -63,9 +63,10 @@ class Event < AbstractModel
     end
   end
 
-  def self.all_of_user(user_id, range_start, range_end, time_zone)
-    sql = send(:sanitize_sql, ["(SELECT * FROM recurring_events_for(%i, '%s', '%s', '%s')) events",
-                               user_id, range_start, range_end, time_zone])
+  def self.all_of_user(user_id, range_start, range_end, time_zone, filter)
+    filter_value = filter.present? ? "'#{filter}'" : 'NULL'
+    sql = send(:sanitize_sql, ["(SELECT * FROM recurring_events_for(%i, '%s', %s, '%s', '%s')) events",
+                               user_id, range_start, filter_value, range_end, time_zone])
     from(sql)
   end
 

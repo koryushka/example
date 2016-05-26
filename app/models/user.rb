@@ -42,8 +42,8 @@ class User < ActiveRecord::Base
     groups.includes(participations: [:user, :sender]).first
   end
 
-  def all_events(range_start, range_end, time_zone)
-    Event.all_of_user(id, range_start, range_end, time_zone)
+  def all_events(range_start, range_end, time_zone, filter)
+    Event.all_of_user(id, range_start, range_end, time_zone, filter)
         .with_muted(id)
         .includes(:list, participations: [
             {user: :profile},
