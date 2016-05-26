@@ -67,7 +67,7 @@ Rails.application.routes.draw do
 
       # devices
       post 'device', to: 'devices#create'
-      delete 'device/:device_token', to: 'devices#destroy'
+      delete 'device/:id', to: 'devices#destroy'
       # put 'device/:id', to: 'devices#update'
 
     end
