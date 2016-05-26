@@ -1,7 +1,8 @@
 class Api::V1::CalendarsController < ApiController
   include Swagger::Blocks
 
-  before_filter :find_entity, except: [:index, :create]
+  # before_filter :find_entity, except: [:index, :create]
+  before_filter(except: [:index, :create]) { find_entity_of_current_user }
   after_filter :something_updated, except: [:index, :show]
   authorize_resource
   check_authorization
@@ -71,8 +72,9 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def create
-    @calendar = Calendar.new(calendar_params)
-    @calendar.user = current_user
+    # @calendar = Calendar.new(calendar_params)
+    # @calendar.user = current_user
+    @calendar = current_user.calendars.build(calendar_params)
 
     raise InternalServerErrorException unless @calendar.save
     render partial: 'calendar', locals: { calendar: @calendar }, status: :created
@@ -142,10 +144,13 @@ class Api::V1::CalendarsController < ApiController
       key :tags, ['Calendars']
     end # end operation :delete
   end # end swagger_path ':/calendars/{id}'
-  def update
-    @calendar.assign_attributes(calendar_params)
 
-    raise InternalServerErrorException unless @calendar.save
+  def update
+    if @calendar.update_attributes(calendar_params)
+      @calendar.remove_events if params[:synchronizable] == false
+    else
+      raise InternalServerErrorException
+    end
     render partial: 'calendar', locals: { calendar: @calendar }
   end
 
@@ -153,9 +158,10 @@ class Api::V1::CalendarsController < ApiController
     @calendar.destroy
     render nothing: true, status: :no_content
   end
+
 private
   def calendar_params
-    params.permit(:title, :hex_color, :main, :kind, :visible)
+    params.permit(:title, :hex_color, :main, :kind, :visible, :synchronizable)
   end
 
   # ================================================================================

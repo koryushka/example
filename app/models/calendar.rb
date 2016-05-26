@@ -41,19 +41,23 @@ class Calendar < AbstractModel
   end
 
   def should_be_synchronised?
-    self.sync_with_google == true
+    self.synchronizable == true
   end
 
-  def unsync!
-    ActiveRecord::Base.transaction do
-      self.update_column(:sync_with_google, false)
-      self.events.destroy_all
-    end
+  # def unsync!
+  #   ActiveRecord::Base.transaction do
+  #     self.update_column(:synchronizable, false)
+  #     self.events.destroy_all
+  #   end
+  # end
+  #
+  # def sync!
+  #   self.update_column(:synchronizable, true)
+  # end
+  def remove_events
+    self.events.destroy_all
   end
 
-  def sync!
-    self.update_column(:sync_with_google, true)
-  end
 
 
   # ================================================================================

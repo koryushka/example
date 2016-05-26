@@ -19,10 +19,12 @@ module GoogleAuth
       client_secret: Rails.application.secrets.google_client_secret,
     }
     request = Net::HTTP.post_form(URI.parse(uri), data)
-    if request.class == Net::HTTPBadRequest
-      puts request.body
+    body = JSON.parse(request.body)
+    if token_has_been_revoked?(body)
+      p "BAD REQUEST -> token has been revoked #{google_access_token.inspect}"
+      # google_access_token.revoke!
     else
-      body = JSON.parse(request.body)
+
       google_access_token.update_attributes(
         token: body['access_token'],
         expires_at: Time.now + body['expires_in'].to_i
@@ -36,4 +38,13 @@ module GoogleAuth
     @service = Google::Apis::CalendarV3::CalendarService.new
     @service.authorization = client
   end
+
+  def bad_request?(request)
+    request.class == Net::HTTPBadRequest
+  end
+
+  def token_has_been_revoked?(body)
+    body['error_description'] == "Token has been revoked."
+  end
+
 end

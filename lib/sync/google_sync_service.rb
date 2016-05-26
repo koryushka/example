@@ -14,13 +14,16 @@ class GoogleSyncService
       puts "USER_ID #{user_id}"
       accounts = []
 
-      user.google_access_tokens.where('deleted IS NOT true').each do |google_access_token|
+      user.google_access_tokens.where('synchronizable IS true AND revoked IS NOT true').each do |google_access_token|
         authorize google_access_token
         accounts << [@service, google_access_token]
-      end if user
+      end
 
       accounts.each do |service|
-        account = account(service[0].authorization.access_token)
+        access_token = service[0].authorization.access_token
+        next unless access_token
+        account = account(service[1])
+        next unless account
         parser = GoogleCalendars.new(user, service, account)
         parser.import_calendars
         google_events_ids = get_google_events_ids(parser.items)
@@ -38,7 +41,7 @@ class GoogleSyncService
   def get_local_event_ids(user_id, account)
     Event.where('google_event_id IS NOT NULL AND events.user_id = ?', user_id)
       .includes(:calendar)
-      .where(calendars: {sync_with_google: true, account: account})
+      .where(calendars: {synchronizable: true, account: account})
       .pluck(:google_event_id)
   end
 
@@ -48,8 +51,17 @@ class GoogleSyncService
   end
 
   def account(access_token)
-    uri = ACCOUNT_INFO_URI + access_token
-    response = JSON.parse(open(uri).string)
-    response['email']
+    begin
+      uri = ACCOUNT_INFO_URI + access_token.token
+      response = JSON.parse(open(uri).string)
+      response['email']
+    rescue OpenURI::HTTPError => e
+      access_token.revoke! if unauthorized?(e)
+      false
+    end
+  end
+
+  def unauthorized? e
+    e.message == '401 Unauthorized'
   end
 end

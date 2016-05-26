@@ -1,8 +1,7 @@
 json.accounts @accounts do |item|
-  json.extract! item, :id, :account
-  json.syncronized item.deleted ? false : true
+  json.extract! item, :id, :account, :revoked, :synchronizable
   json.calendars  item.calendars do |calendar|
     json.extract! calendar, :id, :title
-    json.syncronized calendar.sync_with_google
+    json.synchronizable calendar.synchronizable
   end
 end

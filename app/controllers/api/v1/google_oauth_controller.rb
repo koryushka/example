@@ -26,22 +26,17 @@ class Api::V1::GoogleOauthController < ApiController
     if google_access_token = GoogleAccessToken.find_by(account: response['email'],
                                                        user_id: current_user.id)
       if @google_access_token
-        google_access_token.update_attributes(
-          token: data['access_token'],
-          refresh_token: data['refresh_token'],
-          deleted: false
-        )
-      else
-        google_access_token.update_attributes(
-          token: data['access_token'],
-          deleted: false
-        )
+        GoogleAccessToken.where(account: response['email'])
+        .update_all(refresh_token: data['refresh_token'], revoked: false)
       end
+        google_access_token.update_attributes(
+          google_access_token_params(data)
+        )
     else
       if google_access_token = GoogleAccessToken.find_by(account: response['email'])
         GoogleAccessToken.new(google_access_token
                               .attributes
-                              .except('id', 'created_at', 'updated_at', 'deleted')
+                              .except('id', 'created_at', 'updated_at', 'synchronizable')
                               .merge({user_id: current_user.id}))
                               .save
       else
@@ -49,8 +44,15 @@ class Api::V1::GoogleOauthController < ApiController
                                                user_id: current_user.id)
       end
     end
+    GoogleSyncService.new.sync current_user.id
+    render json:{message: "Import completed"}
+  end
 
-    render json:{data: response}
+  def google_access_token_params(data)
+    {
+      token: data['access_token'],
+      revoked: false
+    }
   end
 
   def set_client
