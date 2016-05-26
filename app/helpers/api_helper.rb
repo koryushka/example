@@ -50,7 +50,7 @@ module ApiHelper
             token: device_token,
         )
       rescue
-        raise InternalServerErrorException, status: :bad_request
+        raise InternalServerErrorException
       end
     end
 
@@ -59,7 +59,7 @@ module ApiHelper
       begin
         @sns.delete_endpoint(endpoint_arn: end_point)
       rescue
-        raise InternalServerErrorException, status: :bad_request
+        raise InternalServerErrorException
       end
     end
   end
