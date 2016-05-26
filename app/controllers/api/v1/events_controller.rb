@@ -192,7 +192,9 @@ Examples:
   end
 
   def update
-    @event.update(event_params)
+    if @event.update(event_params)
+      @event.update_google_event if @event.etag
+    end
     MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
     render partial: 'event', locals: {event: @event}
   end
@@ -222,7 +224,9 @@ Examples:
   end
 
   def destroy
-    @event.destroy
+    if @event.destroy && @event.google_event_id
+      @event.destroy_from_google
+    end
     render nothing: true, status: :no_content
   end
 
@@ -470,9 +474,4 @@ Examples:
       key :tags, ['Events']
     end # end operation :delete
   end
-
-
-
 end
-
-

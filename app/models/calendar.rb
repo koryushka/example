@@ -2,7 +2,10 @@ class Calendar < AbstractModel
   include Swagger::Blocks
 
   belongs_to :user
-  has_and_belongs_to_many :events
+  belongs_to :google_access_token
+  # has_and_belongs_to_many :events
+  has_many :events, dependent: :destroy
+  # has_and_belongs_to_many :calendars_groups
   has_and_belongs_to_many :complex_events, join_table: 'calendars_events', readonly: true, association_foreign_key: 'event_id'
 
   validates :title, length: {maximum: 128}, presence: true
@@ -36,6 +39,34 @@ class Calendar < AbstractModel
 
     Event.where(id: nil)
   end
+
+  def should_be_synchronised?
+    self.synchronizable == true
+  end
+
+  # def unsync!
+  #   ActiveRecord::Base.transaction do
+  #     self.update_column(:synchronizable, false)
+  #     self.events.destroy_all
+  #   end
+  # end
+  #
+  # def sync!
+  #   self.update_column(:synchronizable, true)
+  # end
+  def remove_events
+    self.events.destroy_all
+  end
+
+
+
+  # ================================================================================
+  # Swagger::Blocks
+  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
+  # SWAGGER SCHEMA: Model Calendar
+  # ================================================================================
+
+  # swagger_schema calendar
 
   swagger_schema :Calendar do
     key :type, :object
@@ -109,4 +140,3 @@ class Calendar < AbstractModel
   end
 
 end
-
