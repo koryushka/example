@@ -6,10 +6,10 @@ class AddFiltersToUserEvents < ActiveRecord::Migration
           DROP FUNCTION IF EXISTS user_events(INTEGER);
           DROP FUNCTION IF EXISTS user_events(INTEGER, INTEGER);
           CREATE OR REPLACE FUNCTION public.user_events(
-    current_user_id integer,
-    events_filter character varying DEFAULT NULL::character varying)
-  RETURNS SETOF events AS
-$BODY$
+              current_user_id integer,
+              events_filter character varying DEFAULT NULL::character varying)
+            RETURNS SETOF events AS
+          $BODY$
           DECLARE family_id INTEGER;
             is_my_events BOOLEAN DEFAULT NULL;
             is_family_events BOOLEAN DEFAULT NULL;
@@ -29,9 +29,8 @@ $BODY$
                 END;
               END IF;
             END IF;
-            raise notice 'my: %, family: %, user_id: %', is_my_events, is_family_events, family_member_id;
 
-            IF NOT is_my_events THEN
+            IF is_my_events IS NULL THEN
               SELECT groups.id INTO family_id FROM groups WHERE groups.user_id = current_user_id;
               IF family_id IS NULL THEN
                 SELECT p.participationable_id INTO family_id FROM participations p
@@ -41,13 +40,13 @@ $BODY$
 
             RETURN QUERY
             SELECT * FROM events
-            WHERE events.user_id = current_user_id AND NOT is_family_events AND family_member_id IS NULL OR events_filter IS NULL
+            WHERE events.user_id = current_user_id AND (events_filter IS NULL OR is_family_events IS NULL AND family_member_id IS NULL)
             UNION ALL
             SELECT events.* FROM participations p
             INNER JOIN events ON events.id = p.participationable_id
               AND p.participationable_type = 'Event'
               AND p.user_id = current_user_id
-            WHERE NOT is_my_events AND NOT is_family_events OR events.user_id = family_member_id OR events_filter IS NULL
+            WHERE events_filter IS NULL OR family_member_id IS NOT NULL AND events.user_id = family_member_id
             UNION ALL
             SELECT events.* FROM (
               SELECT p.user_id FROM participations p
@@ -64,7 +63,7 @@ $BODY$
               SELECT events.id FROM participations p
               INNER JOIN events ON events.id = p.participationable_id
               AND p.participationable_type = 'Event' AND p.user_id = current_user_id
-            ) AND NOT is_my_events OR (family_member_id IS NOT NULL AND events.user_id = family_member_id) OR events_filter IS NULL;
+            ) AND (is_my_events IS NULL OR events_filter IS NULL OR family_member_id IS NOT NULL AND events.user_id = family_member_id);
           END;
           $BODY$
           LANGUAGE plpgsql STABLE;
