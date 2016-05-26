@@ -66,8 +66,9 @@ Rails.application.routes.draw do
       resources :apidocs, only: [:index]
 
       # devices
-      put 'device/:id', to: 'devices#update'
+      post 'device', to: 'devices#create'
       delete 'device/:id', to: 'devices#destroy'
+      # put 'device/:id', to: 'devices#update'
 
     end
   end
