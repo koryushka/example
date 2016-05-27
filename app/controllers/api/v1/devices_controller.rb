@@ -3,8 +3,8 @@ class Api::V1::DevicesController < ApiController
 
   before_filter :find_entity, except: [:create]
 
-  authorize_resource
-  check_authorization
+  # authorize_resource
+  # check_authorization
 
   # swagger_path /device
   swagger_path '/devices' do
@@ -59,7 +59,11 @@ class Api::V1::DevicesController < ApiController
       @device.aws_endpoint_arn = sns_response.endpoint_arn
       raise InternalServerErrorException unless @device.save
     else
-      raise SnsUnsuccessfulException
+      render json: {
+          code: 1,
+          messages: t('errors.messages.validation_error'),
+          validation_errors: sns_response
+      }, status: :bad_request
     end
     render nothing: true, status: :created
   end
@@ -93,8 +97,6 @@ class Api::V1::DevicesController < ApiController
     sns_response = sns.delete_endpoint(@device.aws_endpoint_arn)
     if sns_response.present? && sns_response.successful?
       raise InternalServerErrorException unless@device.destroy
-    else
-      raise SnsUnsuccessfulException
     end
     render nothing: true, status: :no_content
   end

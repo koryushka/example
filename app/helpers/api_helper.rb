@@ -15,6 +15,7 @@ module ApiHelper
           region: ApiHelper.region,
           credentials: Aws::Credentials.new(ApiHelper.aws_access_key_id, ApiHelper.aws_secret_access_key)
       )
+      puts
     end
 
     # Send push notification
@@ -49,8 +50,8 @@ module ApiHelper
             platform_application_arn: ApiHelper.aws_app_arn,
             token: device_token,
         )
-      rescue
-        raise InternalServerErrorException
+      rescue => e
+        raise SnsUnsuccessfulException.new({code: e.code, message: e.message})
       end
     end
 
@@ -58,8 +59,8 @@ module ApiHelper
     def delete_endpoint(end_point)
       begin
         @sns.delete_endpoint(endpoint_arn: end_point)
-      rescue
-        raise InternalServerErrorException
+      rescue => e
+        raise SnsUnsuccessfulException.new({code: e.code, message: e.message})
       end
     end
   end

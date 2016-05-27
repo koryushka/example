@@ -24,4 +24,13 @@ class Api::V1::DevicesControllerTest < ActionController::TestCase
       Device.find(device.id)
     end
   end
+
+  test 'should raise sns unsuccessful exception' do
+    post :create, {
+        device_token: Faker::Number.hexadecimal(32), # real device_token must be hexadecimal(64)
+    }
+    assert_response :not_acceptable
+
+  end
+
 end

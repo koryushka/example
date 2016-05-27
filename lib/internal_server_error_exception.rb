@@ -1,5 +1,5 @@
 class InternalServerErrorException < AppException
   def initialize
-    super(500, 'Internale error', nil, :internal_server_error)
+    super(500, 'Internal error', nil, :internal_server_error)
   end
 end
