@@ -23,9 +23,8 @@ class GoogleAccessToken < ActiveRecord::Base
     self.calendars.destroy_all
   end
 
-  protected
-
   def revoked?
     self.revoked
   end
+
 end
