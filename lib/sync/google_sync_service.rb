@@ -14,9 +14,10 @@ class GoogleSyncService
       puts "USER_ID #{user_id}"
       accounts = []
 
-      user.google_access_tokens.where('synchronizable IS true AND revoked IS NOT true').each do |google_access_token|
-        authorize google_access_token
-        accounts << [@service, google_access_token]
+      user.google_access_tokens.where('synchronizable IS true AND revoked IS NOT true')
+        .each do |google_access_token|
+          authorize google_access_token
+          accounts << [@service, google_access_token]
       end
 
       accounts.each do |service|

@@ -1,4 +1,5 @@
 class GoogleAccessToken < ActiveRecord::Base
+  include Swagger::Blocks
   belongs_to :user
   has_many :calendars, dependent: :destroy
 
@@ -25,6 +26,53 @@ class GoogleAccessToken < ActiveRecord::Base
 
   def revoked?
     self.revoked
+  end
+
+  swagger_schema :ArrayOfAccounts do
+    key :type, :array
+    items do
+      key :'$ref', :Account
+    end
+  end
+
+  swagger_schema :AccountInput do
+    key :type, :object
+    property :synchronizable do
+      key :type, :boolean
+    end
+  end
+
+  swagger_schema :Account do
+    key :type, :object
+    property :id do
+      key :type, :integer
+      key :description, 'Account ID'
+    end
+
+    property :account do
+      key :type, :string
+      key :description, 'Account name'
+    end
+
+    property :revoked do
+      key :type, :boolean
+      key :description, 'Specifies if access to Google account has been revoked by user'
+      key :default, false
+    end
+
+    property :synchronizable do
+      key :type, :boolean
+      key :description, 'Specifies if account is synchronizable with external service'
+      key :default, true
+    end
+
+    property :calendars do
+      key :type, :array
+      items do
+        key :'$ref', :CalendarList
+      end
+    end
+
   end
 
 end

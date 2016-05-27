@@ -12,7 +12,7 @@ class Api::V1::CalendarsController < ApiController
     @calendars = current_user.calendars
   end
 
-  # swagger_path /calendars
+
   swagger_path '/calendars' do
     operation :get do
       key :summary, 'Current user calendars'

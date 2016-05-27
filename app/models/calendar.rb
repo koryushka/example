@@ -68,6 +68,23 @@ class Calendar < AbstractModel
 
   # swagger_schema calendar
 
+  swagger_schema :CalendarList do
+    key :type, :object
+    property :id do
+      key :type, :integer
+      key :description, 'Calendar ID'
+    end
+    property :title do
+      key :type, :string
+      key :description, 'Calendar title'
+    end
+    property :synchronizable do
+      key :type, :boolean
+      key :description, 'Specifies if calendar is synchronizable with external service'
+      key :default, true
+    end
+  end
+
   swagger_schema :Calendar do
     key :type, :object
     property :id do
@@ -113,28 +130,33 @@ class Calendar < AbstractModel
 
   swagger_schema :CalendarInput do
     key :type, :object
-    property :title do
-      key :type, :string
-      key :description, 'Calendar title'
-    end
-    property :hex_color do
-      key :type, :string
-      key :description, 'Calendar color in hex string'
-    end
-    property :main do
+    # property :title do
+    #   key :type, :string
+    #   key :description, 'Calendar title'
+    # end
+    # property :hex_color do
+    #   key :type, :string
+    #   key :description, 'Calendar color in hex string'
+    # end
+    # property :main do
+    #   key :type, :boolean
+    #   key :description, 'Specifies is it default Curago calendar for user or not'
+    #   key :default, false
+    # end
+    # property :kind do
+    #   key :type, :integer
+    #   key :format, :int16
+    #   key :description, 'Enumeration specifies the type of calendar'
+    #   key :default, 0
+    # end
+    # property :visible do
+    #   key :type, :boolean
+    #   key :description, 'Specifies if calendar visible in UI'
+    #   key :default, true
+    # end
+    property :synchronizable do
       key :type, :boolean
-      key :description, 'Specifies is it default Curago calendar for user or not'
-      key :default, false
-    end
-    property :kind do
-      key :type, :integer
-      key :format, :int16
-      key :description, 'Enumeration specifies the type of calendar'
-      key :default, 0
-    end
-    property :visible do
-      key :type, :boolean
-      key :description, 'Specifies if calendar visible in UI'
+      key :description, 'Specifies if calendar if synchronizable with Google calendar'
       key :default, true
     end
   end
