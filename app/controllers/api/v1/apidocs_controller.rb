@@ -20,6 +20,8 @@ module Api
       SWAGGERED_CLASSES = [
           SwaggerSchema,
           TokensController,
+          AccountsController,
+          GoogleAccessToken,
           CalendarsController,
           Calendar,
           EventsController,
