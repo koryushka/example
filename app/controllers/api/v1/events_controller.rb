@@ -35,11 +35,17 @@ class Api::V1::EventsController < ApiController
       end
       parameter do
         key :name, 'time_zone'
-        key :description, 'End date for events range. Default value is the end of current month'
         key :in, 'query'
         key :required, false
         key :type, :string
         key :default, 'UTC'
+      end
+      parameter do
+        key :name, 'filter'
+        key :description, 'Specifies which filter should be applied. Possible values: me, family, &lt;user_id> (identifier of family member)'
+        key :in, 'query'
+        key :required, false
+        key :type, :string
       end
       response 200 do
         key :description, 'OK'
