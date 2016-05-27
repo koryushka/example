@@ -1,1 +1,1 @@
-json.partial! 'google_calendar', item: @calendar_events
+json.extract! @account, :id, :synchronizable, :account, :revoked
