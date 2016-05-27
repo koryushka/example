@@ -15,7 +15,6 @@ module ApiHelper
           region: ApiHelper.region,
           credentials: Aws::Credentials.new(ApiHelper.aws_access_key_id, ApiHelper.aws_secret_access_key)
       )
-      puts
     end
 
     # Send push notification
