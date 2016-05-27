@@ -95,6 +95,8 @@ class Api::V1::DevicesController < ApiController
     sns_response = sns.delete_endpoint(@device.aws_endpoint_arn)
     if sns_response.present? && sns_response.successful?
       raise InternalServerErrorException unless@device.destroy
+    else
+      raise ValidationException.new(self)
     end
     render nothing: true, status: :no_content
   end
