@@ -1,13 +1,13 @@
 class Api::V1::GoogleOauthController < ApiController
   include GoogleAuth
-  # before_action :set_client, only: [:auth, :oauth2callback]
+  before_action :set_client, only: [:auth, :oauth2callback]
 
-  # def auth
-  #   redirect_to @client.authorization_uri.to_s
-  # end
+  def auth
+    redirect_to @client.authorization_uri.to_s
+  end
 
   def oauth2callback
-    @response = params#@client.fetch_access_token!
+    @response = params[:code] ? @client.fetch_access_token! : params
     if refresh_token = @response['refresh_token']
       @google_access_token = GoogleAccessToken.new(
         refresh_token: refresh_token,
@@ -56,7 +56,7 @@ class Api::V1::GoogleOauthController < ApiController
   end
 
   def set_client
-    @client ||= Signet::OAuth2::Client.new({
+    @client = Signet::OAuth2::Client.new({
       authorization_uri: google_auth_uri,
       token_credential_uri: google_token_uri,
       scope: [
