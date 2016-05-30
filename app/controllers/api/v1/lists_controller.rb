@@ -183,7 +183,7 @@ class Api::V1::ListsController < ApiController
 
 private
   def list_params
-    params.permit(:title, :notes, :kind)
+    params.permit(:title, :notes, :kind, :public)
   end
 
   # ================================================================================

@@ -38,6 +38,14 @@ Rails.application.configure do
     }
   end
 
+  ApiHelper.configuration do |config|
+    config.aws_access_key_id = ENV['AWS_ACCESS_KEY']
+    config.aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+    config.region = ENV['AWS_REGION'] || 'us-west-2'
+    config.aws_app_arn = ENV['AWS_APP_ARN']
+
+  end
+
   config.after_initialize do
     Bullet.enable = true
     Bullet.bullet_logger = true

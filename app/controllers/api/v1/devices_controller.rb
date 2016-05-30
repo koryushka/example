@@ -48,6 +48,8 @@ class Api::V1::DevicesController < ApiController
         endpoint_response = sns.delete_endpoint(@device.aws_endpoint_arn)
         if endpoint_response.present? && endpoint_response.successful?
           raise InternalServerErrorException unless @device.destroy
+        else
+          raise SnsUnsuccessfulException.new({message: 'Response is empty or unsuccessful'})
         end
     end
 
@@ -59,7 +61,7 @@ class Api::V1::DevicesController < ApiController
       @device.aws_endpoint_arn = sns_response.endpoint_arn
       raise InternalServerErrorException unless @device.save
     else
-      raise SnsUnsuccessfulException
+      raise SnsUnsuccessfulException.new({message: 'Response is empty or unsuccessful'})
     end
     render nothing: true, status: :created
   end
@@ -94,7 +96,7 @@ class Api::V1::DevicesController < ApiController
     if sns_response.present? && sns_response.successful?
       raise InternalServerErrorException unless@device.destroy
     else
-      raise SnsUnsuccessfulException
+      raise SnsUnsuccessfulException.new({message: 'Response is empty or unsuccessful'})
     end
     render nothing: true, status: :no_content
   end
