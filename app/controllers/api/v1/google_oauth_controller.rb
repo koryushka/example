@@ -1,22 +1,74 @@
 class Api::V1::GoogleOauthController < ApiController
+  include Swagger::Blocks
   include GoogleAuth
-  # before_action :set_client, only: [:auth, :oauth2callback]
+  before_action :set_client, only: [:auth, :oauth2callback]
 
-  # def auth
-  #   redirect_to @client.authorization_uri.to_s
-  # end
+  def auth
+    redirect_to @client.authorization_uri.to_s
+  end
 
   def oauth2callback
-    @response = params#@client.fetch_access_token!
+    @response = params[:code] ? @client.fetch_access_token! : params
     if refresh_token = @response['refresh_token']
       @google_access_token = GoogleAccessToken.new(
         refresh_token: refresh_token,
         token: @response['access_token'],
-        expires_at: Time.now + @response['expires_in'].to_i
+        expires_at: Time.now + 3500#@response['expires_in'].to_i
       )
     end
     get_account_info(@response)
   end
+
+  swagger_path '/oauth2callback' do
+    operation :get do
+      key :summary, 'Add google account'
+      key :description, 'Updates calendar information by ID'
+      parameter do
+        key :name, 'access_token'
+        key :description, 'Google access token'
+        key :in, 'query'
+        key :required, true
+        key :type, :string
+      end
+      parameter do
+        key :name, 'refresh_token'
+        key :description, 'Google refresh token'
+        key :in, 'query'
+        key :required, true
+        key :type, :string
+      end
+      # parameter do
+      #   key :name, 'expires_in'
+      #   key :description, 'Google access_token expiration'
+      #   key :in, 'query'
+      #   key :required, true
+      #   key :type, :integer
+      # end
+
+      response 200 do
+        key :description, 'OK'
+        schema do
+          key :'$ref', :Account
+        end
+      end # end response 200
+      # responses
+      # response 400 do
+      #   key :description, 'Validation errors'
+      #   schema do
+      #     key :'$ref', :ValidationErrorsContainer
+      #   end
+      # end
+      # # response Default
+      # response :default do
+      #   key :description, 'Unexpected error'
+      #   schema do
+      #     key :'$ref', :Error
+      #   end
+      # end # end response Default
+      key :tags, ['Accounts']
+    end # end operation :get
+  end # end swagger_path ':/oauth2callback'
+
 
   private
 
@@ -56,7 +108,7 @@ class Api::V1::GoogleOauthController < ApiController
   end
 
   def set_client
-    @client ||= Signet::OAuth2::Client.new({
+    @client = Signet::OAuth2::Client.new({
       authorization_uri: google_auth_uri,
       token_credential_uri: google_token_uri,
       scope: [
