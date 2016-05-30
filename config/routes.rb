@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       #put 'users' => 'users#update'
       get 'google_auth', to: 'google_oauth#auth'
       get 'oauth2callback', to: 'google_oauth#oauth2callback'
+      get 'google_oauth', to: 'google_oauth#google_oauth'
       # get 'google_calendars', to: 'google_calendars#index'
       get 'accounts', to: 'accounts#index'
       put 'accounts/:id', to: 'accounts#update'

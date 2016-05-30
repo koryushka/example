@@ -42,6 +42,18 @@ class GoogleAccessToken < ActiveRecord::Base
     end
   end
 
+  swagger_schema :AccessToken do
+    key :type, :object
+    property :info do
+      key :type, :string
+      key :description, 'Returns google account which was connected to current_user'
+    end
+    property :access_token do
+      key :type, :string
+      key :description, 'Google access_token after refresh. This field appears if access_token in params is expired or invalid'
+    end
+  end
+
   swagger_schema :Account do
     key :type, :object
     property :id do
@@ -72,7 +84,6 @@ class GoogleAccessToken < ActiveRecord::Base
         key :'$ref', :CalendarList
       end
     end
-
   end
 
 end
