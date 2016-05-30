@@ -1,6 +1,9 @@
 class ApiController < ActionController::Base
   include Doorkeeper::Helpers::Controller
-  before_action :doorkeeper_authorize!
+
+  before_action do
+    doorkeeper_authorize! unless should_pass?
+  end
 
   rescue_from CanCan::AccessDenied do
     render json: {
@@ -33,6 +36,9 @@ class ApiController < ActionController::Base
     }, status: e.http_status
   end
 private
+  def should_pass?
+    self.respond_to?(:unauth_actions) && self.unauth_actions.include?(action_name.to_sym)
+  end
 
   def current_user
     @current_user ||= server.resource_owner
@@ -63,6 +69,21 @@ private
 
   def something_updated
     publish('updated')
+  end
+
+  # Tries to find entity of specified type using condition
+  # *type*:
+  #     type of model (:user, :admin, :document, etc.), should a symbol.
+  # *condition*:
+  #     helps to add filters during entity search. it's the same as codition for where() method
+  def find_entity_of_type(type, condition)
+    entity_class = type.to_s.classify.constantize
+    entity = entity_class.where(condition).first
+    raise NotFoundException if entity.nil?
+
+    property_name = entity_class.name.underscore
+    class_eval { attr_accessor property_name }
+    instance_variable_set "@#{property_name}", entity
   end
 
   # Tries to find entity related to controller and adds appropriate class variable to controller

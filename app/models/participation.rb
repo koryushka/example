@@ -12,6 +12,10 @@ class Participation < AbstractModel
   validates :email, length: {maximum: 128}, allow_blank: true,
             email_format: {message: "doesn't look like an email address."}
 
+  before_create do
+    assign_attributes(invitation_token: SecureRandom.base64(128))
+  end
+
   after_create do
     change_status_to(PENDING)
   end

@@ -3,6 +3,7 @@ class ParticipationsMailer < ActionMailer::Base
 
   def invitation(participation)
     @participation = participation
+    @entity_name = @participation.participationable_type.downcase
     mail(to: participation.email, subject: 'Invitation')
   end
 end

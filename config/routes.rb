@@ -71,6 +71,7 @@ Rails.application.routes.draw do
       end
       get 'participations' => 'participations#index_recent'
       post 'participations/:id/accept' => 'participations#accept'
+      post 'participations/link_accept/:token' => 'participations#link_accept'
       delete 'participations/:id/decline' => 'participations#decline'
 
       put 'users/me/profile' => 'profiles#update'

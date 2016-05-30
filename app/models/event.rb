@@ -64,9 +64,10 @@ class Event < AbstractModel
   end
 
   def self.all_of_user(user_id, range_start, range_end, time_zone, filter)
-    filter_value = filter.present? ? "'#{filter}'" : 'NULL'
-    sql = send(:sanitize_sql, ["(SELECT * FROM recurring_events_for(%i, '%s', %s, '%s', '%s')) events",
-                               user_id, range_start, filter_value, range_end, time_zone])
+    params = [user_id, range_start, filter, range_end, time_zone].map do |param|
+      param.nil? ? 'NULL' : sanitize(param)
+    end.join(', ')
+    sql = "(SELECT * FROM recurring_events_for(#{params})) events"
     from(sql)
   end
 
@@ -99,7 +100,13 @@ class Event < AbstractModel
   def create_participation(sender, user)
     participation = Participation.create(user: user, sender: sender, participationable: self)
     family_member = sender.family && sender.family.participations.exists?(user: user)
-    participation.change_status_to(Participation::ACCEPTED) if family_member
+    if family_member
+      participation.change_status_to(Participation::ACCEPTED)
+    else
+      ParticipationsMailer.invitation(participation).deliver_now
+    end
+    # TODO: push notification sending shoulod be here
+
     participation
   end
 
