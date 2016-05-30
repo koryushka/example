@@ -205,11 +205,7 @@ private
       key :type, :string
       key :description, 'Additional notes'
     end
-    property :timezone_name do
-      key :type, :string
-      key :description, 'Optional time zone to apply to starting and ending dates. For reminders time zone usually
-does not matter'
-    end
+
     property :kind do
       key :type, :integer
       key :format, :int16

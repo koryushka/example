@@ -345,7 +345,7 @@ Examples:
   def event_params
     params.permit(:title, :starts_at, :ends_at, :all_day, :notes,
                   :kind, :latitude, :longitude, :location_name, :separation,
-                  :count, :until, :timezone_name, :frequency, :image_url, :public,
+                  :count, :until, :frequency, :image_url, :public,
                   event_recurrences_attributes: [:day, :week, :month],
                   event_cancelations_attributes: [:date])
   end
