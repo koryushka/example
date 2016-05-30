@@ -1,4 +1,5 @@
 class Api::V1::AccountsController < ApiController
+  include Swagger::Blocks
 
   before_filter(except: [:index, :create]) { find_entity_of_current_user(type:GoogleAccessToken, property_name: 'account') }
 
@@ -6,18 +7,79 @@ class Api::V1::AccountsController < ApiController
     @accounts = current_user.google_access_tokens
   end
 
+  swagger_path '/accounts' do
+    operation :get do
+      key :summary, 'Current user accounts'
+      key :description, 'Returns all current user\'s accounts'
+      # responses
+      response 200 do
+        key :description, 'OK'
+        schema do
+          key :'$ref', :ArrayOfAccounts
+        end
+      end # end response 200
+      # response :default
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :ErrorsContainer
+        end
+      end # end response :default
+      key :tags, ['Accounts']
+    end # end operation :get
+  end # end swagger_path '/accounts'
+
   def update
     if @account.update_attributes(account_params)
       @account.remove_calendars if params[:synchronizable] == false
-      render json: {account: @account}
+      render :show, status: :updated
     else
-      raise InternalServerErrorException    
+      raise InternalServerErrorException
     end
   end
 
-  def show
-    render json: {account: @account}
-  end
+  swagger_path '/accounts/{id}' do
+    operation :put do
+      key :summary, 'Update account'
+      key :description, 'Updates account information by ID'
+      parameter do
+        key :name, 'id'
+        key :description, 'Account ID'
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      parameter do
+        key :name, 'account'
+        key :in, 'body'
+        key :required, true
+        schema do
+          key :'$ref', :AccountInput
+        end
+      end
+      # responses
+      response 201 do
+        key :description, 'Updated'
+        schema do
+          key :'$ref', :AccountInput
+        end
+      end # end response OK
+      response 400 do
+        key :description, 'Validation errors'
+        schema do
+          key :'$ref', :ValidationErrorsContainer
+        end
+      end
+      # response Default
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end # end response Default
+      key :tags, ['Accounts']
+    end # end operation :put
+  end # end swagger_path ':/accounts/{id}'
 
   private
 

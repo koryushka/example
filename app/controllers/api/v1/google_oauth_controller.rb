@@ -7,15 +7,15 @@ class Api::V1::GoogleOauthController < ApiController
   end
 
   def oauth2callback
-    response = @client.fetch_access_token!
-    if refresh_token = response['refresh_token']
+    @response = params[:code] ? @client.fetch_access_token! : params
+    if refresh_token = @response['refresh_token']
       @google_access_token = GoogleAccessToken.new(
         refresh_token: refresh_token,
-        token: response['access_token'],
-        expires_at: Time.now + response['expires_in'].to_i
+        token: @response['access_token'],
+        expires_at: Time.now + @response['expires_in'].to_i
       )
     end
-    get_account_info(response)
+    get_account_info(@response)
   end
 
   private
@@ -45,7 +45,7 @@ class Api::V1::GoogleOauthController < ApiController
       end
     end
     GoogleSyncService.new.sync current_user.id
-    render json:{message: "Import completed"}
+    render json:{response: @response}
   end
 
   def google_access_token_params(data)

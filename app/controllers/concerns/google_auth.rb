@@ -21,10 +21,8 @@ module GoogleAuth
     request = Net::HTTP.post_form(URI.parse(uri), data)
     body = JSON.parse(request.body)
     if token_has_been_revoked?(body)
-      p "BAD REQUEST -> token has been revoked #{google_access_token.inspect}"
-      # google_access_token.revoke!
+      google_access_token.revoke!
     else
-
       google_access_token.update_attributes(
         token: body['access_token'],
         expires_at: Time.now + body['expires_in'].to_i
@@ -33,7 +31,7 @@ module GoogleAuth
   end
 
   def authorize(google_access_token)
-    refresh_token google_access_token if google_access_token.expired?
+    refresh_token google_access_token if (google_access_token.expired? && !google_access_token.revoked?)
     client = Signet::OAuth2::Client.new(access_token: google_access_token.token)
     @service = Google::Apis::CalendarV3::CalendarService.new
     @service.authorization = client
