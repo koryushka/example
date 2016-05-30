@@ -20,6 +20,16 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_not_nil json_response
   end
 
+  test 'should show event to participant' do
+    user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: user)
+    FactoryGirl.create(:participation, participationable: event, sender: user, user: @user)
+
+    get :show, id: event.id
+    assert_response :success
+    assert_not_nil json_response
+  end
+
   #### Event creation group
   test 'should create new regular event' do
     post :create, {
