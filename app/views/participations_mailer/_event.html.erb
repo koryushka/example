@@ -1,0 +1,14 @@
+<p>
+  <%= @participation.sender.profile.first_name %> <%= @participation.sender.profile.last_name %>
+  invited you to Event <%= entity.title %>
+  <% if entity.starts_at.present? %>
+      on <%= entity.starts_at.strftime('%D') %> at <% entity.starts_at.strftime('%I:%M %p') %>
+  <% elsif entity.starts_on.present? %>
+      on <%= entity.starts_on.strftime('%D') %>
+  <% end %>
+
+</p>
+<p><%= link_to('Accept', {host: ActionMailer::Base.default_url_options[:host],
+                          controller: 'api/v1/participations',
+                          action: 'link_accept',
+                          token: @participation.invitation_token}) %></p>

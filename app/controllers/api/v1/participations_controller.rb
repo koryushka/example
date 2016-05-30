@@ -1,9 +1,13 @@
 class Api::V1::ParticipationsController < ApiController
   include Swagger::Blocks
+
   before_filter :find_entity, only: [:destroy, :accept, :decline]
-  after_filter :something_updated, except: [:index, :index_recent]
-  authorize_resource
-  check_authorization
+  before_filter only: [:link_accept] do
+    find_entity_of_type(:participation, {invitation_token: params[:token], status: Participation::PENDING})
+  end
+  after_filter :something_updated, except: [:index, :index_recent, :link_accept]
+  authorize_resource except: [:link_accept]
+  check_authorization unless: :should_pass?
 
   swagger_path '/{resource}/{resource_id}/participations' do
     operation :get do
@@ -290,7 +294,35 @@ class Api::V1::ParticipationsController < ApiController
     render nothing: true
   end
 
-  protected
+  swagger_path '/participations/link_accept/{token}' do
+    operation :post do
+      key :summary, 'Accepts invitation sent to person by email'
+      parameter do
+        key :name, :token
+        key :description, 'Invitation token'
+        key :type, :string
+        key :in, :path
+        key :required, true
+      end
+      response 200 do
+        key :description, 'OK'
+      end
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end
+      key :tags, ['Participations']
+    end
+  end
+  def link_accept
+    @participation = Participation.find_by_invitation_token_and_status(params[:token], Participation::PENDING)
+    @participation.change_status_to(Participation::ACCEPTED)
+    render nothing: true
+  end
+
+protected
   def participation_params
     params.permit(:messaage, emails: [], user_ids: [])
   end
@@ -298,5 +330,9 @@ class Api::V1::ParticipationsController < ApiController
   def find_participationable
     klass = [Event, List, Group].detect { |c| params["#{c.name.underscore}_id"] }
     klass.find(params["#{klass.name.underscore}_id"])
+  end
+
+  def unauth_actions
+    [:link_accept]
   end
 end
