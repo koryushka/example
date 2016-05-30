@@ -13,6 +13,8 @@ class List < AbstractModel
   validates :notes, length: {maximum: 2048}, exclusion: { in: [nil] }
   validates :kind, numericality: {only_integer: true}, inclusion: {in: LIST_KINDS}
 
+  default :public, true
+
   # ================================================================================
   # Swagger::Blocks
   # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
@@ -54,6 +56,12 @@ class List < AbstractModel
         key :'$ref', :Participation
       end
     end
+    property :public do
+      key :type, :boolean
+      key :description, "Specifies list. If it's true so all family members across my family should be able to modify
+all attributes of the list with the exception of changing the ‘Public / Private’ setting"
+      key :default, true
+    end
   end # end swagger_schema :List
 
   # swagger_schema :ArrayOfLists
@@ -78,6 +86,12 @@ class List < AbstractModel
     property :kind do
       key :type, :integer
       key :description, 'Specified type of list. Can be 1 - Grocery, 2 - ToDo'
+    end
+    property :public do
+      key :type, :boolean
+      key :description, "Specifies list. If it's true so all family members across my family should be able to modify
+all attributes of the list with the exception of changing the ‘Public / Private’ setting"
+      key :default, true
     end
   end # end swagger_schema :ListInput
 
