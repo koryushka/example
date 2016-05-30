@@ -21,6 +21,7 @@ module Api
           SwaggerSchema,
           TokensController,
           AccountsController,
+          GoogleOauthController,
           GoogleAccessToken,
           CalendarsController,
           Calendar,
