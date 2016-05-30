@@ -8,7 +8,6 @@
   <% end %>
 
 </p>
-<p><%= link_to('Accept', {host: ActionMailer::Base.default_url_options[:host],
-                          controller: 'api/v1/participations',
-                          action: 'link_accept',
-                          token: @participation.invitation_token}) %></p>
+
+<p><%= link_to('Accept', URI::HTTP.build({host: ActionMailer::Base.default_url_options[:host], path: '/'}).to_s +
+    "#/index/accept/#{@participation.invitation_token}") %></p>

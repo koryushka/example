@@ -44,7 +44,6 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
-
   def index
     @participations = find_participationable.participations
                           .includes(sender: :profile, user: :profile)
@@ -71,7 +70,6 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
-
   def index_recent
     @participations = current_user.sent_paticipations
                           .includes(sender: :profile, user: :profile)
@@ -220,7 +218,6 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
-
   def destroy
     find_participationable.participations.destroy(@participation)
     render nothing: true
@@ -251,7 +248,6 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
-
   def accept
     raise AlreadyAcceptedException if @participation.accepted?
 
@@ -286,7 +282,6 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
-
   def decline
     raise AlreadyDeclinedException if @participation.declined?
 
@@ -317,7 +312,6 @@ class Api::V1::ParticipationsController < ApiController
     end
   end
   def link_accept
-    @participation = Participation.find_by_invitation_token_and_status(params[:token], Participation::PENDING)
     @participation.change_status_to(Participation::ACCEPTED)
     render nothing: true
   end

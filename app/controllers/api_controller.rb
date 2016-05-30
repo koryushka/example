@@ -37,7 +37,7 @@ class ApiController < ActionController::Base
   end
 private
   def should_pass?
-    unauth_actions.present? && self.unauth_actions.include?(action_name.to_sym)
+    self.respond_to?(:unauth_actions) && self.unauth_actions.include?(action_name.to_sym)
   end
 
   def current_user

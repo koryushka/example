@@ -100,7 +100,13 @@ class Event < AbstractModel
   def create_participation(sender, user)
     participation = Participation.create(user: user, sender: sender, participationable: self)
     family_member = sender.family && sender.family.participations.exists?(user: user)
-    participation.change_status_to(Participation::ACCEPTED) if family_member
+    if family_member
+      participation.change_status_to(Participation::ACCEPTED)
+    else
+      ParticipationsMailer.invitation(participation).deliver_now
+    end
+    # TODO: push notification sending shoulod be here
+
     participation
   end
 
