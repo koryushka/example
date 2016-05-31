@@ -48,9 +48,40 @@ class Event < AbstractModel
   default :all_day, false
   default :public, true
 
+  @changed_attributes = nil
   before_save do
     assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
     assign_attributes(starts_on: nil, ends_on: nil) unless all_day
+    @changed_attributes = changes
+  end
+
+  after_save do
+    next if @changed_attributes.present?
+
+    family = user.family
+    user_ids = []
+    user_ids << current_user.id # me
+    user_ids << user_id # event owner
+
+    if !public? && ![:starts_at, :starts_on, :ends_at, :ends_on].all? { |k| !@changed_attributes.key?(k) }
+
+      user_ids << participations.where(status: Participation::ACCEPTED)
+                      .pluck(:user_id) # participants with status pending/accepted
+    else
+      user_ids << participations.where.not(status: Participation::DECLINED)
+                      .where.not(Participation::FAILED)
+                      .pluck(:user_id) # participants with status accepted
+      if family.present?
+        user_ids << family.participations.pluck(:user_id) # family members
+        user_ids << family.user_id # family creator/owner
+      end
+    end
+
+    user_ids.uniq.each do |user_id|
+      PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+    end
+
+    @changed_attributes = nil
   end
 
   # after_destroy :destroy_from_google, if: :has_etag?
@@ -82,8 +113,6 @@ class Event < AbstractModel
   #     destroy_from_google
   #   end
   # end
-
-
 
   def destroy_from_google
     calendar = self.calendar

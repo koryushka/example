@@ -9,7 +9,6 @@ class Api::V1::EventsController < ApiController
   before_filter only: [:add_list, :remove_list, :index_of_list] do
     find_entity_of_current_user type: :list, id_param: :list_id
   end
-  after_filter :something_updated, except: [:index, :show, :index_of_calendar, :index_of_list]
   authorize_resource
   check_authorization
 
