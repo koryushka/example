@@ -21,6 +21,7 @@ module GoogleAuth
     request = Net::HTTP.post_form(URI.parse(uri), data)
     body = JSON.parse(request.body)
     if token_has_been_revoked?(body)
+      puts "REVOKE TOKEN during refresh"
       google_access_token.revoke!
     else
       google_access_token.update_attributes(
