@@ -58,6 +58,7 @@ class GoogleSyncService
       response['email']
     rescue OpenURI::HTTPError => e
       access_token.revoke! if unauthorized?(e)
+      p "An error occurred #{e.inspect}"
       false
     end
   end
