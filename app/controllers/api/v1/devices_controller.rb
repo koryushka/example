@@ -63,7 +63,7 @@ class Api::V1::DevicesController < ApiController
     else
       raise SnsUnsuccessfulException.new({message: 'Response is empty or unsuccessful'})
     end
-    render nothing: true, status: :created
+    render partial: 'device', status: :created
   end
 
   # swagger_path /device/{id}
