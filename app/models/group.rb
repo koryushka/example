@@ -7,8 +7,6 @@ class Group < AbstractModel
 
   alias_attribute :user, :owner
 
-
-
   validates :title, presence: true, length: {maximum: 128}
 
   def create_participation(sender, user)
@@ -31,7 +29,15 @@ class Group < AbstractModel
                            participationable: self,
                            sender: sender,
                            status: Participation::ACCEPTED)
+
+      notify_members
     end
+  end
+
+  def leave(user)
+    participation = participations.where(user: user)
+    participations.delete(participation)
+    notify_members
   end
 
   def members
@@ -40,6 +46,12 @@ class Group < AbstractModel
                        .where(status: Participation::ACCEPTED, participationable_id: id)
                        .select(:user_id)
     User.where("users.id IN (#{owner.to_sql}) OR users.id IN (#{participants.to_sql})")
+  end
+private
+  def notify_members
+    members.pluck(:user_id).each do |user_id|
+      PubnubHelpers::Publisher.publish('group participation changed', user_id)
+    end
   end
 
   swagger_schema :Group do

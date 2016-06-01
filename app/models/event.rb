@@ -58,7 +58,6 @@ class Event < AbstractModel
   after_save do
     next if @changed_attributes.present?
 
-    family = user.family
     user_ids = []
     user_ids << current_user.id # me
     user_ids << user_id # event owner
@@ -71,10 +70,9 @@ class Event < AbstractModel
       user_ids << participations.where.not(status: Participation::DECLINED)
                       .where.not(Participation::FAILED)
                       .pluck(:user_id) # participants with status accepted
-      if family.present?
-        user_ids << family.participations.pluck(:user_id) # family members
-        user_ids << family.user_id # family creator/owner
-      end
+      # My Family Members & My Family Creator
+      family = user.family
+      user_ids << user.family.members.pluck(:user_id) if family.present?
     end
 
     user_ids.uniq.each do |user_id|
