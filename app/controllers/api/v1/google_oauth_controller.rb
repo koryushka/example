@@ -3,7 +3,7 @@ class Api::V1::GoogleOauthController < ApiController
   include GoogleAuth
   before_filter :set_client, only: [:auth, :oauth2callback]
   before_filter :check_for_tokens, only: [:google_oauth]
-  before_filter :authorize_user_from_query_params, only: [:oauth2callback]
+  before_filter :authorize_user_from_query_params, only: [:auth, :oauth2callback]
 
   def google_oauth
     access_token = @access_token || params[:access_token]
@@ -71,6 +71,7 @@ class Api::V1::GoogleOauthController < ApiController
 
   #These endpoints are used for development
   def auth
+    render nothing: true, status: 401 and return unless @current_user_id
     redirect_to @client.authorization_uri.to_s
   end
 
@@ -90,11 +91,19 @@ class Api::V1::GoogleOauthController < ApiController
   private
 
   def unauth_actions
-    [:oauth2callback]
+    [:auth, :oauth2callback]
   end
 
   def authorize_user_from_query_params
-    @current_user_id = Doorkeeper::AccessToken.find_by(token: params[:token], revoked_at: nil).resource_owner_id
+    if params[:token].blank?
+      render json: {error: 'Token required'}, status: 401
+      return
+    end
+    @current_user_id = Doorkeeper::AccessToken.find_by(token: params[:token], revoked_at: nil).try(:resource_owner_id)
+    unless @current_user_id
+      render json: {error: 'Check your token'}, status: 401
+      return
+    end
   end
 
   def manage_google_access_tokens(email)
