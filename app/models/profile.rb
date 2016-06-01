@@ -12,6 +12,36 @@ class Profile < AbstractModel
   default :last_name, ''
   default :notification_time, 30
 
+  @changed_attributes = nil
+  before_save do
+    @changed_attributes = changes
+  end
+
+  after_save do
+    next if @changed_attributes.present?
+
+    user_ids = []
+    if [:color, :image_url, :first_name, :last_name].any? { |k| !@changed_attributes.key?(k) }
+      user_ids << user_id # Me
+
+      # My Family Members & My Family Creator
+      family = user.family
+      user_ids << user.family.members.pluck(:user_id) if family.present?
+
+      # All other users participated (accepted) or owned events where I'm a participant (pending, accepted)
+      events_ids = Participation.events
+                       .where(user_id: user_id, status: [Participation::PENDING, Participation::PENDING])
+                       .select(:participationable_id)
+      user_ids << Event.where(id: events_ids).pluck(:user_id)
+      events_paticipants_ids = Participation.events.select(:user_id)
+                                   .where(participationable_id: events_ids,
+                                          status: [Participation::PENDING, Participation::PENDING])
+      user_ids << events_paticipants_ids.pluck(:user_id)
+    end
+
+    @changed_attributes = nil
+  end
+
   swagger_schema :Profile do
     key :type, :object
     property :id do

@@ -30,4 +30,16 @@ class GroupTest < ActiveSupport::TestCase
                                  participationable_type: Group.name,
                                  status: Participation::FAILED)
   end
+
+  test 'should get members' do
+    owner = FactoryGirl.create(:user)
+    group = FactoryGirl.create(:group, owner: owner)
+    participations_count = 5
+    participations_count.times.each do
+      participant = FactoryGirl.create(:user)
+      FactoryGirl.create(:participation, participationable: group, user: participant, status: Participation::ACCEPTED)
+    end
+
+    assert_equal participations_count + 1, group.members.size
+  end
 end

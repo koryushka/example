@@ -2,13 +2,12 @@ class Group < AbstractModel
   include Swagger::Blocks
 
   belongs_to :owner, class_name: 'User', foreign_key: 'user_id'
-  has_and_belongs_to_many :members, class_name: 'User'
-  has_many :participations, as: :participationable, dependent: :destroy
+    has_many :participations, as: :participationable, dependent: :destroy
   has_many :activities, as: :notificationable, dependent: :destroy
 
   alias_attribute :user, :owner
 
-  before_destroy { members.clear }
+
 
   validates :title, presence: true, length: {maximum: 128}
 
@@ -35,9 +34,12 @@ class Group < AbstractModel
     end
   end
 
-  # TODO: should be removed if unnecessary
-  def accept_participation(participation)
-    members << participation.user
+  def members
+    owner = User.where(id: user_id).select(:id)
+    participants = Participation.groups
+                       .where(status: Participation::ACCEPTED, participationable_id: id)
+                       .select(:user_id)
+    User.where("users.id IN (#{owner.to_sql}) OR users.id IN (#{participants.to_sql})")
   end
 
   swagger_schema :Group do
