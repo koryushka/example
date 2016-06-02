@@ -132,7 +132,8 @@ class Event < AbstractModel
     else
       ParticipationsMailer.invitation(participation).deliver_now
     end
-    # TODO: push notification sending shoulod be here
+
+    notify_members
 
     participation
   end
@@ -180,6 +181,16 @@ private
 
   def has_etag?
     self.etag
+  end
+
+  def notify_members
+    users_ids = [user.family.members.pluck(:user_id),
+                participations.pluck(:user_id),
+                user_id].flatten.uniq
+
+    users_ids.each do |user_id|
+      PubnubHelpers::Publisher.publish('event participation changed', user_id)
+    end
   end
 
   def recurrency_check

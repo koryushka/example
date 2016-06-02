@@ -19,6 +19,16 @@ class Participation < AbstractModel
     assign_attributes(invitation_token: SecureRandom.base64(128))
   end
 
+  before_destroy do
+    users_ids = [user.family.members.pluck(:user_id),
+                 participationable.participations.pluck(:user_id),
+                 participationable.user_id].flatten.uniq
+
+    users_ids.each do |user_id|
+      PubnubHelpers::Publisher.publish('event participation changed', user_id)
+    end
+  end
+
   after_create do
     change_status_to(PENDING)
   end
