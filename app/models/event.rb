@@ -396,6 +396,9 @@ For reminders time zone usually does not matter'
     property :list do
       key :'$ref', :List
     end
+    property :user do
+      key :'$ref', :UserWithProfileOnly
+    end
     property :participations do
       key :type, :array
       items do
