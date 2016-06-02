@@ -1,7 +1,7 @@
 class EventRecurrence < ActiveRecord::Base
   include Swagger::Blocks
 
-  belongs_to :event, counter_cache: true
+  belongs_to :event#, counter_cache: true
 
   # ================================================================================
   # Swagger::Blocks
