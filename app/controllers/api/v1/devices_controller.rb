@@ -66,8 +66,8 @@ class Api::V1::DevicesController < ApiController
     render partial: 'device', status: :created
   end
 
-  # swagger_path /device/{id}
-  swagger_path '/device/{id}' do
+  # swagger_path /devices/{id}
+  swagger_path '/devices/{id}' do
     operation :delete do
       key :summary, 'Delete device'
       key :description, 'Deletes device by ID'
@@ -89,7 +89,7 @@ class Api::V1::DevicesController < ApiController
       end # end response default
       key :tags, ['Devices']
     end # end operation :delete
-  end
+  end # end swagger_path /devices/{id}
   def destroy
     sns = ApiHelper::Sns.new
     sns_response = sns.delete_endpoint(@device.aws_endpoint_arn)
