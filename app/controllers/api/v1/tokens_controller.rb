@@ -48,23 +48,25 @@ private
     key :required, [:grant_type, :username, :password]
     property :grant_type do
       key :type, :string
-      key :description, 'grant type, can be *password* or *refresh_token*'
+      key :description, 'Grant type, can be *password* or *refresh_token*'
     end
     property :username do
       key :type, :string
-      key :description, "User's email. Required if grant_type is password"
+      key :description, 'User\'s email. Required if grant_type is password'
+      key :maxLength, 255
+      key :minLength, 2
     end
     property :password do
       key :type, :string
-      key :description, "User's password. Required if grant_type is password"
+      key :description, 'User\'s password. Required if grant_type is password'
     end
     property :scope do
       key :type, :string
-      key :description, "Authorisation scope. Can be sent if grant_type is password. = ['user' or 'admin']"
+      key :description, 'Authorisation scope. Can be sent if grant_type is password = [\'user\' or \'admin\']'
     end
     property :refresh_token do
       key :type, :string
-      key :description, "User's refresh token. Required if grant_type is refresh_token"
+      key :description, 'User\'s refresh token. Required if grant_type is refresh_token'
     end
   end
 

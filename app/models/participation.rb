@@ -76,6 +76,7 @@ class Participation < AbstractModel
     property :emails do
       key :description, 'Array of people emails which should participate events, lists or groups'
       key :type, :array
+      key :maxLength, 128
       items do
         key :type, :string
       end

@@ -25,6 +25,8 @@ class Device < ActiveRecord::Base
 
   # swagger_schema :DeviceInput
   swagger_schema 'DeviceInput' do
+    key :type, :object
+    key :required, [:device_token]
     property :device_token do
       key :type, :string
       key :description, 'Token of device obtained from iOS application'

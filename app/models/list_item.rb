@@ -71,13 +71,16 @@ class ListItem < AbstractModel
 
   swagger_schema :ListItemInput do
     key :type, :object
+    key :required, [:title]
     property :title do
       key :type, :string
       key :description, 'List item title'
+      key :maxLength, 128
     end
     property :notes do
       key :type, :string
       key :description, 'Additional notes'
+      key :maxLength, 2048
     end
     property :order do
       key :type, :integer
