@@ -1,7 +1,7 @@
 class EventCancellation < AbstractModel
   include Swagger::Blocks
 
-  belongs_to :event, counter_cache: true
+  belongs_to :event#, counter_cache: true
 
   validates 'date', date: true, presence: true
 
