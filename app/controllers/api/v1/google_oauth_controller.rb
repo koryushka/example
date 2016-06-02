@@ -70,7 +70,8 @@ class Api::V1::GoogleOauthController < ApiController
     redirect_to @client.authorization_uri(prompt: 'consent').to_s
     cookies[:token] = params[:token]
     cookies[:redirect_url] = params[:redirect_url]
-    puts "COOCKIES #{cookies[:redirect_url] }"
+    cookies[:redirect_path] = params[:redirect_path]
+
   end
 
   def oauth2callback
@@ -89,8 +90,11 @@ class Api::V1::GoogleOauthController < ApiController
     GoogleSyncService.new.sync @current_user_id
     # render json: {response: @response}
     # get_account_info
-    redirect_to [Rails.application.secrets.host, cookies[:redirect_url]].join('#')
+    host = cookies[:redirect_url] || Rails.application.secrets.host
+    path = cookies[:redirect_path] || Rails.application.secrets.path
+    redirect_to [host, path].join('#/')
     cookies.delete(:redirect_url)
+    cookies.delete(:redirect_path)
   end
 
   private
