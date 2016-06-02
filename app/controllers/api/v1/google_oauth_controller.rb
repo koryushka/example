@@ -69,6 +69,8 @@ class Api::V1::GoogleOauthController < ApiController
   def auth
     redirect_to @client.authorization_uri(prompt: 'consent').to_s
     cookies[:token] = params[:token]
+    cookies[:redirect_url] = params[:redirect_url]
+    puts "COOCKIES #{cookies[:redirect_url] }"
   end
 
   def oauth2callback
@@ -85,8 +87,10 @@ class Api::V1::GoogleOauthController < ApiController
 
     manage_google_access_tokens
     GoogleSyncService.new.sync @current_user_id
-    render json: {response: @response}
+    # render json: {response: @response}
     # get_account_info
+    redirect_to [Rails.application.secrets.host, cookies[:redirect_url]].join('#')
+    cookies.delete(:redirect_url)
   end
 
   private
@@ -146,16 +150,17 @@ class Api::V1::GoogleOauthController < ApiController
   end
 
   def manage_google_access_tokens
-    if google_access_token = GoogleAccessToken.find_by(account: @email,
+    if google_access_token = GoogleAccessToken.find_by(account: email,
                                                        user_id: @current_user_id)
       google_access_token.update_columns(google_token_params)
-    elsif GoogleAccessToken.new(google_token_params.merge({
+    elsif google_access_token = GoogleAccessToken.new(google_token_params.merge({
             user_id: @current_user_id,
             account: email,
             expires_at: Time.now + 3500
             })
           ).save!
     end
+    p "GOOGLE #{google_access_token.inspect}"
   end
 
   def google_token_params
