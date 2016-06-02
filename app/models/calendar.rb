@@ -132,6 +132,7 @@ class Calendar < AbstractModel
 
   swagger_schema :CalendarInput do
     key :type, :object
+    key :required, [:synchronizable]
     # property :title do
     #   key :type, :string
     #   key :description, 'Calendar title'
