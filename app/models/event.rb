@@ -59,7 +59,8 @@ class Event < AbstractModel
     next if @changed_attributes.present?
 
     user_ids = []
-    user_ids << current_user.id # me
+    # need to rework it
+    #user_ids << current_user.id # me
     user_ids << user_id # event owner
 
     if !public? && ![:starts_at, :starts_on, :ends_at, :ends_on].all? { |k| !@changed_attributes.key?(k) }
