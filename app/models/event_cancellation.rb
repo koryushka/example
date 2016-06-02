@@ -15,6 +15,7 @@ class EventCancellation < AbstractModel
   swagger_schema :EventCancellationInput do
     key :type, :object
     key :description, 'Specifies a date when event shall not occur or be canceled'
+    key :required, [:date]
     property :date do
       key :type, :string
       key :format, 'date-time'

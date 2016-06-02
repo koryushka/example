@@ -75,13 +75,16 @@ all attributes of the list with the exception of changing the ‘Public / Privat
   # swagger_schema :ListInput
   swagger_schema :ListInput do
     key :type, :object
+    key :required, %w(title)
     property :title do
       key :type, :string
       key :description, 'List title'
+      key :maxLength, 128
     end
     property :notes do
       key :type, :string
       key :description, 'Additional notes'
+      key :maxLength, 2048
     end
     property :kind do
       key :type, :integer

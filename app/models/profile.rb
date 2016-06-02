@@ -46,17 +46,21 @@ when event occurence notifications should be sent. Default value is 30 minutes b
     key :type, :object
     property :first_name do
       key :type, :string
+      key :maxLength, 64
     end
     property :last_name do
       key :type, :string
+      key :maxLength, 64
     end
     property :image_url do
       key :type, :string
       key :description, 'Avatar URL'
+      key :maxLength, 2048
     end
     property :color do
       key :type, :string
       key :description, 'Hex string representation of color'
+      key :maxLength, 6
     end
   end
 
