@@ -3,8 +3,11 @@ class Api::V1::GoogleOauthController < ApiController
   include GoogleAuth
   before_filter :set_client, only: [:auth, :oauth2callback]
   before_filter :check_for_tokens, only: [:google_oauth]
-  before_filter :authorize_user_from_query_params, only: [:auth, :oauth2callback]
+  before_filter :authorize_user_from_query_params, only: [:auth]
+  # after_filter :get_account_info, only: [:oauth2callback]
 
+
+  # iOS endpoint
   def google_oauth
     access_token = @access_token || params[:access_token]
     refresh_token = params[:refresh_token]
@@ -26,13 +29,6 @@ class Api::V1::GoogleOauthController < ApiController
     manage_google_access_tokens(email)
     GoogleSyncService.new.sync current_user.id
     render json: google_oauth_response(email)
-  end
-
-  def google_oauth_response(email)
-    {
-      info: "Account #{email} has been successfully added to user #{current_user.email}",
-      access_token: @access_token
-    }
   end
 
   swagger_path '/google_oauth' do
@@ -69,14 +65,15 @@ class Api::V1::GoogleOauthController < ApiController
     end # end operation :get
   end # end swagger_path ':/oauth2callback'
 
-  #These endpoints are used for development
+  #These endpoints are used for web app
   def auth
-    render nothing: true, status: 401 and return unless @current_user_id
-    redirect_to @client.authorization_uri.to_s
+    redirect_to @client.authorization_uri(prompt: 'consent').to_s
+    cookies[:token] = params[:token]
   end
 
   def oauth2callback
-    render nothing: true, status: 401 and return unless @current_user_id
+    render nothing: true, status: 401 and return unless current_user_id(cookies[:token])
+    cookies.delete(:token)
     @response = @client.fetch_access_token!
     if refresh_token = @response['refresh_token']
       @google_access_token = GoogleAccessToken.new(
@@ -85,8 +82,10 @@ class Api::V1::GoogleOauthController < ApiController
         expires_at: Time.now + 3500#@response['expires_in'].to_i
       )
     end
-    get_account_info(@response)
-  end #end of development methods
+    render json: {response: @response}
+    # get_account_info(@response)
+    get_account_info
+  end
 
   private
 
@@ -95,23 +94,30 @@ class Api::V1::GoogleOauthController < ApiController
   end
 
   def authorize_user_from_query_params
+    return unless token_present?
+    render nothing: true, status: 401 and return unless current_user_id(params[:token])
+  end
+
+  def current_user_id(token)
+    doorkeeper_token = Doorkeeper::AccessToken.find_by(token: token, revoked_at: nil)
+    @current_user_id = doorkeeper_token.try(:resource_owner_id)
+  end
+
+  def token_present?
     if params[:token].blank?
       render json: {error: 'Token required'}, status: 401
-      return
-    end
-    @current_user_id = Doorkeeper::AccessToken.find_by(token: params[:token], revoked_at: nil).try(:resource_owner_id)
-    unless @current_user_id
-      render json: {error: 'Check your token'}, status: 401
-      return
+      false
+    else
+      true
     end
   end
 
   def manage_google_access_tokens(email)
     if google_access_token = GoogleAccessToken.find_by(account: email,
-                                                       user_id: current_user.id)
+                                                       user_id: @current_user_id)
       google_access_token.update_columns(google_token_params(google_access_token))
     elsif GoogleAccessToken.new(google_token_params.merge({
-            user_id: current_user.id,
+            user_id: @current_user_id,
             account: email,
             expires_at: Time.now + 3500
             })
@@ -128,6 +134,13 @@ class Api::V1::GoogleOauthController < ApiController
     }
   end
 
+  def google_oauth_response(email)
+    {
+      info: "Account #{email} has been successfully added to user #{current_user.email}",
+      access_token: @access_token
+    }
+  end
+
   def check_for_tokens
     errors = []
     errors << 'Access token required' if params[:access_token].blank?
@@ -139,18 +152,18 @@ class Api::V1::GoogleOauthController < ApiController
 
   end
 
-  #These endpoints are used for development
-  def get_account_info(data)
-    uri = ACCOUNT_INFO_URI + data['access_token']
+  #These endpoints are used for web app
+  def get_account_info#(data)
+    uri = ACCOUNT_INFO_URI + @response['access_token']
     response = JSON.parse(open(uri).string)
     if google_access_token = GoogleAccessToken.find_by(account: response['email'],
                                                        user_id: @current_user_id)
       if @google_access_token
         GoogleAccessToken.where(account: response['email'])
-        .update_all(refresh_token: data['refresh_token'], revoked: false)
+        .update_all(refresh_token: @response['refresh_token'], revoked: false)
       end
         google_access_token.update_attributes(
-          google_access_token_params(data)
+          google_access_token_params#(data)
         )
     else
       if google_access_token = GoogleAccessToken.find_by(account: response['email'])
@@ -165,12 +178,12 @@ class Api::V1::GoogleOauthController < ApiController
       end
     end
     GoogleSyncService.new.sync @current_user_id
-    render json:{response: @response}
+    # render json:{response: @response}
   end
 
-  def google_access_token_params(data)
+  def google_access_token_params#(data)
     {
-      token: data['access_token'],
+      token: @response['access_token'],
       revoked: false
     }
   end
