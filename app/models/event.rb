@@ -4,8 +4,8 @@ class Event < AbstractModel
 
   belongs_to :user
   belongs_to :calendar
-  has_and_belongs_to_many :calendars
-  has_and_belongs_to_many :documents
+  # has_and_belongs_to_many :calendars
+  has_and_belongs_to_many :documents, counter_cache: true
   has_many :complex_events, foreign_key: 'id'
   has_many :event_recurrences, dependent: :destroy
   has_many :event_cancellations, dependent: :destroy
@@ -14,7 +14,7 @@ class Event < AbstractModel
   has_many :participations, as: :participationable, dependent: :destroy
   has_many :activities, as: :notificationable, dependent: :destroy
   has_many :child_events, class_name: 'Event', foreign_key: 'recurring_event_id', dependent: :destroy
-  belongs_to :parent_event, class_name: 'Event', foreign_key: 'recurring_event_id'
+  belongs_to :parent_event, class_name: 'Event', foreign_key: 'recurring_event_id'#, counter_cache: true
   has_one :muted_event, -> (user) {where(user_id: user.id)}
 
 

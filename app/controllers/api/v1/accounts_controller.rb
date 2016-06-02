@@ -4,7 +4,7 @@ class Api::V1::AccountsController < ApiController
   before_filter(except: [:index, :create]) { find_entity_of_current_user(type:GoogleAccessToken, property_name: 'account') }
 
   def index
-    @accounts = current_user.google_access_tokens
+    @accounts = current_user.google_access_tokens.includes(:calendars)
   end
 
   swagger_path '/accounts' do

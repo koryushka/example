@@ -55,7 +55,9 @@ class Calendar < AbstractModel
   #   self.update_column(:synchronizable, true)
   # end
   def remove_events
-    self.events.destroy_all
+    self.events.includes( :activities, :child_events,
+                         :event_recurrences, :participations,
+                         :event_cancellations).destroy_all
   end
 
 
