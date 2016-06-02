@@ -45,10 +45,11 @@ class User < ActiveRecord::Base
   def all_events(range_start, range_end, time_zone, filter)
     Event.all_of_user(id, range_start, range_end, time_zone, filter)
         .with_muted(id)
-        .includes(:list, participations: [
-            {user: :profile},
-            {sender: :profile}
-        ])
+        .includes(:list, user: :profile,
+                  participations: [
+                    {user: :profile},
+                    {sender: :profile}
+                ])
   end
 
   swagger_schema :User do
