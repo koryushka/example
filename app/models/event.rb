@@ -184,7 +184,7 @@ private
   end
 
   def notify_members
-    users_ids = [user.family.members.pluck(:user_id),
+    users_ids = [user.family.members.pluck(:id),
                 participations.pluck(:user_id),
                 user_id].flatten.uniq
 
