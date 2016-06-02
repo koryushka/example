@@ -37,6 +37,7 @@ class GoogleAccessToken < ActiveRecord::Base
 
   swagger_schema :AccountInput do
     key :type, :object
+    key :required, %w(synchronizable)
     property :synchronizable do
       key :type, :boolean
     end

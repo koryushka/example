@@ -82,9 +82,11 @@ class User < ActiveRecord::Base
 
   swagger_schema :RegistrationInput do
     key :type, :object
+    key :required, %w(email password)
     property :email do
       key :type, :string
       key :description, 'Email of registered user'
+      key :maxLength, 128
     end
     property :password do
       key :type, :string
@@ -93,9 +95,11 @@ class User < ActiveRecord::Base
 
   swagger_schema :UserUpdateInput do
     key :type, :object
+    key :required, %w(email password current_password)
     property :email do
       key :type, :string
       key :description, 'Email of registered user'
+      key :maxLength, 128
     end
     property :password do
       key :type, :string
@@ -114,6 +118,7 @@ class User < ActiveRecord::Base
       key :type, :string
       key :description, 'Email of user who requested password resetting'
       key :format, 'email'
+      key :maxLength, 128
     end
     property :redirect_url do
       key :description, 'The url to which the user will be redirected after

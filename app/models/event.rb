@@ -182,9 +182,11 @@ private
 
   swagger_schema :EventInput do
     key :type, :object
+    key :required, [:title, :starts_at]
     property :title do
       key :type, :string
-      key :description, "Event's title"
+      key :description, 'Event\'s title'
+      key :maxLength, 128
     end
     property :starts_at do
       key :type, :string
@@ -447,6 +449,25 @@ of the event with the exception of changing the ‘Public’ / ‘Private’ set
     end
   end # end swagger_schema :EventCancellation
 
+  # swagger_schema :NotificationPreference
+  swagger_schema :NotificationPreference do
+    key :type, :object
+    property :email do
+      key :type, :boolean
+      key :description, 'Preference for getting email notification'
+      key :default, false
+    end
+    property :push do
+      key :type, :boolean
+      key :description, 'Preference for getting push notification'
+      key :default, false
+    end
+    property :sms do
+      key :type, :boolean
+      key :description, 'Preference for getting sms notification'
+      key :default, false
+    end
+  end # end swagger_schema :NotificationPreference
 
 
 end

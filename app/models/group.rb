@@ -66,6 +66,7 @@ class Group < AbstractModel
     property :title do
       key :type, :string
       key :description, 'Group title'
+      key :maxLength, 128
     end
   end
 
