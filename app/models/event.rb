@@ -4,8 +4,8 @@ class Event < AbstractModel
 
   belongs_to :user
   belongs_to :calendar
-  has_and_belongs_to_many :calendars
-  has_and_belongs_to_many :documents
+  # has_and_belongs_to_many :calendars
+  has_and_belongs_to_many :documents, counter_cache: true
   has_many :complex_events, foreign_key: 'id'
   has_many :event_recurrences, dependent: :destroy
   has_many :event_cancellations, dependent: :destroy
@@ -14,7 +14,7 @@ class Event < AbstractModel
   has_many :participations, as: :participationable, dependent: :destroy
   has_many :activities, as: :notificationable, dependent: :destroy
   has_many :child_events, class_name: 'Event', foreign_key: 'recurring_event_id', dependent: :destroy
-  belongs_to :parent_event, class_name: 'Event', foreign_key: 'recurring_event_id'
+  belongs_to :parent_event, class_name: 'Event', foreign_key: 'recurring_event_id'#, counter_cache: true
   has_one :muted_event, -> (user) {where(user_id: user.id)}
 
 
@@ -48,9 +48,38 @@ class Event < AbstractModel
   default :all_day, false
   default :public, true
 
+  @changed_attributes = nil
   before_save do
     assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
     assign_attributes(starts_on: nil, ends_on: nil) unless all_day
+    @changed_attributes = changes
+  end
+
+  after_save do
+    next if @changed_attributes.present?
+
+    user_ids = []
+    user_ids << current_user.id # me
+    user_ids << user_id # event owner
+
+    if !public? && ![:starts_at, :starts_on, :ends_at, :ends_on].all? { |k| !@changed_attributes.key?(k) }
+
+      user_ids << participations.where(status: Participation::ACCEPTED)
+                      .pluck(:user_id) # participants with status pending/accepted
+    else
+      user_ids << participations.where.not(status: Participation::DECLINED)
+                      .where.not(Participation::FAILED)
+                      .pluck(:user_id) # participants with status accepted
+      # My Family Members & My Family Creator
+      family = user.family
+      user_ids << user.family.members.pluck(:user_id) if family.present?
+    end
+
+    user_ids.uniq.each do |user_id|
+      PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+    end
+
+    @changed_attributes = nil
   end
 
   # after_destroy :destroy_from_google, if: :has_etag?
@@ -83,8 +112,6 @@ class Event < AbstractModel
   #   end
   # end
 
-
-
   def destroy_from_google
     calendar = self.calendar
     google_access_token = GoogleAccessToken.find_by_account(calendar.account)
@@ -105,7 +132,8 @@ class Event < AbstractModel
     else
       ParticipationsMailer.invitation(participation).deliver_now
     end
-    # TODO: push notification sending shoulod be here
+
+    notify_members
 
     participation
   end
@@ -155,6 +183,16 @@ private
     self.etag
   end
 
+  def notify_members
+    users_ids = [user.family.members.pluck(:id),
+                participations.pluck(:user_id),
+                user_id].flatten.uniq
+
+    users_ids.each do |user_id|
+      PubnubHelpers::Publisher.publish('event participation changed', user_id)
+    end
+  end
+
   def recurrency_check
     if frequency == 'once' && event_recurrences.size > 0
       errors.add(:frequency, I18n.t('events.incorrect_once_event_reccurences'))
@@ -182,9 +220,11 @@ private
 
   swagger_schema :EventInput do
     key :type, :object
+    key :required, [:title, :starts_at]
     property :title do
       key :type, :string
-      key :description, "Event's title"
+      key :description, 'Event\'s title'
+      key :maxLength, 128
     end
     property :starts_at do
       key :type, :string
@@ -447,6 +487,25 @@ of the event with the exception of changing the ‘Public’ / ‘Private’ set
     end
   end # end swagger_schema :EventCancellation
 
+  # swagger_schema :NotificationPreference
+  swagger_schema :NotificationPreference do
+    key :type, :object
+    property :email do
+      key :type, :boolean
+      key :description, 'Preference for getting email notification'
+      key :default, false
+    end
+    property :push do
+      key :type, :boolean
+      key :description, 'Preference for getting push notification'
+      key :default, false
+    end
+    property :sms do
+      key :type, :boolean
+      key :description, 'Preference for getting sms notification'
+      key :default, false
+    end
+  end # end swagger_schema :NotificationPreference
 
 
 end

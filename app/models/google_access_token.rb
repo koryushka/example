@@ -4,17 +4,17 @@ class GoogleAccessToken < ActiveRecord::Base
   has_many :calendars, dependent: :destroy
 
   def expired?
-    Time.now.utc >= self.expires_at# - 3600
+    Time.now.utc >= self.expires_at
   end
 
-  def unsync!
-    self.update_column(:synchronizable, false)
-    remove_calendars
-  end
-
-  def sync!
-    self.update_column(:synchronizable, true)
-  end
+  # def unsync!
+  #   self.update_column(:synchronizable, false)
+  #   remove_calendars
+  # end
+  #
+  # def sync!
+  #   self.update_column(:synchronizable, true)
+  # end
 
   def revoke!
     self.update_columns(revoked: true)
@@ -37,6 +37,7 @@ class GoogleAccessToken < ActiveRecord::Base
 
   swagger_schema :AccountInput do
     key :type, :object
+    key :required, %w(synchronizable)
     property :synchronizable do
       key :type, :boolean
     end

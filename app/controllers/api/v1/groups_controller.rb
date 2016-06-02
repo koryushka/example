@@ -203,8 +203,7 @@ class Api::V1::GroupsController < ApiController
     end # end operation :delete
   end
   def leave
-    participation = @group.participations.where(user: current_user)
-    @group.participations.delete(participation)
+    @group.leave(current_user)
     render nothing: true
   end
 

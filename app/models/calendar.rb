@@ -55,7 +55,9 @@ class Calendar < AbstractModel
   #   self.update_column(:synchronizable, true)
   # end
   def remove_events
-    self.events.destroy_all
+    self.events.includes( :activities, :child_events,
+                         :event_recurrences, :participations,
+                         :event_cancellations).destroy_all
   end
 
 
@@ -130,6 +132,7 @@ class Calendar < AbstractModel
 
   swagger_schema :CalendarInput do
     key :type, :object
+    key :required, [:synchronizable]
     # property :title do
     #   key :type, :string
     #   key :description, 'Calendar title'

@@ -88,7 +88,7 @@ A verification email will be sent to the email address provided.'
     end
   end # end swagger_path /users
 
-  swagger_path '/users/pasword' do
+  swagger_path '/users/password' do
     operation :post do
       key :summary, 'Starts password resetting process'
       key :description, 'Accepts email and redirect_url as params. The user matching the email

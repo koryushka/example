@@ -6,6 +6,9 @@ class Participation < AbstractModel
   belongs_to :sender, class_name: 'User', foreign_key: 'sender_id'
   has_many :activities, as: :notificationable
 
+  scope :events, -> {where(participationable_type: Event.name)}
+  scope :groups, -> {where(participationable_type: Group.name)}
+
   PARTICIPATION_STATUS = [PENDING = 1, ACCEPTED = 2, DECLINED = 3, FAILED = 4]
 
   validates :user_id, allow_blank: true, numericality: {only_integer: true}
@@ -14,6 +17,16 @@ class Participation < AbstractModel
 
   before_create do
     assign_attributes(invitation_token: SecureRandom.base64(128))
+  end
+
+  before_destroy do
+    users_ids = []
+    users_ids << user.family.members.pluck(:id) if user.family
+    users_ids << participationable.participations.pluck(:user_id)
+    users_ids << participationable.user_id
+    users_ids.uniq.each do |user_id|
+      PubnubHelpers::Publisher.publish('event participation changed', user_id)
+    end
   end
 
   after_create do
@@ -63,6 +76,7 @@ class Participation < AbstractModel
     property :emails do
       key :description, 'Array of people emails which should participate events, lists or groups'
       key :type, :array
+      key :maxLength, 128
       items do
         key :type, :string
       end

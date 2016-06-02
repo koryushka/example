@@ -7,11 +7,9 @@ class Api::V1::CalendarsController < ApiController
   authorize_resource
   check_authorization
 
-
   def index
     @calendars = current_user.calendars
   end
-
 
   swagger_path '/calendars' do
     operation :get do
@@ -67,6 +65,7 @@ class Api::V1::CalendarsController < ApiController
       key :tags, ['Calendars']
     end # end operation :post
   end # end swagger_path '/calendars'
+  
   def show
     render partial: 'calendar', locals: { calendar: @calendar }
   end

@@ -1,7 +1,7 @@
 class EventRecurrence < ActiveRecord::Base
   include Swagger::Blocks
 
-  belongs_to :event
+  belongs_to :event#, counter_cache: true
 
   # ================================================================================
   # Swagger::Blocks
@@ -45,4 +45,3 @@ For yearly recurring events:
   end # end swagger_schema :EventReccurenceInput
 
 end
-

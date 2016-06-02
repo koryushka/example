@@ -1,6 +1,6 @@
 class Document < AbstractModel
   belongs_to :user
-  has_and_belongs_to_many :events
+  has_and_belongs_to_many :events, counter_cache: true
   belongs_to :uploaded_file
 
   validates :title, length: {maximum: 128}, presence: true
