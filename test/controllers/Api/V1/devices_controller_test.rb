@@ -5,10 +5,15 @@ class Api::V1::DevicesControllerTest < ActionController::TestCase
   include AuthenticatedUser
 
   test 'should create new device' do
+    device_token = Faker::Number.hexadecimal(64)
     post :create, {
-        device_token: Faker::Number.hexadecimal(64),
+        device_token: device_token,
     }
     assert_response :success
+    device = Device.find_by_device_token(device_token)
+    assert_not_nil Device.find_by_user_id(device.user_id)
+    assert_not_nil Device.find_by_aws_endpoint_arn(device.aws_endpoint_arn)
+
   end
 
   test 'should fail invalid device creation' do
