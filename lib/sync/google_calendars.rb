@@ -7,10 +7,14 @@ class GoogleCalendars
     @items = []
   end
 
-  def import_calendars
-    calendar_list = @service.list_calendar_lists
+  def import_calendars(calendar_id=nil)
+    if calendar_id
+      calendar_list = [@service.get_calendar(calendar_id)]
+    else
+      calendar_list = @service.list_calendar_lists.items
+    end
     calendars = []
-    calendar_list.items.each do |item|
+    calendar_list.each do |item|
       google_calendar = Calendar.find_or_create_by(
         google_calendar_id: item.id,
         google_access_token_id: @gat.id

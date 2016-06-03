@@ -77,27 +77,33 @@ class Api::V1::GoogleOauthController < ApiController
   def oauth2callback
     render nothing: true, status: 401 and return unless current_user_id(cookies[:token])
     cookies.delete(:token)
-    @response = @client.fetch_access_token!
-    # if refresh_token = @response['refresh_token']
-    #   @google_access_token = GoogleAccessToken.new(
-    #     refresh_token: refresh_token,
-    #     token: @response['access_token'],
-    #     expires_at: Time.now + 3500#@response['expires_in'].to_i
-    #   )
-    # end
+    unless access_denied?
+      @response = @client.fetch_access_token!
+      # if refresh_token = @response['refresh_token']
+      #   @google_access_token = GoogleAccessToken.new(
+      #     refresh_token: refresh_token,
+      #     token: @response['access_token'],
+      #     expires_at: Time.now + 3500#@response['expires_in'].to_i
+      #   )
+      # end
 
-    manage_google_access_tokens
-    GoogleSyncService.new.sync @current_user_id
+      manage_google_access_tokens
+      GoogleSyncService.new.sync @current_user_id
+    end
     # render json: {response: @response}
     # get_account_info
     host = cookies[:redirect_url] || Rails.application.secrets.host
     path = cookies[:redirect_path] || Rails.application.secrets.path
     redirect_to [host, path].join('#/')
-    cookies.delete(:redirect_url)
-    cookies.delete(:redirect_path)
+    cookies.delete(:redirect_url, :redirect_path)
+    # cookies.delete(:redirect_path)
   end
 
   private
+
+  def access_denied?
+    params[:error].present?
+  end
 
   # def account_info
   #   refresh_token = @response['refresh_token']
