@@ -9,15 +9,18 @@ class GoogleSyncService
     end
   end
 
-  def sync(user_id)
+  def sync(user_id, calendar_id=nil)
       user = User.find_by_id(user_id)
       puts "USER_ID #{user_id}"
       accounts = []
-
-      user.google_access_tokens.where('synchronizable IS true AND revoked IS NOT true')
-        .each do |google_access_token|
-          authorize google_access_token
-          accounts << [@service, google_access_token]
+      if calendar_id
+        #appropriate case goes here
+      else
+        user.google_access_tokens.where('synchronizable IS true AND revoked IS NOT true')
+          .each do |google_access_token|
+            authorize google_access_token
+            accounts << [@service, google_access_token]
+        end
       end
 
       accounts.each do |service|
@@ -26,7 +29,7 @@ class GoogleSyncService
         account = account(service[1])
         next unless account
         parser = GoogleCalendars.new(user, service, account)
-        parser.import_calendars
+        parser.import_calendars(calendar_id)
         google_events_ids = get_google_events_ids(parser.items)
         local_events_ids = get_local_event_ids(user_id, account)
         compare_ids(google_events_ids, local_events_ids)

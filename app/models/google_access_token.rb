@@ -21,7 +21,7 @@ class GoogleAccessToken < ActiveRecord::Base
   end
 
   def remove_calendars
-    self.calendars.destroy_all
+    self.calendars.includes(:events).destroy_all
   end
 
   def revoked?

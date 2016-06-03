@@ -31,8 +31,12 @@ class Api::V1::AccountsController < ApiController
 
   def update
     if @account.update_attributes(account_params)
-      @account.remove_calendars if params[:synchronizable] == false
-      render :show, status: :updated
+      if params[:synchronizable] == false
+        @account.remove_calendars
+    elsif params[:synchronizable] == true
+      GoogleSyncService.new.sync current_user.id
+    end
+      render :show, status: 201
     else
       raise InternalServerErrorException
     end
