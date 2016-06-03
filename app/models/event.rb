@@ -55,7 +55,7 @@ class Event < AbstractModel
   end
 
   after_save do
-    next if @changed_attributes.present?
+    next unless @changed_attributes.present?
 
     user_ids = [user_id] # event owner
 
@@ -69,7 +69,7 @@ class Event < AbstractModel
                       .pluck(:user_id) # participants with status accepted
       # My Family Members & My Family Creator
       family = user.family
-      user_ids << user.family.members.pluck(:user_id) if family.present?
+      user_ids << user.family.members.pluck(:id) if family.present?
     end
 
     user_ids.uniq.each do |user_id|

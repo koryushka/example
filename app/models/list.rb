@@ -21,7 +21,7 @@ class List < AbstractModel
   end
 
   after_save do
-    next if @changed_attributes.present?
+    next unless @changed_attributes.present?
 
     family = user.family
     if public? && family.present?
