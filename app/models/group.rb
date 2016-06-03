@@ -25,12 +25,13 @@ class Group < AbstractModel
                            sender: sender,
                            status: Participation::FAILED)
     else
-      Participation.create(user: user,
+      participation = Participation.create(user: user,
                            participationable: self,
                            sender: sender,
                            status: Participation::ACCEPTED)
 
       notify_members
+      participation
     end
   end
 
