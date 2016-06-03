@@ -6,7 +6,6 @@ class Event < AbstractModel
   belongs_to :calendar
   # has_and_belongs_to_many :calendars
   has_and_belongs_to_many :documents, counter_cache: true
-  has_many :complex_events, foreign_key: 'id'
   has_many :event_recurrences, dependent: :destroy
   has_many :event_cancellations, dependent: :destroy
   belongs_to :list
@@ -58,10 +57,7 @@ class Event < AbstractModel
   after_save do
     next if @changed_attributes.present?
 
-    user_ids = []
-    # need to rework it
-    #user_ids << current_user.id # me
-    user_ids << user_id # event owner
+    user_ids = [user_id] # event owner
 
     if !public? && ![:starts_at, :starts_on, :ends_at, :ends_on].all? { |k| !@changed_attributes.key?(k) }
 
@@ -69,7 +65,7 @@ class Event < AbstractModel
                       .pluck(:user_id) # participants with status pending/accepted
     else
       user_ids << participations.where.not(status: Participation::DECLINED)
-                      .where.not(Participation::FAILED)
+                      .where.not(status: Participation::FAILED)
                       .pluck(:user_id) # participants with status accepted
       # My Family Members & My Family Creator
       family = user.family
