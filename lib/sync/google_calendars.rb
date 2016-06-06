@@ -214,7 +214,11 @@ class GoogleCalendars
 
   def get_frequency(item)
     if item.recurrence
+
       @frequence = count_frequency(item.recurrence[0])
+      if @frequence[:FREQ].nil?
+        p "ITEM Recurrence #{item.recurrence} - ITEM #{item}"
+      end
       @frequence[:FREQ].downcase
     else
       'once'

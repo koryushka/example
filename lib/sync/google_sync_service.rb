@@ -40,6 +40,11 @@ class GoogleSyncService
 
   private
 
+  def prepare_accounts(google_access_token, accounts)
+    authorize google_access_token
+    accounts << [@service, google_access_token]
+  end
+
   def get_google_events_ids(items)
     items.map { |item| item.id }
   end
