@@ -26,11 +26,11 @@ class List < AbstractModel
     family = user.family
     if public? && family.present?
       user.family.participations.pluck(:user_id).each do |user_id|
-        PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+        PubnubHelper::Publisher.publish(@changed_attributes, user_id)
       end
-      PubnubHelpers::Publisher.publish(@changed_attributes, user.family.owner.id)
+      PubnubHelper::Publisher.publish(@changed_attributes, user.family.owner.id)
     else
-      PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+      PubnubHelper::Publisher.publish(@changed_attributes, user_id)
     end
 
     @changed_attributes = nil

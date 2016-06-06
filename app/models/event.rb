@@ -73,7 +73,7 @@ class Event < AbstractModel
     end
 
     user_ids.uniq.each do |user_id|
-      PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+      PubnubHelper::Publisher.publish(@changed_attributes, user_id)
     end
 
     @changed_attributes = nil
@@ -186,7 +186,7 @@ private
     users_ids << family.members.pluck(:id) if family.present?
 
     users_ids.flatten.uniq.each do |user_id|
-      PubnubHelpers::Publisher.publish('event participation changed', user_id)
+      PubnubHelper::Publisher.publish('event participation changed', user_id)
     end
   end
 

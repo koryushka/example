@@ -25,7 +25,7 @@ class Participation < AbstractModel
     users_ids << participationable.participations.pluck(:user_id)
     users_ids << participationable.user_id
     users_ids.uniq.each do |user_id|
-      PubnubHelpers::Publisher.publish('event participation changed', user_id)
+      PubnubHelper::Publisher.publish('event participation changed', user_id)
     end
   end
 
