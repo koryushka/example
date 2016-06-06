@@ -93,13 +93,17 @@ class Api::V1::GoogleOauthController < ApiController
     host = cookies[:redirect_url] || Rails.application.secrets.host
     path = cookies[:redirect_path] || Rails.application.secrets.path
     redirect_to [host, path].join('#/')
-    cookies.delete(:redirect_url, :redirect_path)
+    delete_cookies(:redirect_url, :redirect_path)
   end
 
   private
 
   def access_denied?
     params[:error].present?
+  end
+
+  def delete_cookies(*args)
+    args.each {|cookie| cookies.delete(cookie)}
   end
 
 
