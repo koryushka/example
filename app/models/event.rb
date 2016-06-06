@@ -111,7 +111,7 @@ class Event < AbstractModel
 
   def destroy_from_google
     calendar = self.calendar
-    google_access_token = GoogleAccessToken.find_by_account(calendar.account)
+    google_access_token = GoogleAccessToken.find_by_account_name(calendar.account)
     if google_access_token && calendar.should_be_synchronised?
       authorize google_access_token
       begin
@@ -137,7 +137,7 @@ class Event < AbstractModel
 
   def update_google_event
     calendar = self.calendar
-    google_access_token = GoogleAccessToken.find_by_account(calendar.account)
+    google_access_token = GoogleAccessToken.find_by_account_name(calendar.account)
     if google_access_token && calendar.should_be_synchronised?
       authorize google_access_token
       params = {
