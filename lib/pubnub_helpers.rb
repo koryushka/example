@@ -18,6 +18,10 @@ module PubnubHelpers
     end
 
     def self.publish(message, user_id)
+      if Rails.env.test?
+        Rails.logger.info "[PubNub] Publishing following message for user #{user_id}:\n#{message}"
+        return
+      end
       instance.pubnub.publish(
           channel: "curago_dev_#{user_id}",
           message: message
