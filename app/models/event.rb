@@ -181,11 +181,11 @@ private
   end
 
   def notify_members
-    users_ids = [user.family.members.pluck(:id),
-                participations.pluck(:user_id),
-                user_id].flatten.uniq
+    users_ids = [participations.pluck(:user_id), user_id]
+    family = user.family
+    users_ids << family.members.pluck(:id) if family.present?
 
-    users_ids.each do |user_id|
+    users_ids.flatten.uniq.each do |user_id|
       PubnubHelpers::Publisher.publish('event participation changed', user_id)
     end
   end
