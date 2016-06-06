@@ -52,7 +52,7 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
-  config.action_mailer.default_url_options = { host: 'curago-staging.s3-us-west-2.amazonaws.com' }
+  config.action_mailer.default_url_options = { host: 'curago-staging.s3-website-us-west-2.amazonaws.com' }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
