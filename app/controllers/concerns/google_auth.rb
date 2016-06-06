@@ -20,14 +20,18 @@ module GoogleAuth
     }
     request = Net::HTTP.post_form(URI.parse(uri), data)
     body = JSON.parse(request.body)
+    puts body
     if token_has_been_revoked?(body)
       puts "REVOKE TOKEN during refresh"
       google_access_token.revoke!
     else
-      google_access_token.update_attributes(
+      puts "REFRESHING TOKEN.."
+      if google_access_token.update_attributes(
         token: body['access_token'],
-        expires_at: Time.now + body['expires_in'].to_i
-      )
+        expires_at: Time.now + body['expires_in'].to_i)
+      else
+        raise WrongCredentialsException.new
+      end
     end
   end
 

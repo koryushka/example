@@ -3,6 +3,10 @@ class GoogleAccessToken < ActiveRecord::Base
   belongs_to :user
   has_many :calendars, dependent: :destroy
 
+  validates :token, presence: true
+  validates :refresh_token, presence: true
+
+
   def expired?
     Time.now.utc >= self.expires_at
   end

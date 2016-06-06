@@ -199,7 +199,6 @@ class Api::V1::GoogleOauthController < ApiController
       render json: {errors: errors}, status: 401
       return
     end
-
   end
 
   #These endpoints are used for web app
