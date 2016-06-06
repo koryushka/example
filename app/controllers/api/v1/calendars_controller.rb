@@ -65,7 +65,7 @@ class Api::V1::CalendarsController < ApiController
       key :tags, ['Calendars']
     end # end operation :post
   end # end swagger_path '/calendars'
-  
+
   def show
     render partial: 'calendar', locals: { calendar: @calendar }
   end
@@ -146,11 +146,16 @@ class Api::V1::CalendarsController < ApiController
 
   def update
     if @calendar.update_attributes(calendar_params)
-      @calendar.remove_events if params[:synchronizable] == false
+      if params[:synchronizable] == false
+        @calendar.remove_events
+      elsif params[:synchronizable] == true
+        account = @calendar.google_access_token
+        GoogleSyncService.new.sync current_user.id, account, @calendar.google_calendar_id
+      end
     else
       raise InternalServerErrorException
     end
-    render partial: 'calendar', locals: { calendar: @calendar }
+    render partial: 'calendar', locals: { calendar: @calendar }, status: 201
   end
 
   def destroy

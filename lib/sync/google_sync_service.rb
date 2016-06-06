@@ -9,28 +9,33 @@ class GoogleSyncService
     end
   end
 
-  def sync(user_id)
-      user = User.find_by_id(user_id)
-      puts "USER_ID #{user_id}"
-      accounts = []
-
+  def sync(user_id, google_access_token=nil, calendar_id=nil)
+    user = User.find_by_id(user_id)
+    puts "USER_ID #{user_id}"
+    accounts = []
+    #move code to model
+    if google_access_token
+      authorize google_access_token
+      accounts << [@service, google_access_token]
+    else
       user.google_access_tokens.where('synchronizable IS true AND revoked IS NOT true')
         .each do |google_access_token|
           authorize google_access_token
           accounts << [@service, google_access_token]
       end
+    end
 
-      accounts.each do |service|
-        access_token = service[0].authorization.access_token
-        next unless access_token
-        account = account(service[1])
-        next unless account
-        parser = GoogleCalendars.new(user, service, account)
-        parser.import_calendars
-        google_events_ids = get_google_events_ids(parser.items)
-        local_events_ids = get_local_event_ids(user_id, account)
-        compare_ids(google_events_ids, local_events_ids)
-      end
+    accounts.each do |service|
+      access_token = service[0].authorization.access_token
+      next unless access_token
+      account = account(service[1])
+      next unless account
+      parser = GoogleCalendars.new(user, service, account)
+      parser.import_calendars(calendar_id)
+      google_events_ids = get_google_events_ids(parser.items)
+      local_events_ids = get_local_event_ids(user_id, account)
+      compare_ids(google_events_ids, local_events_ids)
+    end
   end
 
   private
@@ -48,7 +53,7 @@ class GoogleSyncService
 
   def compare_ids(google_events_ids, local_events_ids)
     result =  local_events_ids - google_events_ids
-    Event.where('google_event_id in (?)', result).destroy_all
+    Event.includes(:event_recurrences, :event_cancellations, :participations).where('google_event_id in (?)', result).destroy_all
   end
 
   def account(access_token)

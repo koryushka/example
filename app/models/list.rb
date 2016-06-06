@@ -15,13 +15,27 @@ class List < AbstractModel
 
   default :public, true
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER SCHEMA: Model List
-  # ================================================================================
+  @changed_attributes = nil
+  before_save do
+    @changed_attributes = changes
+  end
 
-  #swagger_schema :List
+  after_save do
+    next unless @changed_attributes.present?
+
+    family = user.family
+    if public? && family.present?
+      user.family.participations.pluck(:user_id).each do |user_id|
+        PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+      end
+      PubnubHelpers::Publisher.publish(@changed_attributes, user.family.owner.id)
+    else
+      PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+    end
+
+    @changed_attributes = nil
+  end
+
   swagger_schema :List do
     key :type, :object
     property :id do
@@ -56,23 +70,8 @@ class List < AbstractModel
         key :'$ref', :Participation
       end
     end
-    property :public do
-      key :type, :boolean
-      key :description, "Specifies list. If it's true so all family members across my family should be able to modify
-all attributes of the list with the exception of changing the ‘Public / Private’ setting"
-      key :default, true
-    end
-  end # end swagger_schema :List
+  end
 
-  # swagger_schema :ArrayOfLists
-  swagger_schema :ArrayOfLists do
-    key :type, :array
-    items do
-      key :'$ref', :List
-    end
-  end # end swagger_schema :ArrayOfLists
-
-  # swagger_schema :ListInput
   swagger_schema :ListInput do
     key :type, :object
     key :required, %w(title)
@@ -90,12 +89,12 @@ all attributes of the list with the exception of changing the ‘Public / Privat
       key :type, :integer
       key :description, 'Specified type of list. Can be 1 - Grocery, 2 - ToDo'
     end
-    property :public do
-      key :type, :boolean
-      key :description, "Specifies list. If it's true so all family members across my family should be able to modify
-all attributes of the list with the exception of changing the ‘Public / Private’ setting"
-      key :default, true
-    end
-  end # end swagger_schema :ListInput
+  end
 
+  swagger_schema :ArrayOfLists do
+    key :type, :array
+    items do
+      key :'$ref', :List
+    end
+  end
 end

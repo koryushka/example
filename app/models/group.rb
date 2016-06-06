@@ -2,13 +2,10 @@ class Group < AbstractModel
   include Swagger::Blocks
 
   belongs_to :owner, class_name: 'User', foreign_key: 'user_id'
-  has_and_belongs_to_many :members, class_name: 'User'
-  has_many :participations, as: :participationable, dependent: :destroy
+    has_many :participations, as: :participationable, dependent: :destroy
   has_many :activities, as: :notificationable, dependent: :destroy
 
   alias_attribute :user, :owner
-
-  before_destroy { members.clear }
 
   validates :title, presence: true, length: {maximum: 128}
 
@@ -28,16 +25,34 @@ class Group < AbstractModel
                            sender: sender,
                            status: Participation::FAILED)
     else
-      Participation.create(user: user,
+      participation = Participation.create(user: user,
                            participationable: self,
                            sender: sender,
                            status: Participation::ACCEPTED)
+
+      notify_members
+      participation
     end
   end
 
-  # TODO: should be removed if unnecessary
-  def accept_participation(participation)
-    members << participation.user
+  def leave(user)
+    participation = participations.where(user: user)
+    participations.delete(participation)
+    notify_members
+  end
+
+  def members
+    owner = User.where(id: user_id).select(:id)
+    participants = Participation.groups
+                       .where(status: Participation::ACCEPTED, participationable_id: id)
+                       .select(:user_id)
+    User.where("users.id IN (#{owner.to_sql}) OR users.id IN (#{participants.to_sql})")
+  end
+private
+  def notify_members
+    members.pluck(:id).each do |user_id|
+      PubnubHelpers::Publisher.publish('group participation changed', user_id)
+    end
   end
 
   swagger_schema :Group do

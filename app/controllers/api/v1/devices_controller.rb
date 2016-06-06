@@ -52,8 +52,8 @@ class Api::V1::DevicesController < ApiController
           raise SnsUnsuccessfulException.new({message: 'Response is empty or unsuccessful'})
         end
     end
-
-    @device = Device.new(device_params)
+    
+    @device = current_user.devices.build(device_params)
     return render json: :ValidationErrorsContainer, status: :bad_request if @device.invalid?
 
     sns_response = sns.insert_token(@device.device_token)

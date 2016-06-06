@@ -20,6 +20,7 @@ protected
     return if participation.nil?
 
     participation.update(status: Participation::ACCEPTED, user_id: user.id)
+    participation.participationable.send(:notify_members)
   end
 
   def attach_events_invitations

@@ -6,7 +6,6 @@ class Event < AbstractModel
   belongs_to :calendar
   # has_and_belongs_to_many :calendars
   has_and_belongs_to_many :documents, counter_cache: true
-  has_many :complex_events, foreign_key: 'id'
   has_many :event_recurrences, dependent: :destroy
   has_many :event_cancellations, dependent: :destroy
   belongs_to :list
@@ -48,9 +47,36 @@ class Event < AbstractModel
   default :all_day, false
   default :public, true
 
+  @changed_attributes = nil
   before_save do
     assign_attributes(starts_on: starts_at, ends_on: nil) if all_day && starts_at.present?
     assign_attributes(starts_on: nil, ends_on: nil) unless all_day
+    @changed_attributes = changes
+  end
+
+  after_save do
+    next unless @changed_attributes.present?
+
+    user_ids = [user_id] # event owner
+
+    if !public? && ![:starts_at, :starts_on, :ends_at, :ends_on].all? { |k| !@changed_attributes.key?(k) }
+
+      user_ids << participations.where(status: Participation::ACCEPTED)
+                      .pluck(:user_id) # participants with status pending/accepted
+    else
+      user_ids << participations.where.not(status: Participation::DECLINED)
+                      .where.not(status: Participation::FAILED)
+                      .pluck(:user_id) # participants with status accepted
+      # My Family Members & My Family Creator
+      family = user.family
+      user_ids << user.family.members.pluck(:id) if family.present?
+    end
+
+    user_ids.uniq.each do |user_id|
+      PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+    end
+
+    @changed_attributes = nil
   end
 
   # after_destroy :destroy_from_google, if: :has_etag?
@@ -83,11 +109,9 @@ class Event < AbstractModel
   #   end
   # end
 
-
-
   def destroy_from_google
     calendar = self.calendar
-    google_access_token = GoogleAccessToken.find_by_account(calendar.account)
+    google_access_token = GoogleAccessToken.find_by_account_name(calendar.account)
     if google_access_token && calendar.should_be_synchronised?
       authorize google_access_token
       begin
@@ -105,14 +129,15 @@ class Event < AbstractModel
     else
       ParticipationsMailer.invitation(participation).deliver_now
     end
-    # TODO: push notification sending shoulod be here
+
+    notify_members
 
     participation
   end
 
   def update_google_event
     calendar = self.calendar
-    google_access_token = GoogleAccessToken.find_by_account(calendar.account)
+    google_access_token = GoogleAccessToken.find_by_account_name(calendar.account)
     if google_access_token && calendar.should_be_synchronised?
       authorize google_access_token
       params = {
@@ -153,6 +178,16 @@ private
 
   def has_etag?
     self.etag
+  end
+
+  def notify_members
+    users_ids = [user.family.members.pluck(:id),
+                participations.pluck(:user_id),
+                user_id].flatten.uniq
+
+    users_ids.each do |user_id|
+      PubnubHelpers::Publisher.publish('event participation changed', user_id)
+    end
   end
 
   def recurrency_check
@@ -357,6 +392,9 @@ For reminders time zone usually does not matter'
     end
     property :list do
       key :'$ref', :List
+    end
+    property :user do
+      key :'$ref', :UserWithProfileOnly
     end
     property :participations do
       key :type, :array

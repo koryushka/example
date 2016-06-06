@@ -44,31 +44,8 @@ private
     @current_user ||= server.resource_owner
   end
 
-  def pubnub
-    if @pubnub.nil?
-      logger = Logger.new(STDOUT)
-      logger = Logger.new('/dev/null') if Rails.env.test?
-      @pubnub = Pubnub.new(
-          subscribe_key: 'sub-c-b30e1dac-d56c-11e5-b684-02ee2ddab7fe',
-          publish_key: 'pub-c-dc0c88cf-f1dd-468d-88a4-160c26eb981d',
-          logger: logger
-      )
-
-    end
-    @pubnub
-  end
-
-  def publish(message)
-    pubnub.publish(
-        channel: "curago_dev_#{current_user.id}",
-        message: message
-    ) do |envelope|
-      #puts envelope.parsed_response
-    end
-  end
-
   def something_updated
-    publish('updated')
+    PubnubHelpers::Publisher.publish('updated', current_user.id)
   end
 
   # Tries to find entity of specified type using condition

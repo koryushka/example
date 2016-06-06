@@ -14,13 +14,27 @@ class ListItem < AbstractModel
   default :done, false
   default :order, 0
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER SCHEMA: Model List Item
-  # ================================================================================
+  @changed_attributes = nil
+  before_save do
+    @changed_attributes = changes
+  end
 
-  # swagger_schema :ListItem
+  after_save do
+    next unless @changed_attributes.present?
+
+    family = user.family
+    if list.public? && family.present?
+      user.family.participations.pluck(:user_id).each do |user_id|
+        PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+      end
+      PubnubHelpers::Publisher.publish(@changed_attributes, user.family.owner.id)
+    else
+      PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+    end
+
+    @changed_attributes = nil
+  end
+
   swagger_schema :ListItem do
     key :type, :object
     property :id do
@@ -46,17 +60,15 @@ class ListItem < AbstractModel
       key :description, 'Shows whether user finished with this item or not'
       key :default, false
     end
-  end # end swagger_schema :ListItem
+  end
 
-  # swagger_schema :ArrayOfListItems
   swagger_schema :ArrayOfListItems do
     key :type, :array
     items do
       key :'$ref', :ListItem
     end
-  end # swagger_schema :ArrayOfListItems
+  end
 
-  # swagger_schema :ListItemInput
   swagger_schema :ListItemInput do
     key :type, :object
     key :required, [:title]
@@ -81,6 +93,6 @@ class ListItem < AbstractModel
       key :description, 'Shows whether user finished with this item or not'
       key :default, false
     end
-  end # end :ListItemInput
+  end
 
 end
