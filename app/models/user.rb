@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   has_many :sent_paticipations, class_name: 'Participation', foreign_key: 'sender_id'
   has_many :participations
   has_many :devices, dependent: :destroy
+  has_many :google_access_tokens, dependent: :destroy
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -39,6 +40,16 @@ class User < ActiveRecord::Base
                                          status: Participation::ACCEPTED).first
     return participation.participationable if participation.present?
     groups.includes(participations: [:user, :sender]).first
+  end
+
+  def all_events(range_start, range_end, time_zone, filter)
+    Event.all_of_user(id, range_start, range_end, time_zone, filter)
+        .with_muted(id)
+        .includes(:list, user: :profile,
+                  participations: [
+                    {user: :profile},
+                    {sender: :profile}
+                ])
   end
 
   swagger_schema :User do
@@ -72,9 +83,11 @@ class User < ActiveRecord::Base
 
   swagger_schema :RegistrationInput do
     key :type, :object
+    key :required, %w(email password)
     property :email do
       key :type, :string
       key :description, 'Email of registered user'
+      key :maxLength, 128
     end
     property :password do
       key :type, :string
@@ -83,9 +96,11 @@ class User < ActiveRecord::Base
 
   swagger_schema :UserUpdateInput do
     key :type, :object
+    key :required, %w(email password current_password)
     property :email do
       key :type, :string
       key :description, 'Email of registered user'
+      key :maxLength, 128
     end
     property :password do
       key :type, :string
@@ -104,6 +119,7 @@ class User < ActiveRecord::Base
       key :type, :string
       key :description, 'Email of user who requested password resetting'
       key :format, 'email'
+      key :maxLength, 128
     end
     property :redirect_url do
       key :description, 'The url to which the user will be redirected after

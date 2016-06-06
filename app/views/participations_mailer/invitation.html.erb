@@ -1,6 +1,10 @@
 <p>Hi there!</p>
 
-<p>
-  <%= @participation.sender.profile.first_name %> <%= @participation.sender.profile.last_name %>
-  invites you into <%= @participation.participationable_type.downcase %> '<%= @participation.participationable.title %>'
-</p>
+<div>
+  <% if lookup_context.exists?(@entity_name, 'participations_mailer', true) %>
+      <%= render partial: @entity_name, locals: {entity: @participation.participationable} %>
+  <% else %>
+      <p><%= @participation.sender.profile.first_name %> <%= @participation.sender.profile.last_name %>
+      invited you to <%= @entity_name %> '<%= @participation.participationable.title %>'</p>
+  <% end %>
+</div>

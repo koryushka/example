@@ -2,7 +2,6 @@ class Api::V1::ListsController < ApiController
   include Swagger::Blocks
 
   before_filter :find_entity, except: [:index, :create]
-  after_filter :something_updated, except: [:index, :show]
   authorize_resource
   check_authorization
 
@@ -183,7 +182,7 @@ class Api::V1::ListsController < ApiController
 
 private
   def list_params
-    params.permit(:title, :notes, :kind)
+    params.permit(:title, :notes, :kind, :public)
   end
 
   # ================================================================================

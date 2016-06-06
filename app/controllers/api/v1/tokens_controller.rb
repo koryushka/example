@@ -1,9 +1,8 @@
 class Api::V1::TokensController < Doorkeeper::TokensController
   include Swagger::Blocks
-
   include ActionController::StrongParameters
 
-  # swagger_path /oauth/token
+
   swagger_path '/oauth/token' do
     operation :post do
       key :summary, 'Authenticates user'
@@ -24,7 +23,7 @@ class Api::V1::TokensController < Doorkeeper::TokensController
       end # end response 200
       key :tags, ['Auth']
     end # end operation :post
-  end # end swagger_path /oauth/token
+  end
   def create
     @login_data = LoginData.new(auth_params)
     return render json: {
@@ -44,39 +43,33 @@ private
     params.permit(:username, :password, :refresh_token, :scope, :grant_type)
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Tokens
-  # ================================================================================
-
-  # swagger_schema :SignInCredentials
   swagger_schema :SignInCredentials do
     key :type, :object
     key :required, [:grant_type, :username, :password]
     property :grant_type do
       key :type, :string
-      key :description, 'grant type, can be *password* or *refresh_token*'
+      key :description, 'Grant type, can be *password* or *refresh_token*'
     end
     property :username do
       key :type, :string
-      key :description, "User's email. Required if grant_type is password"
+      key :description, 'User\'s email. Required if grant_type is password'
+      key :maxLength, 255
+      key :minLength, 2
     end
     property :password do
       key :type, :string
-      key :description, "User's password. Required if grant_type is password"
+      key :description, 'User\'s password. Required if grant_type is password'
     end
     property :scope do
       key :type, :string
-      key :description, "Authorisation scope. Can be sent if grant_type is password. = ['user' or 'admin']"
+      key :description, 'Authorisation scope. Can be sent if grant_type is password = [\'user\' or \'admin\']'
     end
     property :refresh_token do
       key :type, :string
-      key :description, "User's refresh token. Required if grant_type is refresh_token"
+      key :description, 'User\'s refresh token. Required if grant_type is refresh_token'
     end
-  end # end swagger_schema :SignInCredentials
+  end
 
-  # swagger_schema SignInResponse
   swagger_schema :SignInResponse do
     key :type, :object
     key :required, [:access_token, :token_type, :expires_in, :refresh_token, :scope, :created_at]
@@ -104,5 +97,5 @@ private
       key :type, :integer
       key :description, 'Access_token expiration in seconds'
     end
-  end # end swagger_schema SignInResponse
+  end
 end

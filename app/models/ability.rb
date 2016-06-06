@@ -6,9 +6,17 @@ class Ability
     can :manage, Participation, sender_id: user.id
     cannot :manage, Participation, user_id: user.id
     can [:accept, :decline], Participation, user_id: user.id
-    can :leave, Group do |group|
-      group.members.exists?(users: {id: user.id})
+    can [:show], Event do |event|
+      event.participations.exists?(user: user)
     end
+    can :leave, Group do |group|
+      group.participations.exists?(user: user)
+    end
+
+    can :destroy, Device do |device|
+      user.devices.exists?(device_token: device.device_token)
+    end
+
     #Define abilities for the passed in user here. For example:
     # if user
     #   user.roles.includes(:permissions).each do |role|

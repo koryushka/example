@@ -1,6 +1,9 @@
 class ApiController < ActionController::Base
   include Doorkeeper::Helpers::Controller
-  before_action :doorkeeper_authorize!
+
+  before_action do
+    doorkeeper_authorize! unless should_pass?
+  end
 
   rescue_from CanCan::AccessDenied do
     render json: {
@@ -17,6 +20,14 @@ class ApiController < ActionController::Base
     }, status: :not_acceptable
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: {
+        code: 4,
+        message: e.message,
+        error_data: nil
+    }, status: :not_found
+  end
+
   rescue_from AppException do |e|
     render json: {
         code: e.code,
@@ -25,36 +36,31 @@ class ApiController < ActionController::Base
     }, status: e.http_status
   end
 private
+  def should_pass?
+    (defined? unauth_actions) && unauth_actions.include?(action_name.to_sym)
+  end
 
   def current_user
     @current_user ||= server.resource_owner
   end
 
-  def pubnub
-    if @pubnub.nil?
-      logger = Logger.new(STDOUT)
-      logger = Logger.new('/dev/null') if Rails.env.test?
-      @pubnub = Pubnub.new(
-          subscribe_key: 'sub-c-b30e1dac-d56c-11e5-b684-02ee2ddab7fe',
-          publish_key: 'pub-c-dc0c88cf-f1dd-468d-88a4-160c26eb981d',
-          logger: logger
-      )
-
-    end
-    @pubnub
-  end
-
-  def publish(message)
-    pubnub.publish(
-        channel: "curago_dev_#{current_user.id}",
-        message: message
-    ) do |envelope|
-      #puts envelope.parsed_response
-    end
-  end
-
   def something_updated
-    publish('updated')
+    PubnubHelpers::Publisher.publish('updated', current_user.id)
+  end
+
+  # Tries to find entity of specified type using condition
+  # *type*:
+  #     type of model (:user, :admin, :document, etc.), should a symbol.
+  # *condition*:
+  #     helps to add filters during entity search. it's the same as codition for where() method
+  def find_entity_of_type(type, condition)
+    entity_class = type.to_s.classify.constantize
+    entity = entity_class.where(condition).first
+    raise NotFoundException if entity.nil?
+
+    property_name = entity_class.name.underscore
+    class_eval { attr_accessor property_name }
+    instance_variable_set "@#{property_name}", entity
   end
 
   # Tries to find entity related to controller and adds appropriate class variable to controller
@@ -76,7 +82,6 @@ private
     entity_class_name = (type.nil? ? controller_name : type.to_s).classify
     entity_class = entity_class_name.constantize
     relation = condition.nil? ? entity_class : entity_class.where(condition)
-
     # loading entity
     entity_id = params[id_param]
     entity = relation.where(id: entity_id).first

@@ -27,4 +27,14 @@ class EventTest < ActiveSupport::TestCase
     event.event_recurrences << EventRecurrence.new
     assert event.invalid?
   end
+
+  test 'should accept invitation to event automatically for family member' do
+    sender = FactoryGirl.create(:user)
+    group = FactoryGirl.create(:group, user: sender)
+    group.participations << Participation.new(sender: sender, user: @user, status: Participation::ACCEPTED)
+    event = FactoryGirl.create(:event, user: sender)
+    event.create_participation(sender, @user)
+
+    assert event.participations.exists?(user: @user, status: Participation::ACCEPTED)
+  end
 end

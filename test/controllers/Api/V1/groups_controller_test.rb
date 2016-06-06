@@ -93,7 +93,7 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
   test 'should remove current user from group' do
     user = FactoryGirl.create(:user)
     group = FactoryGirl.create(:group, owner: user)
-    group.members << @user
+    FactoryGirl.create(:participation, user: @user, participationable: group, status: Participation::ACCEPTED)
 
     delete :leave, id: group.id
     assert_response :success

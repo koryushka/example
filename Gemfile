@@ -16,6 +16,12 @@ gem 'bcrypt'
 gem 'devise_token_auth'
 gem 'doorkeeper'
 
+# gem "omniauth-google-oauth2"
+gem 'google-api-client', '~> 0.9', require: 'google/apis/calendar_v3'
+gem 'sidekiq', '~> 4.1', '>= 4.1.2'
+gem 'sinatra', :require => nil
+gem 'whenever', :require => false
+
 gem 'validates_email_format_of'
 gem 'date_validator'
 
@@ -30,7 +36,6 @@ gem 'pubnub'
 gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
 gem 'swagger-blocks'
 gem 'aws-sdk'
-
 
 # Use Capistrano for deployment
 group :development do

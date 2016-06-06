@@ -28,13 +28,6 @@ class Api::V1::UsersController < ApiController
     render partial: 'user', locals: { user: current_user }
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Users
-  # ================================================================================
-
-  # swagger_path /users
   swagger_path '/users' do
     operation :post do
       key :summary, 'Registers user'
@@ -95,7 +88,7 @@ A verification email will be sent to the email address provided.'
     end
   end # end swagger_path /users
 
-  swagger_path '/users/pasword' do
+  swagger_path '/users/password' do
     operation :post do
       key :summary, 'Starts password resetting process'
       key :description, 'Accepts email and redirect_url as params. The user matching the email
@@ -134,7 +127,7 @@ after visiting the link contained in the email.'
       key :summary, "Updates user's password and finishes password resetting process"
       key :description, "This method changes user's password. It requires values of params:
 client_id, token and uid. These params can be obtained when user
-clicks on link which were sent after /users/password calling"
+clicks on link which is being sent after /users/password calling"
       parameter do
         key :name, 'client'
         key :description, 'Value of cleint_id query param should be placed here'

@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
   namespace :admin do
     #mount_devise_token_auth_for 'Admin', at: 'auth'
     root to: 'home#index'
   end
-
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
       use_doorkeeper do
@@ -16,7 +17,23 @@ Rails.application.routes.draw do
       }
       get 'users/me' => 'users#me'
       #put 'users' => 'users#update'
-
+      get 'google_auth', to: 'google_oauth#auth'
+      get 'oauth2callback', to: 'google_oauth#oauth2callback'
+      get 'google_oauth', to: 'google_oauth#google_oauth'
+      # get 'google_calendars', to: 'google_calendars#index'
+      get 'accounts', to: 'accounts#index'
+      put 'accounts/:id', to: 'accounts#update'
+      get 'accounts/:id', to: 'accounts#show'
+      # put 'google_calendars/accounts/:id/unsync', to: 'google_calendars#unsync_account'
+      # put 'google_calendars/accounts/:id/sync', to: 'google_calendars#sync_account'
+      put 'google_calendars/accounts/:id', to: 'google_calendars#manage_account'
+      # get 'google_calendars/sync', to: 'google_calendars#sync'
+      put 'google_calendars/calendars/:id/unsync', to: 'google_calendars#unsync_calendar'
+      put 'google_calendars/calendars/:id/sync', to: 'google_calendars#sync_calendar'
+      post 'google/refresh_token', to: 'google_oauth#refresh_token'
+      get 'google/account_info', to: 'google_oauth#get_account_info'
+      delete 'google/remove_account', to: 'google_oauth#remove_account'
+      # get 'google_calendars/:calendar_id', to: 'google_calendars#show', param: :calendar_id, constraints: { calendar_id: /[^\/]+/ }
       resources :calendars, except: [:edit, :new] do
         post 'events/:id', to: 'events#add_to_calendar'
         delete 'events/:id', to: 'events#remove_from_calendar'
@@ -55,6 +72,7 @@ Rails.application.routes.draw do
       end
       get 'participations' => 'participations#index_recent'
       post 'participations/:id/accept' => 'participations#accept'
+      post 'participations/link_accept/:token' => 'participations#link_accept'
       delete 'participations/:id/decline' => 'participations#decline'
 
       put 'users/me/profile' => 'profiles#update'
@@ -66,8 +84,9 @@ Rails.application.routes.draw do
       resources :apidocs, only: [:index]
 
       # devices
-      put 'device/:id', to: 'devices#update'
-      delete 'device/:id', to: 'devices#destroy'
+      post 'devices', to: 'devices#create'
+      delete 'devices/:id', to: 'devices#destroy'
+      # put 'device/:id', to: 'devices#update'
 
     end
   end
