@@ -62,7 +62,7 @@ class GoogleAccessToken < ActiveRecord::Base
       key :description, 'Account ID'
     end
 
-    property :account do
+    property :account_name do
       key :type, :string
       key :description, 'Account name'
     end

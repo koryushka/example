@@ -71,7 +71,6 @@ class Api::V1::GoogleOauthController < ApiController
     cookies[:token] = params[:token]
     cookies[:redirect_url] = params[:redirect_url]
     cookies[:redirect_path] = params[:redirect_path]
-
   end
 
   def oauth2callback
@@ -86,17 +85,15 @@ class Api::V1::GoogleOauthController < ApiController
       #     expires_at: Time.now + 3500#@response['expires_in'].to_i
       #   )
       # end
-
       manage_google_access_tokens
       GoogleSyncService.new.sync @current_user_id
+      # render json: {response: @response}
+      # get_account_info
     end
-    # render json: {response: @response}
-    # get_account_info
     host = cookies[:redirect_url] || Rails.application.secrets.host
     path = cookies[:redirect_path] || Rails.application.secrets.path
     redirect_to [host, path].join('#/')
-    cookies.delete(:redirect_url, :redirect_path)
-    # cookies.delete(:redirect_path)
+    delete_cookies(:redirect_url, :redirect_path)
   end
 
   private
@@ -105,11 +102,17 @@ class Api::V1::GoogleOauthController < ApiController
     params[:error].present?
   end
 
+  def delete_cookies(*args)
+    args.each {|cookie| cookies.delete(cookie)}
+  end
+
+
+
   # def account_info
   #   refresh_token = @response['refresh_token']
   #   access_token  = @response['access_token']
   #   expitration   = Time.now.utc + 3500
-  #   @google_access_token = GoogleAccessToken.find_or_initialize_by(user_id: @current_user_id, account: email) do |token|
+  #   @google_access_token = GoogleAccessToken.find_or_initialize_by(user_id: @current_user_id, account_name: email) do |token|
   #     token.refresh_token = refresh_token
   #     token.token         = access_token
   #     token.expires_at    = expitration
@@ -160,17 +163,16 @@ class Api::V1::GoogleOauthController < ApiController
   end
 
   def manage_google_access_tokens
-    if google_access_token = GoogleAccessToken.find_by(account: email,
+    if google_access_token = GoogleAccessToken.find_by(account_name: email,
                                                        user_id: @current_user_id)
       google_access_token.update_columns(google_token_params)
     elsif google_access_token = GoogleAccessToken.new(google_token_params.merge({
             user_id: @current_user_id,
-            account: email,
+            account_name: email,
             expires_at: Time.now + 3500
             })
           ).save!
     end
-    p "GOOGLE #{google_access_token.inspect}"
   end
 
   def google_token_params
@@ -204,24 +206,24 @@ class Api::V1::GoogleOauthController < ApiController
   # def get_account_info#(data)
   #   uri = ACCOUNT_INFO_URI + @response['access_token']
   #   response = JSON.parse(open(uri).string)
-  #   if google_access_token = GoogleAccessToken.find_by(account: response['email'],
+  #   if google_access_token = GoogleAccessToken.find_by(account_name: response['email'],
   #                                                      user_id: @current_user_id)
   #     if @google_access_token
-  #       GoogleAccessToken.where(account: response['email'])
+  #       GoogleAccessToken.where(account_name: response['email'])
   #       .update_all(refresh_token: @response['refresh_token'], revoked: false)
   #     end
   #       google_access_token.update_attributes(
   #         google_access_token_params#(data)
   #       )
   #   else
-  #     if google_access_token = GoogleAccessToken.find_by(account: response['email'])
+  #     if google_access_token = GoogleAccessToken.find_by(account_name: response['email'])
   #       GoogleAccessToken.new(google_access_token
   #                             .attributes
   #                             .except('id', 'created_at', 'updated_at', 'synchronizable')
   #                             .merge({user_id: @current_user_id}))
   #                             .save
   #     else
-  #       @google_access_token.update_attributes(account: response['email'],
+  #       @google_access_token.update_attributes(account_name: response['email'],
   #                                              user_id: @current_user_id)
   #     end
   #   end
@@ -249,6 +251,6 @@ class Api::V1::GoogleOauthController < ApiController
       client_secret: Rails.application.secrets.google_client_secret,
       redirect_uri: url_for(:action => :oauth2callback)
     })
-  end #end of development methods
+  end
 
 end

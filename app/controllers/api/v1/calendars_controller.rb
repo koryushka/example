@@ -149,7 +149,8 @@ class Api::V1::CalendarsController < ApiController
       if params[:synchronizable] == false
         @calendar.remove_events
       elsif params[:synchronizable] == true
-        GoogleSyncService.new.sync current_user.id#, @calendar.google_calendar_id
+        account = @calendar.google_access_token
+        GoogleSyncService.new.sync current_user.id, account, @calendar.google_calendar_id
       end
     else
       raise InternalServerErrorException

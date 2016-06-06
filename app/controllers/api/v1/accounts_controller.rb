@@ -34,7 +34,7 @@ class Api::V1::AccountsController < ApiController
       if params[:synchronizable] == false
         @account.remove_calendars
     elsif params[:synchronizable] == true
-      GoogleSyncService.new.sync current_user.id
+      GoogleSyncService.new.sync(current_user.id, @account)
     end
       render :show, status: 201
     else
