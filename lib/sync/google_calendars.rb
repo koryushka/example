@@ -23,7 +23,7 @@ class GoogleCalendars
         calendar.account = @account
         calendar.user_id = @current_user.id
       end
-      if google_calendar.persisted? && calendar_attributes_changed?(item, calendar)
+      if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
         google_calendar.update_attributes(
           color: item.background_color,
           title: item.summary,
