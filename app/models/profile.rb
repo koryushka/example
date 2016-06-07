@@ -38,7 +38,7 @@ class Profile < AbstractModel
                                           status: [Participation::PENDING, Participation::PENDING])
       user_ids << events_paticipants_ids.pluck(:user_id)
       user_ids.flatten.uniq.each do |user_id|
-        PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+        PubnubHelper::Publisher.publish(@changed_attributes, user_id)
       end
     end
 

@@ -21,11 +21,11 @@ class Participation < AbstractModel
 
   before_destroy do
     users_ids = []
-    users_ids << user.family.members.pluck(:id) if user.family
+    users_ids << user.family.members.pluck(:id) unless user.nil? || user.family.nil?
     users_ids << participationable.participations.pluck(:user_id)
     users_ids << participationable.user_id
     users_ids.uniq.each do |user_id|
-      PubnubHelpers::Publisher.publish('event participation changed', user_id)
+      PubnubHelper::Publisher.publish('event participation changed', user_id)
     end
   end
 

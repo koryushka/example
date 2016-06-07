@@ -45,7 +45,7 @@ private
   end
 
   def something_updated
-    PubnubHelpers::Publisher.publish('updated', current_user.id)
+    PubnubHelper::Publisher.publish('updated', current_user.id)
   end
 
   # Tries to find entity of specified type using condition
