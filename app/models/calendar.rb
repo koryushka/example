@@ -121,6 +121,10 @@ class Calendar < AbstractModel
       key :description, 'Specifies if calendar visible in UI'
       key :default, true
     end
+    property :color do
+      key :type, :string
+      key :description, 'Specifies calendar color'
+    end
   end
 
   swagger_schema :ArrayOfCalendars do

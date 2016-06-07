@@ -169,7 +169,7 @@ class Api::V1::GoogleOauthController < ApiController
     elsif google_access_token = GoogleAccessToken.new(google_token_params.merge({
             user_id: @current_user_id,
             account_name: email,
-            expires_at: Time.now + 3500
+            expires_at:  Time.now.utc + 2700
             })
           ).save!
     end

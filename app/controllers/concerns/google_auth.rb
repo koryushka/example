@@ -25,12 +25,14 @@ module GoogleAuth
       puts "REVOKE TOKEN during refresh"
       google_access_token.revoke!
     else
+      begin
       puts "REFRESHING TOKEN.."
-      if google_access_token.update_attributes(
+      google_access_token.update_attributes(
         token: body['access_token'],
-        expires_at: Time.now + body['expires_in'].to_i)
-      else
-        raise WrongCredentialsException.new
+        expires_at: Time.now.utc + body['expires_in'].to_i)
+      rescue OpenURI::HTTPError => e
+        p "ERROR #{e.inspect}"
+        false
       end
     end
   end
