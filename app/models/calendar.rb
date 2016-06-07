@@ -85,6 +85,10 @@ class Calendar < AbstractModel
       key :description, 'Specifies if calendar is synchronizable with external service'
       key :default, true
     end
+    property :color do
+      key :type, :string
+      key :description, 'Specifies calendar color'
+    end
   end
 
   swagger_schema :Calendar do

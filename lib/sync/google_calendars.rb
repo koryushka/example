@@ -12,7 +12,6 @@ class GoogleCalendars
       @service.list_calendar_lists.items
     calendars = []
     calendar_list.each do |item|
-      p "Calendar #{item.inspect}"
       google_calendar = Calendar.find_or_create_by(
         google_calendar_id: item.id,
         google_access_token_id: @gat.id
@@ -224,9 +223,9 @@ class GoogleCalendars
   end
 
   def get_frequency(item)
-    p "ITEM Recurrence #{item.recurrence} - ITEM #{item.inspect}"
     if item.recurrence
-      @frequence = count_frequency(item.recurrence[0])
+      recurrence = item.recurrence.select {|x| x.include?('RRULE')}[0]
+      @frequence = count_frequency(recurrence)
       @frequence[:FREQ].downcase
     else
       'once'
