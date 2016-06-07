@@ -26,13 +26,15 @@ module GoogleAuth
       google_access_token.revoke!
     else
       begin
-      puts "REFRESHING TOKEN.."
-      google_access_token.update_attributes(
-        token: body['access_token'],
-        expires_at: Time.now.utc + body['expires_in'].to_i)
+        puts "REFRESHING TOKEN..."
+        unless google_access_token.update_attributes(
+          token: body['access_token'],
+          expires_at: Time.now.utc + body['expires_in'].to_i)
+          puts google_access_token.errors.full_messages
+          puts body
+        end
       rescue OpenURI::HTTPError => e
         p "ERROR #{e.inspect}"
-        false
       end
     end
   end
