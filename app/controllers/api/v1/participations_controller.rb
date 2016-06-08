@@ -44,6 +44,7 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
+
   def index
     @participations = find_participationable.participations
                           .includes(sender: :profile, user: :profile)
@@ -70,6 +71,7 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
+
   def index_recent
     @participations = current_user.sent_paticipations
                           .includes(sender: :profile, user: :profile)
@@ -155,11 +157,12 @@ class Api::V1::ParticipationsController < ApiController
       ParticipationsMailer.invitation(participation).deliver_now
     end if participation_params[:emails]
 
-    existing_users = existing_users.concat(participation_params[:user_ids]) if participation_params[:user_ids]
-    existing_users.each do |user_id|
-      next if current_user.sent_paticipations.exists?(user_id: user_id,
-                                                      participationable_type: participationable.class.name,
-                                                      participationable_id: participationable.id)
+    #existing_users = existing_users.concat(participation_params[:user_ids]) if participation_params[:user_ids]
+    existing_users.uniq.each do |user_id|
+      next if current_user.sent_paticipations.where.not(status: Participation::FAILED)
+                  .exists?(user_id: user_id,
+                           participationable_type: participationable.class.name,
+                           participationable_id: participationable.id)
       user = User.where(id: user_id).first
       next if user.nil?
 
@@ -218,6 +221,7 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
+
   def destroy
     find_participationable.participations.destroy(@participation)
     render nothing: true
@@ -248,6 +252,7 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
+
   def accept
     raise AlreadyAcceptedException if @participation.accepted?
 
@@ -283,6 +288,7 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
+
   def decline
     raise AlreadyDeclinedException if @participation.declined?
 
@@ -312,12 +318,13 @@ class Api::V1::ParticipationsController < ApiController
       key :tags, ['Participations']
     end
   end
+
   def link_accept
     @participation.change_status_to(Participation::ACCEPTED)
     render nothing: true
   end
 
-protected
+  protected
   def participation_params
     params.permit(:messaage, emails: [], user_ids: [])
   end

@@ -2,7 +2,7 @@ class Group < AbstractModel
   include Swagger::Blocks
 
   belongs_to :owner, class_name: 'User', foreign_key: 'user_id'
-    has_many :participations, as: :participationable, dependent: :destroy
+  has_many :participations, as: :participationable, dependent: :destroy
   has_many :activities, as: :notificationable, dependent: :destroy
 
   alias_attribute :user, :owner
@@ -11,13 +11,13 @@ class Group < AbstractModel
 
   def create_participation(sender, user)
     # TODO: must be combined into single query
-    participation = Participation.where(user: user, participationable_type: Group.name)
+    participation = Participation.groups.where(user: user)
                         .where.not(sender: sender, status: Participation::FAILED).exists?
     failed_participation = Participation.where(user: user,
                                                participationable: self,
                                                sender: sender,
                                                status: Participation::FAILED).first
-    # if invitation was failed for other group and it does not exist for current croup
+    # if invitation was failed for other group and it does not exist for current group
     # we need to create failed participation for current group
     if (participation || user.family.present?) && failed_participation.nil?
       Participation.create(user: user,
@@ -26,9 +26,9 @@ class Group < AbstractModel
                            status: Participation::FAILED)
     else
       participation = Participation.create(user: user,
-                           participationable: self,
-                           sender: sender,
-                           status: Participation::ACCEPTED)
+                                           participationable: self,
+                                           sender: sender,
+                                           status: Participation::ACCEPTED)
 
       notify_members
       participation
@@ -42,12 +42,12 @@ class Group < AbstractModel
   end
 
   def members
-    owner = User.where(id: user_id).select(:id)
     participants = Participation.groups
                        .where(status: Participation::ACCEPTED, participationable_id: id)
                        .select(:user_id)
-    User.where("users.id IN (#{owner.to_sql}) OR users.id IN (#{participants.to_sql})")
+    User.where("users.id = ? OR users.id IN (#{participants.to_sql})", user_id)
   end
+
 private
   def notify_members
     members.pluck(:id).each do |user_id|
