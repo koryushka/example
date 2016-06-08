@@ -83,8 +83,33 @@ class Api::V1::AccountsController < ApiController
       end # end response Default
       key :tags, ['Accounts']
     end # end operation :put
+    operation :delete do
+      key :summary, 'Delete account'
+      key :description, 'Deletes account by ID'
+      parameter do
+        key :name, 'id'
+        key :description, 'Account ID'
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      response 204 do
+        key :description, 'Deleted'
+      end
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end # end response default
+      key :tags, ['Accounts']
+    end # end operation :delete
   end # end swagger_path ':/accounts/{id}'
 
+  def destroy
+    @account.destroy
+    render nothing: true
+  end
   private
 
   def account_params
