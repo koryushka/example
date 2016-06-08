@@ -19,15 +19,7 @@ class Participation < AbstractModel
     assign_attributes(invitation_token: SecureRandom.base64(128))
   end
 
-  before_destroy do
-    users_ids = []
-    users_ids << user.family.members.pluck(:id) if user.family
-    users_ids << participationable.participations.pluck(:user_id)
-    users_ids << participationable.user_id
-    users_ids.uniq.each do |user_id|
-      PubnubHelpers::Publisher.publish('event participation changed', user_id)
-    end
-  end
+  before_destroy :notify_participants
 
   after_create do
     change_status_to(PENDING)
@@ -47,7 +39,6 @@ class Participation < AbstractModel
 
   def change_status_to(status)
     update(status: status)
-
     # activity = nil
     #
     # if pending? && user.present?
@@ -62,6 +53,14 @@ class Participation < AbstractModel
     # end
     #
     # activities << activity unless activity.nil?
+  end
+
+  def notify_participants
+    users_ids = [participationable.participations.pluck(:user_id), participationable.user_id]
+    users_ids << user.family.members.pluck(:id) unless user.nil? || user.family.nil?
+    users_ids.flatten.uniq.each do |user_id|
+      PubnubHelper::Publisher.publish('Participation changed', user_id)
+    end
   end
 
   swagger_schema :ParticipationInput do

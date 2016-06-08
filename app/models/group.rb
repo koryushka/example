@@ -51,7 +51,7 @@ class Group < AbstractModel
 private
   def notify_members
     members.pluck(:id).each do |user_id|
-      PubnubHelpers::Publisher.publish('group participation changed', user_id)
+      PubnubHelper::Publisher.publish('group participation changed', user_id)
     end
   end
 

@@ -73,7 +73,7 @@ class Event < AbstractModel
     end
 
     user_ids.uniq.each do |user_id|
-      PubnubHelpers::Publisher.publish(@changed_attributes, user_id)
+      PubnubHelper::Publisher.publish(@changed_attributes, user_id)
     end
 
     @changed_attributes = nil
@@ -111,7 +111,7 @@ class Event < AbstractModel
 
   def destroy_from_google
     calendar = self.calendar
-    google_access_token = GoogleAccessToken.find_by_account(calendar.account)
+    google_access_token = GoogleAccessToken.find_by_account_name(calendar.account)
     if google_access_token && calendar.should_be_synchronised?
       authorize google_access_token
       begin
@@ -137,7 +137,7 @@ class Event < AbstractModel
 
   def update_google_event
     calendar = self.calendar
-    google_access_token = GoogleAccessToken.find_by_account(calendar.account)
+    google_access_token = GoogleAccessToken.find_by_account_name(calendar.account)
     if google_access_token && calendar.should_be_synchronised?
       authorize google_access_token
       params = {
@@ -181,12 +181,12 @@ private
   end
 
   def notify_members
-    users_ids = [user.family.members.pluck(:id),
-                participations.pluck(:user_id),
-                user_id].flatten.uniq
+    users_ids = [participations.pluck(:user_id), user_id]
+    family = user.family
+    users_ids << family.members.pluck(:id) if family.present?
 
-    users_ids.each do |user_id|
-      PubnubHelpers::Publisher.publish('event participation changed', user_id)
+    users_ids.flatten.uniq.each do |user_id|
+      PubnubHelper::Publisher.publish('event participation changed', user_id)
     end
   end
 

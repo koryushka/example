@@ -254,6 +254,7 @@ class Api::V1::ParticipationsController < ApiController
     # accept_participation means adding to group, event, list, etc.
     #@participation.participationable.accept_participation(@participation)
     @participation.change_status_to(Participation::ACCEPTED)
+    @participation.notify_participants
     render nothing: true
   end
 

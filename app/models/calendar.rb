@@ -4,7 +4,7 @@ class Calendar < AbstractModel
   belongs_to :user
   belongs_to :google_access_token
   # has_and_belongs_to_many :events
-  has_many :events, dependent: :destroy
+  has_many :events, dependent: :destroy, counter_cache: true
   # has_and_belongs_to_many :calendars_groups
   has_and_belongs_to_many :complex_events, join_table: 'calendars_events', readonly: true, association_foreign_key: 'event_id'
 
@@ -85,6 +85,10 @@ class Calendar < AbstractModel
       key :description, 'Specifies if calendar is synchronizable with external service'
       key :default, true
     end
+    property :color do
+      key :type, :string
+      key :description, 'Specifies calendar color'
+    end
   end
 
   swagger_schema :Calendar do
@@ -120,6 +124,10 @@ class Calendar < AbstractModel
       key :type, :boolean
       key :description, 'Specifies if calendar visible in UI'
       key :default, true
+    end
+    property :color do
+      key :type, :string
+      key :description, 'Specifies calendar color'
     end
   end
 

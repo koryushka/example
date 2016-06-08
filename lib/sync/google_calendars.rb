@@ -8,11 +8,8 @@ class GoogleCalendars
   end
 
   def import_calendars(calendar_id=nil)
-    if calendar_id
-      calendar_list = [@service.get_calendar(calendar_id)]
-    else
-      calendar_list = @service.list_calendar_lists.items
-    end
+    calendar_list = calendar_id ? [@service.get_calendar(calendar_id)] :
+      @service.list_calendar_lists.items
     calendars = []
     calendar_list.each do |item|
       google_calendar = Calendar.find_or_create_by(
@@ -20,9 +17,18 @@ class GoogleCalendars
         google_access_token_id: @gat.id
 
       ) do |calendar|
+        calendar.color = item.background_color
         calendar.title = item.summary
         calendar.account = @account
         calendar.user_id = @current_user.id
+      end
+      if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
+        google_calendar.update_attributes(
+          color: item.background_color,
+          title: item.summary,
+          account: @account,
+          user_id: @current_user.id
+        )
       end
 
       if google_calendar.should_be_synchronised?
@@ -32,6 +38,10 @@ class GoogleCalendars
   end
 
   private
+  def calendar_attributes_changed?(item, calendar)
+    #add logic
+    true
+  end
 
   def parse_events_from_calendar(google_calendar)
     google_calendar_events = @service.list_events(google_calendar.google_calendar_id).items
@@ -214,7 +224,8 @@ class GoogleCalendars
 
   def get_frequency(item)
     if item.recurrence
-      @frequence = count_frequency(item.recurrence[0])
+      recurrence = item.recurrence.select {|x| x.include?('RRULE')}[0]
+      @frequence = count_frequency(recurrence)
       @frequence[:FREQ].downcase
     else
       'once'

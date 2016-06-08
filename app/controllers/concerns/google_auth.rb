@@ -20,14 +20,22 @@ module GoogleAuth
     }
     request = Net::HTTP.post_form(URI.parse(uri), data)
     body = JSON.parse(request.body)
+    puts body
     if token_has_been_revoked?(body)
       puts "REVOKE TOKEN during refresh"
       google_access_token.revoke!
     else
-      google_access_token.update_attributes(
-        token: body['access_token'],
-        expires_at: Time.now + body['expires_in'].to_i
-      )
+      begin
+        puts "REFRESHING TOKEN..."
+        unless google_access_token.update_attributes(
+          token: body['access_token'],
+          expires_at: Time.now.utc + body['expires_in'].to_i)
+          puts google_access_token.errors.full_messages
+          puts body
+        end
+      rescue OpenURI::HTTPError => e
+        p "ERROR #{e.inspect}"
+      end
     end
   end
 
