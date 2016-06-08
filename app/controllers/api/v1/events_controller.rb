@@ -162,13 +162,13 @@ Examples:
       key :summary, 'Updates event'
       parameter do
         key :name, 'id'
-        key :description, "Calendar's ID"
+        key :description, "Event's ID"
         key :in, 'path'
         key :required, true
         key :type, :integer
       end
       parameter do
-        key :name, 'id'
+        key :name, 'event'
         key :in, 'body'
         key :required, true
         schema do
