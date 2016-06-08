@@ -65,7 +65,7 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
   end
 
   #### group update group
-  test 'should upadte existing group' do
+  test 'should update existing group' do
     group = FactoryGirl.create(:group, owner: @user)
     new_title = 'New title'
     put :update, id: group.id, title: new_title
@@ -99,4 +99,25 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
     assert_response :success
     assert_not group.participations.exists?(user: @user)
   end
+
+  test 'should fail to update group for non member user' do
+    user = FactoryGirl.create(:user)
+    group = FactoryGirl.create(:group, owner: user)
+    new_title = 'New title'
+    put :update, id: group.id, title: new_title
+    assert_response :forbidden
+  end
+
+  test 'should update group if user is a member of the group' do
+    user = FactoryGirl.create(:user)
+    group = FactoryGirl.create(:group, owner: user)
+    group.create_participation(user, @user)
+    new_title = 'New title'
+    put :update, id: group.id, title: new_title
+    assert_response :success
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], group.title
+  end
+
+
 end

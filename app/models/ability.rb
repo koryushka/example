@@ -9,7 +9,7 @@ class Ability
     can [:show], Event do |event|
       event.participations.exists?(user: user)
     end
-    can :leave, Group do |group|
+    can [:leave, :update], Group do |group|
       group.participations.exists?(user: user)
     end
 
