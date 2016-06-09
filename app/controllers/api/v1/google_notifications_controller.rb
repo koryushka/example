@@ -1,5 +1,5 @@
 class Api::V1::GoogleNotificationsController < ApiController
-  before_filter :authorize_user_from_query_params
+  before_filter :authorize_user_from_query_params, except: [:notifications]
 
   def notifications
     p params.inspect
