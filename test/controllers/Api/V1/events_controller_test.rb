@@ -84,7 +84,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
   end
 
   #### Event update group
-  test 'should upadte existing event' do
+  test 'should update existing event' do
     event = FactoryGirl.create(:event, user: @user)
     new_title = Faker::Lorem.sentence(3)
     put :update, id: event.id, title: new_title
@@ -241,5 +241,25 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
 
     me.reload
     assert !me.muted?
+  end
+
+  test 'should fail to update event for non member user' do
+    user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: user)
+    new_title = Faker::Lorem.sentence(3)
+    put :update, id: event.id, title: new_title
+    assert_response :forbidden
+  end
+
+  test 'should update event if user is a member of the family' do
+    user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: user)
+    group = FactoryGirl.create(:group, owner: user)
+    group.create_participation(user, @user)
+    new_title = Faker::Lorem.sentence(3)
+    put :update, id: event.id, title: new_title
+    assert_response :success
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], event.title
   end
 end
