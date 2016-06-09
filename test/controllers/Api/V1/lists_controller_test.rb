@@ -87,4 +87,14 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
       List.find(list.id)
     end
   end
+
+  test 'should destroy list attached to event' do
+    list = FactoryGirl.create(:list_with_items, items_count: 5, user: @user)
+    FactoryGirl.create(:event, list: list)
+    delete :destroy, id: list.id
+    assert_response :no_content
+    assert_raises ActiveRecord::RecordNotFound do
+      List.find(list.id)
+    end
+  end
 end
