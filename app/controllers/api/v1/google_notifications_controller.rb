@@ -2,7 +2,7 @@ class Api::V1::GoogleNotificationsController < ApiController
   before_filter :authorize_user_from_query_params, except: [:notifications]
 
   def notifications
-    p params.inspect
+    logger.debug "Google params #{params.inspect}"
     render nothing: true
   end
 
