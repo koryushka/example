@@ -70,6 +70,12 @@ class List < AbstractModel
         key :'$ref', :Participation
       end
     end
+    property :public do
+      key :type, :boolean
+      key :description, "Specifies list. If it's true so All family members should be able to modify all attributes
+of the list with the exception of changing the ‘Public’ / ‘Private’ setting"
+      key :default, true
+    end
   end
 
   swagger_schema :ListInput do

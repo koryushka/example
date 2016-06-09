@@ -54,7 +54,7 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
   end
 
   #### list update group
-  test 'should upadte existing list' do
+  test 'should update existing list' do
     list = FactoryGirl.create(:list, user: @user)
     new_title = Faker::Lorem.word
     put :update, id: list.id, title: new_title
@@ -87,4 +87,23 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
       List.find(list.id)
     end
   end
+
+  test 'should fail to get list info for non family member user' do
+    user = FactoryGirl.create(:user)
+    list = FactoryGirl.create(:list, user: user)
+    get :show, id: list.id
+    assert_response :forbidden
+  end
+
+  test 'should get list info if user is a member of the family' do
+    user = FactoryGirl.create(:user)
+    group = FactoryGirl.create(:group, owner: user)
+    group.create_participation(user, @user)
+    list = FactoryGirl.create(:list, user: user)
+
+    get :show, id: list.id
+    assert_response :success
+    assert_not_nil json_response
+  end
+
 end
