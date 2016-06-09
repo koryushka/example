@@ -33,9 +33,9 @@ gem 'fog'
 gem 'fog-aws'
 gem 'cancancan', '~> 1.10'
 gem 'pubnub'
-gem 'aws-ses', '~> 0.6.0', require: 'aws/ses'
 gem 'swagger-blocks'
 gem 'aws-sdk'
+gem 'gibbon'
 
 # Use Capistrano for deployment
 group :development do

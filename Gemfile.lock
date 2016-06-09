@@ -47,11 +47,6 @@ GEM
       jmespath (~> 1.0)
     aws-sdk-resources (2.3.12)
       aws-sdk-core (= 2.3.12)
-    aws-ses (0.6.0)
-      builder
-      mail (> 2.2.5)
-      mime-types
-      xml-simple
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -271,6 +266,9 @@ GEM
       fog-core
       nokogiri (~> 1.5, >= 1.5.11)
     formatador (0.2.5)
+    gibbon (2.2.4)
+      faraday (>= 0.9.1)
+      multi_json (>= 1.11.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     google-api-client (0.9.8)
@@ -489,7 +487,6 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk
-  aws-ses (~> 0.6.0)
   bcrypt
   brakeman
   bullet
@@ -506,6 +503,7 @@ DEPENDENCIES
   faker
   fog
   fog-aws
+  gibbon
   google-api-client (~> 0.9)
   jbuilder (~> 2.0)
   minitest-rails
