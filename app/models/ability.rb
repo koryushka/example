@@ -15,9 +15,11 @@ class Ability
     can [:leave, :update], Group do |group|
       group.participations.exists?(user: user)
     end
-
     can :destroy, Device do |device|
       user.devices.exists?(device_token: device.device_token)
+    end
+    can [:show], List do |list|
+      user.family.present? && user.family.members.exists?(id: list.user_id) && list.public?
     end
 
     #Define abilities for the passed in user here. For example:
