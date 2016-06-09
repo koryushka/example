@@ -115,4 +115,24 @@ class Api::V1::ListsControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_nil json_response
   end
+
+  test 'should fail to update list for non member user' do
+    user = FactoryGirl.create(:user)
+    list = FactoryGirl.create(:list, user: user)
+    new_title = Faker::Lorem.sentence(3)
+    put :update, id: list.id, title: new_title
+    assert_response :forbidden
+  end
+
+  test 'should update list if user is a member of the family' do
+    user = FactoryGirl.create(:user)
+    list = FactoryGirl.create(:list, user: user)
+    group = FactoryGirl.create(:group, owner: user)
+    group.create_participation(user, @user)
+    new_title = Faker::Lorem.sentence(3)
+    put :update, id: list.id, title: new_title
+    assert_response :success
+    assert_equal json_response['title'], new_title
+    assert_not_equal json_response['title'], list.title
+  end
 end

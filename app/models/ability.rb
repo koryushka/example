@@ -18,7 +18,7 @@ class Ability
     can :destroy, Device do |device|
       user.devices.exists?(device_token: device.device_token)
     end
-    can [:show], List do |list|
+    can [:show, :update], List do |list|
       user.family.present? && user.family.members.exists?(id: list.user_id) && list.public?
     end
 
