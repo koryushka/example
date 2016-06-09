@@ -17,6 +17,8 @@ Rails.application.routes.draw do
       }
       get 'users/me' => 'users#me'
       #put 'users' => 'users#update'
+      post 'notifications', to: 'google_notifications#notifications'
+      post 'notification_subscription', to: 'google_notifications#notification_subscription'
       get 'google_auth', to: 'google_oauth#auth'
       get 'oauth2callback', to: 'google_oauth#oauth2callback'
       get 'google_oauth', to: 'google_oauth#google_oauth'
