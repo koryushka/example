@@ -68,7 +68,6 @@ class Api::V1::ListsController < ApiController
                            })
   end
 
-  # swagger_path /lists/{id}
   swagger_path '/lists/{id}' do
     operation :get do
       key :summary, 'Returns list object'
@@ -94,6 +93,20 @@ class Api::V1::ListsController < ApiController
       end # end response :default
       key :tags, ['Lists']
     end # end operation :get
+  end
+  def show
+    render partial: 'list', locals: { list: @list }
+  end
+
+  def create
+    @list = List.new(list_params)
+    @list.user = current_user
+
+    raise InternalServerErrorException unless @list.save
+    render partial: 'list', locals: { list: @list }, status: :created
+  end
+
+  swagger_path '/lists/{id}' do
     operation :put do
       key :summary, 'Updates list information by ID'
       parameter do
@@ -132,42 +145,8 @@ class Api::V1::ListsController < ApiController
         end
       end # end response :default
       key :tags, ['Lists']
-    end # end operation :put
-    operation :delete do
-      key :summary, 'Delete list'
-      key :description, 'Deletes list by ID'
-      parameter do
-        key :name, 'id'
-        key :description, "List's ID"
-        key :in, 'path'
-        key :required, true
-        key :type, :integer
-      end
-      # responses
-      response 204 do
-        key :description, 'Deleted'
-      end # end response 204
-      response :default do
-        key :description, 'Unexpected error'
-        schema do
-          key :'$ref', :Error
-        end
-      end # end response :default
-      key :tags, ['Lists']
-    end # end operation :delete
-  end # end /lists/{id}
-  def show
-    render partial: 'list', locals: { list: @list }
+    end
   end
-
-  def create
-    @list = List.new(list_params)
-    @list.user = current_user
-
-    raise InternalServerErrorException unless @list.save
-    render partial: 'list', locals: { list: @list }, status: :created
-  end
-
   def update
     @list.assign_attributes(list_params)
 
@@ -175,7 +154,34 @@ class Api::V1::ListsController < ApiController
     render partial: 'list', locals: { list: @list }
   end
 
+  swagger_path '/lists/{id}' do
+    operation :delete do
+      key :summary, 'Delete list'
+      key :description, 'Deletes list by ID  and detaches it from event if if was attached earlier'
+      parameter do
+        key :name, 'id'
+        key :description, "List's ID"
+        key :in, 'path'
+        key :required, true
+        key :type, :integer
+      end
+      response 204 do
+        key :description, 'Deleted'
+      end
+      response :default do
+        key :description, 'Unexpected error'
+        schema do
+          key :'$ref', :Error
+        end
+      end
+      key :tags, ['Lists']
+    end
+  end
   def destroy
+
+    @list.events.each do |event|
+      event.update(list_id: nil)
+    end if @list.events.size > 0
     @list.destroy
     render nothing: true, status: :no_content
   end
@@ -185,13 +191,6 @@ private
     params.permit(:title, :notes, :kind, :public)
   end
 
-  # ================================================================================
-  # Swagger::Blocks
-  # Swagger::Blocks is a DSL for pure Ruby code blocks that can be turned into JSON.
-  # SWAGGER PATH: Controller Lists
-  # ================================================================================
-
-  # swagger_path /lists/{id}/events
   swagger_path '/lists/{id}/events' do
     operation :get do
       key :summary, 'Show events'
