@@ -7,7 +7,7 @@ class Ability
     cannot :manage, Participation, user_id: user.id
     can [:accept, :decline], Participation, user_id: user.id
     can [:show], Event do |event|
-      event.participations.exists?(user: user)
+      event.participations.exists?(user: user) || user.family.present? && user.family.members.exists?(id: event.user_id)
     end
     can [:update], Event do |event|
       user.family.present? && user.family.members.exists?(id: event.user_id) && event.public?
