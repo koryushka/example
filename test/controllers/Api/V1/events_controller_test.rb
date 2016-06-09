@@ -254,7 +254,8 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
   test 'should update event if user is a member of the family' do
     user = FactoryGirl.create(:user)
     event = FactoryGirl.create(:event, user: user)
-    event.create_participation(user, @user)
+    group = FactoryGirl.create(:group, owner: user)
+    group.create_participation(user, @user)
     new_title = Faker::Lorem.sentence(3)
     put :update, id: event.id, title: new_title
     assert_response :success

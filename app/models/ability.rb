@@ -6,8 +6,11 @@ class Ability
     can :manage, Participation, sender_id: user.id
     cannot :manage, Participation, user_id: user.id
     can [:accept, :decline], Participation, user_id: user.id
-    can [:show, :update], Event do |event|
+    can [:show], Event do |event|
       event.participations.exists?(user: user)
+    end
+    can [:update], Event do |event|
+      user.family.present? && user.family.members.exists?(id: event.user_id) && event.public?
     end
     can [:leave, :update], Group do |group|
       group.participations.exists?(user: user)
