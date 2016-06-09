@@ -6,7 +6,7 @@ class Ability
     can :manage, Participation, sender_id: user.id
     cannot :manage, Participation, user_id: user.id
     can [:accept, :decline], Participation, user_id: user.id
-    can [:show], Event do |event|
+    can [:show, :update], Event do |event|
       event.participations.exists?(user: user)
     end
     can [:leave, :update], Group do |group|
