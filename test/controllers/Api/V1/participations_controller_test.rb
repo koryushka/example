@@ -166,5 +166,15 @@ class Api::V1::ParticipationsControllerTest < ActionController::TestCase
     end
   end
 
+  test 'should be able to remove himself from event' do
+    sender = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: sender)
+    participation = event.create_participation(sender, @user)
+    delete :destroy, event_id: event.id, id: participation.id
+    assert_response :success
+
+    event.reload
+    assert_equal 0, event.participations.size
+  end
 
 end
