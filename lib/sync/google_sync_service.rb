@@ -9,40 +9,68 @@ class GoogleSyncService
     end
   end
 
-  def sync(user_id, google_access_token=nil, calendar_id=nil)
+  def sync(user_id, google_access_token=nil, calendar_id=nil, after_notification=false)
     user = User.find_by_id(user_id)
-    puts "USER_ID #{user_id}"
     accounts = []
     #move code to model
     if google_access_token
       authorize google_access_token
       accounts << [@service, google_access_token]
+      if calendar_id
+        calendar = Calendar.find_by(google_calendar_id: calendar_id,
+          google_access_token_id: google_access_token.id) unless after_notification
+        build_channel(google_access_token, calendar) if calendar
+      else
+        unless after_notification
+          build_channel(google_access_token)
+          google_access_token.calendars.each do |calendar|
+            build_channel(google_access_token, calendar)
+          end
+        end
+      end
     else
+      puts "USER_ID #{user_id}"
       user.google_access_tokens.where('synchronizable IS true AND revoked IS NOT true')
         .each do |google_access_token|
           authorize google_access_token
           accounts << [@service, google_access_token]
       end
     end
-
+    
     accounts.each do |service|
       access_token = service[0].authorization.access_token
       next unless access_token
       account = account(service[1])
       next unless account
       parser = GoogleCalendars.new(user, service, account)
-      parser.import_calendars(calendar_id)
+      parser.import_calendars(calendar_id, after_notification)
       google_events_ids = get_google_events_ids(parser.items)
       local_events_ids = get_local_event_ids(user_id, account)
       compare_ids(google_events_ids, local_events_ids)
     end
+
   end
 
   private
 
-  def prepare_accounts(google_access_token, accounts)
-    authorize google_access_token
-    accounts << [@service, google_access_token]
+  def build_channel(google_access_token, calendar = nil)
+    object = calendar || google_access_token
+    unless object.google_channel
+      google_channel = object.build_google_channel
+      notifier = GoogleNotifications.new
+      notifier.subscribe(google_access_token, calendar)
+      resp_body = notifier.instance_eval {@body}
+      p "RESPONSE FROM GOOGLE NOTIFY #{resp_body.inspect}"
+      if channel_id = resp_body[:id]
+        google_channel.update_attributes(uuid: channel_id, google_resource_id: resp_body[:resourceId])
+      else
+        logger.debug "GOOGLE NOTIFICATION ERROR: #{resp_body.inspect}"
+      end
+    end
+  end
+
+  def prepare_accounts(accounts, user)
+
   end
 
   def get_google_events_ids(items)

@@ -1,56 +1,35 @@
 class Api::V1::GoogleNotificationsController < ApiController
-  before_filter :authorize_user_from_query_params, except: [:notifications]
+  # before_filter :authorize_user_from_query_params, except: [:notifications, :notification_subscription]
 
   def notifications
-    logger.debug "Google params #{params.inspect}"
-    logger.debug "Google params #{request.headers.inspect}"
+    google_resource_id = request.headers['HTTP_X_GOOG_RESOURCE_ID']
+    uuid = request.headers['HTTP_X_GOOG_CHANNEL_ID']
+    # logger.debug "Google params #{params.inspect}"
+    # logger.debug "Google params #{request.headers.inspect}"
+    google_channel = GoogleChannel.find_by(uuid: uuid, google_resource_id: google_resource_id)
+    if google_channel
+      changed_object = google_channel.channelable
+      update_changed_object changed_object
+    end
     render nothing: true
-  end
-
-  def notification_subscription
-
-    # data = {
-    #   id:  "channel_id" ,
-    #   type: "web_hook",
-    #   address: Rails.application.secrets.google_notification_url
-    # }
-    # if calendar_id = params[:calendar_id]
-    #   uri = "https://www.googleapis.com/calendar/v3/calendars/#{calendar_id}/events/watch"
-    # else
-    #   uri = 'https://www.googleapis.com/calendar/v3/users/me/calendarList/watch'
-    # end
-    # uri = 'https://www.googleapis.com/calendar/v3/users/me/calendarList/watch'
-    # response = Net::HTTP.post_form(URI.parse(uri), data)
-    # render json: {response: response.body}
   end
 
   private
 
-  def channel_id(calendar_id)
-    Channel.find_or_create_by(user_id: current_user.id, resource_id: ca )
+  def update_changed_object(changed_object)
+    user_id = changed_object.user_id
+    if changed_object.class == 'GoogleAccessToken'
+      google_access_token = changed_object
+      calendar_id = nil
+    elsif changed_object.class == 'Calendar'
+      google_access_token = changed_object.google_access_token
+      calendar_id = changed_object.google_calendar_id
+    end
+    GoogleSyncService.new.sync(user_id, google_access_token, calendar_id, true)
   end
 
   def unauth_actions
-    [:notifications, :notification_subscription]
-  end
-
-  def authorize_user_from_query_params
-    return unless token_present?
-    render nothing: true, status: 401 and return unless current_user_id(params[:token])
-  end
-
-  def current_user_id(token)
-    doorkeeper_token = Doorkeeper::AccessToken.find_by(token: token, revoked_at: nil)
-    @current_user_id = doorkeeper_token.try(:resource_owner_id)
-  end
-
-  def token_present?
-    if params[:token].blank?
-      render json: {error: 'Token required'}, status: 401
-      false
-    else
-      true
-    end
+    [:notifications]
   end
 
 end
