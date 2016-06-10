@@ -137,8 +137,6 @@ class Api::V1::ParticipationsController < ApiController
     @participations = []
 
     participation_params[:emails].each do |email|
-      # go to next if user want to add himself
-      next if current_user.email == email
       # go to next email if user already accepted participation
       next if current_user.sent_paticipations.exists?(email: email,
                                                       participationable_type: participationable.class.name,
@@ -166,7 +164,7 @@ class Api::V1::ParticipationsController < ApiController
                            participationable_type: participationable.class.name,
                            participationable_id: participationable.id)
       user = User.where(id: user_id).first
-      next if user.nil?
+      next if user.nil? || user.id == current_user.id
 
       if participationable.respond_to? :create_participation
         @participations << participationable.create_participation(current_user, user)
