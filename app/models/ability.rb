@@ -4,7 +4,7 @@ class Ability
   def initialize(user)
     can :manage, :all, user_id: user.id
     can :manage, Participation, sender_id: user.id
-    cannot :manage, Participation, user_id: user.id
+    # cannot :manage, Participation, user_id: user.id
     can [:accept, :decline], Participation, user_id: user.id
     can [:show], Event do |event|
       event.participations.exists?(user: user) || user.family.present? && user.family.members.exists?(id: event.user_id)
@@ -20,9 +20,6 @@ class Ability
     end
     can [:show, :update], List do |list|
       user.family.present? && user.family.members.exists?(id: list.user_id) && list.public?
-    end
-    can :destroy, Event do |event|
-      event.participations.exists?(user: user)
     end
 
     #Define abilities for the passed in user here. For example:
