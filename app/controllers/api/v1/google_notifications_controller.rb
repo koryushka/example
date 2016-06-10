@@ -3,6 +3,7 @@ class Api::V1::GoogleNotificationsController < ApiController
 
   def notifications
     logger.debug "Google params #{params.inspect}"
+    logger.debug "Google params #{request.headers.inspect}"
     render nothing: true
   end
 
