@@ -1,3 +1,3 @@
 class GoogleChannel < ActiveRecord::Base
-  belongs_to :user
+  belongs_to :channelable, polymorphic: true
 end

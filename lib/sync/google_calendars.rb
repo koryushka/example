@@ -7,7 +7,7 @@ class GoogleCalendars
     @items = []
   end
 
-  def import_calendars(calendar_id=nil)
+  def import_calendars(calendar_id=nil, after_notification=nil)
     calendar_list = calendar_id ? [@service.get_calendar(calendar_id)] :
       @service.list_calendar_lists.items
     calendars = []
@@ -17,18 +17,22 @@ class GoogleCalendars
         google_access_token_id: @gat.id
 
       ) do |calendar|
-        calendar.color = item.background_color
-        calendar.title = item.summary
-        calendar.account = @account
-        calendar.user_id = @current_user.id
+        unless calendar_id
+          calendar.color = item.background_color
+          calendar.title = item.summary
+          calendar.account = @account
+          calendar.user_id = @current_user.id
+        end
       end
-      if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
-        google_calendar.update_attributes(
-          color: item.background_color,
-          title: item.summary,
-          account: @account,
-          user_id: @current_user.id
-        )
+      unless calendar_id
+        if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
+          google_calendar.update_attributes(
+            color: item.background_color,
+            title: item.summary,
+            account: @account,
+            user_id: @current_user.id
+          )
+        end
       end
 
       if google_calendar.should_be_synchronised?
@@ -55,6 +59,7 @@ class GoogleCalendars
     parent_events.each do |item|
       remove_frequency
       @frequency = get_frequency item
+      p "USER #{@current_user}"
       @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid, user_id: @current_user.id) do |event|
         event.google_event_id = item.id
         event.calendar_id = google_calendar.id

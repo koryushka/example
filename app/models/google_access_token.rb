@@ -6,6 +6,7 @@ class GoogleAccessToken < ActiveRecord::Base
   validates :token, presence: true
   validates :refresh_token, presence: true
 
+  has_one :google_channel, as: :channelable, dependent: :destroy
 
   def expired?
     Time.now.utc >= self.expires_at

@@ -13,7 +13,6 @@ class User < ActiveRecord::Base
   has_many :participations
   has_many :devices, dependent: :destroy
   has_many :google_access_tokens, dependent: :destroy
-  has_many :google_channels, dependent: :destroy
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
