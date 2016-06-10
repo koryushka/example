@@ -93,7 +93,7 @@ class Api::V1::ParticipationsController < ApiController
       end
       parameter do
         key :name, :resource_id
-        key :description, "Can be 'lists', 'events' or 'groups'"
+        key :description, "id of 'lists', 'events' or 'groups'"
         key :type, :integer
         key :in, :path
         key :required, true
@@ -137,6 +137,8 @@ class Api::V1::ParticipationsController < ApiController
     @participations = []
 
     participation_params[:emails].each do |email|
+      # go to next if user want to add himself
+      next if current_user.email == email
       # go to next email if user already accepted participation
       next if current_user.sent_paticipations.exists?(email: email,
                                                       participationable_type: participationable.class.name,
