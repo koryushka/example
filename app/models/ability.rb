@@ -21,6 +21,9 @@ class Ability
     can [:show, :update], List do |list|
       user.family.present? && user.family.members.exists?(id: list.user_id) && list.public?
     end
+    can :destroy, Event do |event|
+      event.participations.exists?(user: user)
+    end
 
     #Define abilities for the passed in user here. For example:
     # if user
