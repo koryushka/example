@@ -93,7 +93,7 @@ class Api::V1::ParticipationsController < ApiController
       end
       parameter do
         key :name, :resource_id
-        key :description, "Can be 'lists', 'events' or 'groups'"
+        key :description, "id of 'lists', 'events' or 'groups'"
         key :type, :integer
         key :in, :path
         key :required, true
@@ -164,7 +164,7 @@ class Api::V1::ParticipationsController < ApiController
                            participationable_type: participationable.class.name,
                            participationable_id: participationable.id)
       user = User.where(id: user_id).first
-      next if user.nil?
+      next if user.nil? || user.id == current_user.id
 
       if participationable.respond_to? :create_participation
         @participations << participationable.create_participation(current_user, user)

@@ -155,4 +155,16 @@ class Api::V1::ParticipationsControllerTest < ActionController::TestCase
     assert_response :not_acceptable
   end
 
+  test 'should not be able to invite participants to own resource' do
+    email = @user.email
+    resources_types.each do |resource_type|
+      resource = FactoryGirl.create(resource_type, user: @user)
+      post :create, "#{resource_type}_id": resource.id, emails: [email]
+      assert_response :success
+
+      assert_equal 0, resource.participations.size
+    end
+  end
+
+
 end
