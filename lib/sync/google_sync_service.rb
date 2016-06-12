@@ -36,7 +36,7 @@ class GoogleSyncService
           accounts << [@service, google_access_token]
       end
     end
-    
+
     accounts.each do |service|
       access_token = service[0].authorization.access_token
       next unless access_token
