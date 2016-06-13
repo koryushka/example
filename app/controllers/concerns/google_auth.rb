@@ -10,7 +10,7 @@ module GoogleAuth
     end
   end
 
-  def refresh_token(google_access_token)
+  def refresh_token!(google_access_token)
     uri = google_token_uri
     data = {
       grant_type: 'refresh_token',
@@ -30,8 +30,6 @@ module GoogleAuth
         unless google_access_token.update_attributes(
           token: body['access_token'],
           expires_at: Time.now.utc + body['expires_in'].to_i)
-          puts google_access_token.errors.full_messages
-          puts body
         end
       rescue OpenURI::HTTPError => e
         p "ERROR #{e.inspect}"
@@ -40,7 +38,7 @@ module GoogleAuth
   end
 
   def authorize(google_access_token)
-    refresh_token google_access_token if (google_access_token.expired? && !google_access_token.revoked?)
+    refresh_token! google_access_token if (google_access_token.expired? && !google_access_token.revoked?)
     client = Signet::OAuth2::Client.new(access_token: google_access_token.token)
     @service = Google::Apis::CalendarV3::CalendarService.new
     @service.authorization = client

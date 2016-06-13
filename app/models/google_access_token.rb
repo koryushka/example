@@ -1,5 +1,6 @@
 class GoogleAccessToken < ActiveRecord::Base
   include Swagger::Blocks
+  include GoogleAuth
   belongs_to :user
   has_many :calendars, dependent: :destroy
 
@@ -31,6 +32,21 @@ class GoogleAccessToken < ActiveRecord::Base
 
   def revoked?
     self.revoked
+  end
+
+  #TODO dry
+  def unsubscribe!
+    authorize self
+    subscription_service = GoogleNotifications.new(self)
+    remove_channel(self, subscription_service)
+    self.calendars.each { |calendar| remove_channel(calendar, subscription_service) } unless self.calendars.empty?
+  end
+
+  def remove_channel(resource, service)
+    google_channel = resource.google_channel
+    channel_id, resource_id = google_channel.uuid, google_channel.google_resource_id
+    service.unsubscribe(channel_id, resource_id)
+    google_channel.destroy
   end
 
   swagger_schema :ArrayOfAccounts do

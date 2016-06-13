@@ -18,7 +18,7 @@ class Api::V1::GoogleOauthController < ApiController
     rescue OpenURI::HTTPError => error
       gat = GoogleAccessToken.find_by(refresh_token: refresh_token, user_id: @current_user_id)
       if gat
-        refresh_token gat
+        refresh_token! gat
         @access_token = gat.token
         google_oauth
         return
@@ -135,7 +135,7 @@ class Api::V1::GoogleOauthController < ApiController
     @access_token || params[:access_token] || @response['access_token']
   end
 
-  def refresh_token
+  def get_refresh_token
     params[:refresh_token] || @response['refresh_token']
   end
 
@@ -177,7 +177,7 @@ class Api::V1::GoogleOauthController < ApiController
 
   def google_token_params
     parameters = {
-      refresh_token: refresh_token,
+      refresh_token: get_refresh_token,
       token: access_token,
       revoked: false,
       synchronizable: true
