@@ -20,7 +20,9 @@ class GoogleSyncService
       if calendar_id
         calendar = Calendar.find_by(google_calendar_id: calendar_id,
           google_access_token_id: google_access_token.id)
-        build_channel(google_access_token, calendar) if calendar
+        if calendar && !calendar.google_channel
+          build_channel(google_access_token, calendar)
+        end
       end
     else
       puts "USER_ID #{user_id}"
@@ -46,10 +48,10 @@ class GoogleSyncService
       end
     end
 
-    if google_access_token
-        build_channel(google_access_token)
+    if google_access_token && !calendar_id
+        build_channel(google_access_token) unless google_access_token.google_channel
         google_access_token.calendars.each do |calendar|
-          build_channel(google_access_token, calendar)
+          build_channel(google_access_token, calendar) unless calendar.google_channel
       end
     end
   end
