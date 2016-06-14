@@ -5,7 +5,8 @@ class ApiController < ActionController::Base
     doorkeeper_authorize! unless should_pass?
   end
 
-  rescue_from CanCan::AccessDenied do
+  rescue_from CanCan::AccessDenied do |exception|
+    Rails.logger.debug "Access denied on #{exception.action} #{exception.subject.inspect}"
     render json: {
         code: 2,
         message: t('errors.messages.not_permitted')

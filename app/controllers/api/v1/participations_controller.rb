@@ -6,8 +6,8 @@ class Api::V1::ParticipationsController < ApiController
     find_entity_of_type(:participation, {invitation_token: params[:token], status: Participation::PENDING})
   end
   after_filter :something_updated, except: [:index, :index_recent, :link_accept]
-  authorize_resource except: [:link_accept]
-  check_authorization unless: :should_pass?
+  authorize_resource except: [:link_accept, :destroy]
+  check_authorization unless: :should_pass?, except: :destroy
 
   swagger_path '/{resource}/{resource_id}/participations' do
     operation :get do
@@ -133,6 +133,7 @@ class Api::V1::ParticipationsController < ApiController
   # must be refactoried!
   def create
     participationable = find_participationable
+    authorize! :create_participation, participationable
     existing_users = participation_params[:user_ids] || []
     @participations = []
 
@@ -230,7 +231,9 @@ class Api::V1::ParticipationsController < ApiController
   end
 
   def destroy
-    find_participationable.participations.destroy(@participation)
+    participationable = find_participationable
+    authorize! :destroy_participation, participationable
+    participationable.participations.destroy(@participation)
     render nothing: true
   end
 

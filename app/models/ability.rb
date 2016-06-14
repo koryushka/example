@@ -4,16 +4,38 @@ class Ability
   def initialize(user)
     can :manage, :all, user_id: user.id
     can :manage, Participation, sender_id: user.id
-    # cannot :manage, Participation, user_id: user.id
-    can [:accept, :decline], Participation, user_id: user.id
+
+    # can :create, Participation do |part|
+    #   case part.participationable_type
+    #     when Group.name
+    #       user.family.present? && user.family.id == p.participationable_id
+    #     else
+    #       # replaces [can :manage, Participation, sender_id: user.id]
+    #       # user.id == part.sender_id
+    #       true
+    #   end
+    # end
+    # can [:index, :index_recent, :destroy, :accept, :decline], Participation, sender_id: user.id
+    can [:create_participation, :destroy_participation], Group do |group|
+      family = user.family
+      family.present? && family.id == group.id
+    end
+
+    can [:destroy_participation], Event do |event|
+      event.participations.exists?(user_id: user.id)
+    end
+
     can [:show], Event do |event|
       event.participations.exists?(user: user) || user.family.present? && user.family.members.exists?(id: event.user_id)
     end
     can [:update], Event do |event|
       user.family.present? && user.family.members.exists?(id: event.user_id) && event.public?
     end
-    can [:leave, :update], Group do |group|
+    can :show, Group do |group|
       group.participations.exists?(user: user)
+    end
+    can [:leave, :update], Group do |group|
+      group.participations.exists?(user: user) && group.user_id != user.id
     end
     can :destroy, Device do |device|
       user.devices.exists?(device_token: device.device_token)
