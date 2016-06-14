@@ -1,5 +1,4 @@
 class Api::V1::GoogleNotificationsController < ApiController
-  # before_filter :authorize_user_from_query_params, except: [:notifications, :notification_subscription]
 
   def notifications
     google_resource_id = request.headers['HTTP_X_GOOG_RESOURCE_ID']
@@ -18,10 +17,10 @@ class Api::V1::GoogleNotificationsController < ApiController
 
   def update_changed_object(changed_object)
     user_id = changed_object.user_id
-    if changed_object.class == 'GoogleAccessToken'
+    if changed_object.class == GoogleAccessToken
       google_access_token = changed_object
       calendar_id = nil
-    elsif changed_object.class == 'Calendar'
+    elsif changed_object.class == Calendar
       google_access_token = changed_object.google_access_token
       calendar_id = changed_object.google_calendar_id
     end

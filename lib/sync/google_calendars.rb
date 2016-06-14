@@ -7,19 +7,17 @@ class GoogleCalendars
     @items = []
   end
 
-  def import_calendars(calendar_id=nil, after_notification=nil)
+  def import_calendars(calendar_id=nil, parse_events=nil)
     items = @service.list_calendar_lists.items
     calendar_list = calendar_id ? items.select {|item| item.id == calendar_id} : items
-    unless calendar_id
-      google_calendars_ids = get_google_calendars_ids(calendar_list)
-      local_calendars_ids = get_local_calendars_ids(@current_user.id, @account)
-      compare_calendars(google_calendars_ids, local_calendars_ids)
-    end
+    google_calendars_ids = get_google_calendars_ids(calendar_list)
+    local_calendars_ids = get_local_calendars_ids(@current_user.id, @account)
+    compare_calendars(google_calendars_ids, local_calendars_ids)
+
     calendar_list.each do |item|
       google_calendar = Calendar.find_or_create_by(
         google_calendar_id: item.id,
         google_access_token_id: @gat.id
-
       ) do |calendar|
           calendar.color = item.background_color
           calendar.title = item.summary
@@ -27,18 +25,16 @@ class GoogleCalendars
           calendar.user_id = @current_user.id
       end
 
-      unless calendar_id
-        if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
-          google_calendar.update_attributes(
-            color: item.background_color,
-            title: item.summary,
-            account: @account,
-            user_id: @current_user.id
-          )
-        end
+      if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
+        google_calendar.update_attributes(
+          color: item.background_color,
+          title: item.summary,
+          account: @account,
+          user_id: @current_user.id
+        )
       end
 
-      if google_calendar.should_be_synchronised?
+      if google_calendar.should_be_synchronised? && parse_events
         parse_events_from_calendar(google_calendar)
       end
     end

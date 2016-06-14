@@ -37,7 +37,7 @@ class Api::V1::AccountsController < ApiController
       elsif params[:synchronizable] == true
         GoogleSyncService.new.sync(current_user.id, @account)
       end
-      render :show, status: 201
+      render :show, status: 204
     else
       raise InternalServerErrorException
     end

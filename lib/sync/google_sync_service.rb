@@ -9,7 +9,8 @@ class GoogleSyncService
     end
   end
 
-  def sync(user_id, google_access_token=nil, calendar_id=nil)
+  def sync(user_id, google_access_token=nil, calendar_id=nil, after_notification=nil)
+
     user = User.find_by_id(user_id)
     accounts = []
     #move code to model
@@ -29,6 +30,7 @@ class GoogleSyncService
           accounts << [@service, google_access_token]
       end
     end
+    parse_google_events = parse_events(calendar_id, after_notification)
 
     accounts.each do |service|
       access_token = service[0].authorization.access_token
@@ -36,10 +38,12 @@ class GoogleSyncService
       account = account(service[1])
       next unless account
       parser = GoogleCalendars.new(user, service, account)
-      parser.import_calendars(calendar_id)
-      google_events_ids = get_google_events_ids(parser.items)
-      local_events_ids = get_local_event_ids(user_id, account)
-      compare_ids(google_events_ids, local_events_ids)
+      parser.import_calendars(calendar_id, parse_google_events)
+      if parse_google_events
+        google_events_ids = get_google_events_ids(parser.items)
+        local_events_ids = get_local_event_ids(user_id, account)
+        compare_ids(google_events_ids, local_events_ids)
+      end
     end
 
     if google_access_token
@@ -52,6 +56,13 @@ class GoogleSyncService
 
   private
 
+  def parse_events(calendar_id, after_notification)
+    if !calendar_id && after_notification
+      false
+    else
+      true
+    end
+  end
   def build_channel(google_access_token, calendar = nil)
     object = calendar || google_access_token
     unless object.google_channel
