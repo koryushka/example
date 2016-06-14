@@ -68,15 +68,16 @@ class GoogleSyncService
   def build_channel(google_access_token, calendar = nil)
     object = calendar || google_access_token
     unless object.google_channel
-      google_channel = object.build_google_channel
+      # google_channel = object.build_google_channel
       notifier = GoogleNotifications.new(google_access_token)
       notifier.subscribe(calendar)
       resp_body = notifier.instance_eval {@body}
       resp_body = Rails.env.development? ? resp_body : JSON.parse(resp_body)
       Rails.logger.debug "RESPONSE FROM GOOGLE NOTIFY #{resp_body.inspect}"
       if channel_id = (resp_body['id'] || resp_body[:id])
-        google_channel.update_attributes(uuid: channel_id, google_resource_id: resp_body['resourceId'])
-        Rails.logger.debug "GOOGLE CANNEL CREATED #{google_channel.inspect}"
+        # google_channel.update_attributes(uuid: channel_id, google_resource_id: resp_body['resourceId'])
+        GoogleChannel.create(uuid: channel_id, google_resource_id: resp_body['resourceId'], channelable_id: object.id)
+        Rails.logger.debug "GOOGLE CHANNEL CREATED #{google_channel.inspect}"
       else
         Rails.logger.debug "GOOGLE NOTIFICATION ERROR: #{resp_body.inspect}"
       end
