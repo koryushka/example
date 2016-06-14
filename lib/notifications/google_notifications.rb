@@ -13,7 +13,7 @@ class GoogleNotifications
         ttl: '1426325213000'
       }
     }
-    url = calendar ? URI.escape("https://www.googleapis.com/calendar/v3/calendars/#{calendar.google_calendar_id}/events/watch") :
+    url = calendar ? "https://www.googleapis.com/calendar/v3/calendars/#{URI.escape(calendar.google_calendar_id)}/events/watch") :
       'https://www.googleapis.com/calendar/v3/users/me/calendarList/watch'
 
     post_request(url, data)
