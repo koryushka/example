@@ -49,6 +49,7 @@ class GoogleNotifications
     req = Net::HTTP::Post.new(uri.path, initheader = {'Content-Type' =>'application/json'})
     req['Authorization'] = "Bearer #{@google_access_token.token}"
     req.body = data.to_json
+    Rails.logger.debug "REQUEST URL #{url}"
     Rails.logger.debug "GOOGLE REQUEST #{req.body}"
     @response = https.request(req)
   end
