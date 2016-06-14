@@ -72,7 +72,7 @@ class GoogleSyncService
       resp_body = notifier.instance_eval {@body}
       resp_body = Rails.env.development? ? resp_body : JSON.parse(resp_body)
       Rails.logger.debug "RESPONSE FROM GOOGLE NOTIFY #{resp_body.inspect}"
-      if channel_id = resp_body['id'] || resp_body[:id]
+      if channel_id = (resp_body['id'] || resp_body[:id])
         google_channel.update_attributes(uuid: channel_id, google_resource_id: resp_body['resourceId'])
       else
         Rails.logger.debug "GOOGLE NOTIFICATION ERROR: #{resp_body.inspect}"
