@@ -14,7 +14,7 @@ class GoogleCalendars
     local_calendars_ids = get_local_calendars_ids(@current_user.id, @account)
     Rails.logger.debug "GOOGLE CALENDAR IDS #{google_calendars_ids}"
     Rails.logger.debug "LOCAL CALENDAR IDS #{local_calendars_ids}"
-    # compare_calendars(google_calendars_ids, local_calendars_ids)
+    compare_calendars(google_calendars_ids, local_calendars_ids)
 
     calendar_list.each do |item|
       google_calendar = Calendar.find_or_create_by(
