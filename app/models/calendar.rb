@@ -1,5 +1,6 @@
 class Calendar < AbstractModel
   include Swagger::Blocks
+  include GoogleAuth
 
   belongs_to :user
   belongs_to :google_access_token
@@ -60,6 +61,19 @@ class Calendar < AbstractModel
                          :event_recurrences, :participations,
                          :event_cancellations).destroy_all
   end
+
+  #TODO dry
+  def unsubscribe!
+    self_channel = self.google_channel
+    channel_id = self_channel.uuid
+    resource_id = self_channel.google_resource_id
+    google_access_token = self.google_access_token
+    authorize google_access_token
+    subscription_service = GoogleNotifications.new(google_access_token)
+    subscription_service.unsubscribe(channel_id, resource_id)
+    self_channel.destroy
+  end
+
 
 
 

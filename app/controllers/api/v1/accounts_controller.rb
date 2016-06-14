@@ -33,10 +33,11 @@ class Api::V1::AccountsController < ApiController
     if @account.update_attributes(account_params)
       if params[:synchronizable] == false
         @account.remove_calendars
-    elsif params[:synchronizable] == true
-      GoogleSyncService.new.sync(current_user.id, @account)
-    end
-      render :show, status: 201
+        @account.unsubscribe! if @account.google_channel
+      elsif params[:synchronizable] == true
+        GoogleSyncService.new.sync(current_user.id, @account)
+      end
+      render :show, status: 204
     else
       raise InternalServerErrorException
     end

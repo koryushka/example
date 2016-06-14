@@ -148,6 +148,7 @@ class Api::V1::CalendarsController < ApiController
     if @calendar.update_attributes(calendar_params)
       if params[:synchronizable] == false
         @calendar.remove_events
+        @calendar.unsubscribe! if @calendar.google_channel
       elsif params[:synchronizable] == true
         account = @calendar.google_access_token
         GoogleSyncService.new.sync current_user.id, account, @calendar.google_calendar_id

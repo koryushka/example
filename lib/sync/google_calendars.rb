@@ -7,41 +7,55 @@ class GoogleCalendars
     @items = []
   end
 
-  def import_calendars(calendar_id=nil, after_notification=nil)
-    calendar_list = calendar_id ? [@service.get_calendar(calendar_id)] :
-      @service.list_calendar_lists.items
-    calendars = []
+  def import_calendars(calendar_id=nil, parse_events=nil)
+    items = @service.list_calendar_lists.items
+    calendar_list = calendar_id ? items.select {|item| item.id == calendar_id} : items
+    google_calendars_ids = get_google_calendars_ids(calendar_list)
+    local_calendars_ids = get_local_calendars_ids(@current_user.id, @account)
+    compare_calendars(google_calendars_ids, local_calendars_ids)
+
     calendar_list.each do |item|
       google_calendar = Calendar.find_or_create_by(
         google_calendar_id: item.id,
         google_access_token_id: @gat.id
-
       ) do |calendar|
-        unless calendar_id
           calendar.color = item.background_color
           calendar.title = item.summary
           calendar.account = @account
           calendar.user_id = @current_user.id
-        end
-      end
-      unless calendar_id
-        if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
-          google_calendar.update_attributes(
-            color: item.background_color,
-            title: item.summary,
-            account: @account,
-            user_id: @current_user.id
-          )
-        end
       end
 
-      if google_calendar.should_be_synchronised?
+      if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
+        google_calendar.update_attributes(
+          color: item.background_color,
+          title: item.summary,
+          account: @account,
+          user_id: @current_user.id
+        )
+      end
+
+      if google_calendar.should_be_synchronised? && parse_events
         parse_events_from_calendar(google_calendar)
       end
     end
   end
 
   private
+
+  def get_google_calendars_ids(calendar_list)
+    calendar_list.map {|calendar| calendar.id}
+  end
+
+  def get_local_calendars_ids(user_id, account)
+    Calendar.where('google_calendar_id IS NOT NULL AND calendars.user_id = ? AND account = ?', user_id, account)
+      .pluck(:google_calendar_id)
+  end
+
+  def compare_calendars(google_calendars_ids, local_calendars_ids)
+    result = local_calendars_ids - google_calendars_ids
+    Calendar.where('google_calendar_id in (?)', result).destroy_all
+  end
+
   def calendar_attributes_changed?(item, calendar)
     #add logic
     true
@@ -59,7 +73,6 @@ class GoogleCalendars
     parent_events.each do |item|
       remove_frequency
       @frequency = get_frequency item
-      p "USER #{@current_user}"
       @event = Event.find_or_initialize_by(google_event_uniq_id: item.i_cal_uid, user_id: @current_user.id) do |event|
         event.google_event_id = item.id
         event.calendar_id = google_calendar.id
