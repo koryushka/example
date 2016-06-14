@@ -17,7 +17,7 @@ class GoogleCalendars
       Rails.logger.debug "LOCAL CALENDAR IDS #{local_calendars_ids}"
       compare_calendars(google_calendars_ids, local_calendars_ids)
     end
-
+    Rails.logger.debug "GOOGLE CALENDAR LIST #{calendar_list.inspect}"
     calendar_list.each do |item|
       google_calendar = Calendar.find_or_create_by(
         google_calendar_id: item.id,
@@ -28,6 +28,7 @@ class GoogleCalendars
           calendar.account = @account
           calendar.user_id = @current_user.id
       end
+      Rails.logger.debug "GOOGLE CALENDAR TO UPDATE #{google_calendar.inspect}"
 
       if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
         google_calendar.update_attributes(
