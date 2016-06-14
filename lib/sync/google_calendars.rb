@@ -10,11 +10,13 @@ class GoogleCalendars
   def import_calendars(calendar_id=nil, parse_events=nil)
     items = @service.list_calendar_lists.items
     calendar_list = calendar_id ? items.select {|item| item.id == calendar_id} : items
-    google_calendars_ids = get_google_calendars_ids(calendar_list)
-    local_calendars_ids = get_local_calendars_ids(@current_user.id, @account)
-    Rails.logger.debug "GOOGLE CALENDAR IDS #{google_calendars_ids}"
-    Rails.logger.debug "LOCAL CALENDAR IDS #{local_calendars_ids}"
-    compare_calendars(google_calendars_ids, local_calendars_ids)
+    unless calendar_id
+      google_calendars_ids = get_google_calendars_ids(calendar_list)
+      local_calendars_ids = get_local_calendars_ids(@current_user.id, @account)
+      Rails.logger.debug "GOOGLE CALENDAR IDS #{google_calendars_ids}"
+      Rails.logger.debug "LOCAL CALENDAR IDS #{local_calendars_ids}"
+      compare_calendars(google_calendars_ids, local_calendars_ids)
+    end
 
     calendar_list.each do |item|
       google_calendar = Calendar.find_or_create_by(
@@ -55,6 +57,7 @@ class GoogleCalendars
 
   def compare_calendars(google_calendars_ids, local_calendars_ids)
     result = local_calendars_ids - google_calendars_ids
+    Rails.logger.debug "RESULT(diff) #{result}"
     Calendar.where('google_calendar_id in (?)', result).destroy_all
   end
 
