@@ -177,4 +177,26 @@ class Api::V1::ParticipationsControllerTest < ActionController::TestCase
     assert_equal 0, event.participations.size
   end
 
+  test 'should send push notification when invite participants to resources' do
+    emails = Array.new(5) { Faker::Internet.email }
+    existing_user = FactoryGirl.create(:user)
+    emails << existing_user.email
+
+    resources_types.each do |resource_type|
+      resource = FactoryGirl.create(resource_type, user: @user)
+      sns = ApiHelper::Sns.new
+      sns.stub :send, nil do
+        post :create, "#{resource_type}_id": resource.id, emails: emails
+        assert_response :success
+      end
+    end
+
+    users = FactoryGirl.create_list(:user, 5)
+    resources_types.each do |resource_type|
+      resource = FactoryGirl.create(resource_type, user: @user)
+      post :create, "#{resource_type}_id": resource.id, user_ids: users.map { |user| user.id }
+      assert_response :success
+    end
+  end
+
 end

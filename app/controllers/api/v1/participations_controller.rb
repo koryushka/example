@@ -175,6 +175,13 @@ class Api::V1::ParticipationsController < ApiController
       end
     end
 
+    # AWS SNS instance
+    sns = ApiHelper::Sns.new
+    # Formation of payload
+    payload = {alert: participationable.title}
+    # SNS publishing
+    sns.send(current_user.id, payload)
+
     render 'index'
   end
 
