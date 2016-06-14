@@ -8,7 +8,7 @@ class Api::V1::GoogleNotificationsController < ApiController
     google_channel = GoogleChannel.find_by(uuid: uuid, google_resource_id: google_resource_id)
     if google_channel
       changed_object = google_channel.channelable
-      update_changed_object changed_object
+      update_changed_object changed_object if changed_object
     end
     render nothing: true
   end
