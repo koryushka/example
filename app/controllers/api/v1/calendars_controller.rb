@@ -160,7 +160,9 @@ class Api::V1::CalendarsController < ApiController
   end
 
   def destroy
-    @calendar.destroy
+    if @calendar.destroy
+      @calendar.unsubscribe! if @calendar.google_channel
+    end
     render nothing: true, status: :no_content
   end
 
