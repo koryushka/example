@@ -25,7 +25,7 @@ module ApiHelper
           default: 'Platform was not found',
           APNS: {
                   aps: {
-                      alert: '',
+                      alert: payload[:alert],
                       sound: 'default',
                       badge: 1
                   },
