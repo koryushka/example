@@ -76,7 +76,7 @@ class GoogleSyncService
       Rails.logger.debug "RESPONSE FROM GOOGLE NOTIFY #{resp_body.inspect}"
       if channel_id = (resp_body['id'] || resp_body[:id])
         # google_channel.update_attributes(uuid: channel_id, google_resource_id: resp_body['resourceId'])
-        google_channel = GoogleChannel.create(uuid: channel_id, google_resource_id: resp_body['resourceId'], channelable_id: object.id)
+        google_channel = GoogleChannel.create(uuid: channel_id, google_resource_id: resp_body['resourceId'], channelable_id: object.id, channelable_type: object.class.to_s)
         Rails.logger.debug "GOOGLE CHANNEL CREATED #{google_channel.inspect}"
       else
         Rails.logger.debug "GOOGLE NOTIFICATION ERROR: #{resp_body.inspect}"
