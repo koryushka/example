@@ -12,7 +12,9 @@ class GoogleCalendars
     calendar_list = calendar_id ? items.select {|item| item.id == calendar_id} : items
     google_calendars_ids = get_google_calendars_ids(calendar_list)
     local_calendars_ids = get_local_calendars_ids(@current_user.id, @account)
-    compare_calendars(google_calendars_ids, local_calendars_ids)
+    Rails.logger.debug "GOOGLE CALENDAR IDS #{google_calendars_ids}"
+    Rails.logger.debug "LOCAL CALENDAR IDS #{local_calendars_ids}"
+    # compare_calendars(google_calendars_ids, local_calendars_ids)
 
     calendar_list.each do |item|
       google_calendar = Calendar.find_or_create_by(
