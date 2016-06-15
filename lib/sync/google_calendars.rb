@@ -40,7 +40,7 @@ class GoogleCalendars
         Rails.logger.debug "GOOGLE CALENDAR HAS BEEN UPDATED #{google_calendar.inspect}"
       end
 
-      if google_calendar.should_be_synchronised? && parse_events
+      if google_calendar.should_be_synchronised? #&& parse_events
         parse_events_from_calendar(google_calendar)
       end
     end
