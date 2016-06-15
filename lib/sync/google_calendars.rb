@@ -8,6 +8,7 @@ class GoogleCalendars
   end
 
   def import_calendars(calendar_id=nil, parse_events=nil)
+    Rails.logger.debug "GOOGLE CALENDAR_ID #{calendar_id}" if calendar_id
     items = @service.list_calendar_lists.items
     calendar_list = calendar_id ? items.select {|item| item.id == calendar_id} : items
     unless calendar_id
