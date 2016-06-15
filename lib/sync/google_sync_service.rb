@@ -46,7 +46,7 @@ class GoogleSyncService
       # end
     end
 
-    if google_access_token && !calendar_id
+    if google_access_token
         build_channel(google_access_token) unless google_access_token.google_channel
         google_access_token.calendars.each do |calendar|
           build_channel(google_access_token, calendar) unless calendar.google_channel
