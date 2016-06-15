@@ -24,6 +24,7 @@ class Api::V1::GoogleNotificationsController < ApiController
       google_access_token = changed_object.google_access_token
       calendar_id = changed_object.google_calendar_id
     end
+    Rails.logger.debug "IN GOOGLE NOTIFICATIONS - CALENDAR_ID #{calendar_id}"
     GoogleSyncService.new.sync(user_id, google_access_token, calendar_id, true)
   end
 
