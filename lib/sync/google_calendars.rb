@@ -29,7 +29,7 @@ class GoogleCalendars
           calendar.account = @account
           calendar.user_id = @current_user.id
       end
-      Rails.logger.degug "PARSE EVENTS #{parse_events}"
+      Rails.logger.debug "PARSE EVENTS #{parse_events}"
       Rails.logger.debug "GOOGLE CALENDAR TO UPDATE #{google_calendar.inspect}"
       Rails.logger.debug "GOOGLE INCOMONG item #{item.inspect}"
       google_calendar.update_attributes(
