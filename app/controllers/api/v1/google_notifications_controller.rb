@@ -3,6 +3,8 @@ class Api::V1::GoogleNotificationsController < ApiController
   def notifications
     google_resource_id = request.headers['HTTP_X_GOOG_RESOURCE_ID']
     uuid = request.headers['HTTP_X_GOOG_CHANNEL_ID']
+    # logger.debug "Google params #{params.inspect}"
+    logger.debug "Google headers #{request.headers.inspect}"
     google_channel = GoogleChannel.find_by(uuid: uuid, google_resource_id: google_resource_id)
     if google_channel
       changed_object = google_channel.channelable
