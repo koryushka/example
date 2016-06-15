@@ -8,7 +8,7 @@ class GoogleCalendars
   end
 
   def import_calendars(calendar_id=nil, parse_events=nil)
-    Rails.logger.debug "GOOGLE CALENDAR_ID #{calendar_id}" if calendar_id
+    Rails.logger.debug "GOOGLE CALENDAR_ID #{calendar_id}"
     items = @service.list_calendar_lists.items
     calendar_list = calendar_id ? items.select {|item| item.id == calendar_id} : items
     unless calendar_id
@@ -30,15 +30,15 @@ class GoogleCalendars
           calendar.user_id = @current_user.id
       end
       Rails.logger.debug "GOOGLE CALENDAR TO UPDATE #{google_calendar.inspect}"
-
-      if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
-        google_calendar.update_attributes(
-          color: item.background_color,
-          title: item.summary,
-          account: @account,
-          user_id: @current_user.id
-        )
-      end
+      Rails.logger.debug "GOOGLE INCOMONG item #{item.inspect}"
+      # if google_calendar.persisted? && calendar_attributes_changed?(item, google_calendar)
+      google_calendar.update_attributes(
+        color: item.background_color,
+        title: item.summary,
+        account: @account,
+        user_id: @current_user.id
+      )
+      # end
 
       if google_calendar.should_be_synchronised? && parse_events
         parse_events_from_calendar(google_calendar)
