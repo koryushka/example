@@ -44,6 +44,7 @@ group :development do
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
   gem 'capistrano3-nginx'
+  gem 'capistrano-sidekiq'
 
   gem 'brakeman', require: false
   gem 'rails_best_practices'
