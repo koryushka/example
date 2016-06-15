@@ -105,22 +105,24 @@ class GoogleCalendars
     #manage recurring events(children)
     recurring_events.group_by(&:recurring_event_id).each do |recurring_event_id, group|
       @event = Event.find_by(google_event_id: recurring_event_id, user_id: @current_user.id)
-      group.each do |child_event|
-        unless parent_event_equal_to? child_event
-          @child = Event.find_or_initialize_by(google_event_id: child_event.id, user_id: @current_user.id) do |event|
-            event.recurring_event_id = @event.id
-            event.notes = child_event.description
-            event.title = child_event.summary
-            event.starts_at = @s_date
-            event.ends_at = @e_date
-            event.frequency = 'once'
-            event.calendar_id = @event.calendar_id
-            event.google_event_uniq_id = @event.google_event_uniq_id
-          end
-          if @child.new_record?
-            @child.save
-          else
-            update_changed_attributes(child_event)
+      if @event
+        group.each do |child_event|
+          unless parent_event_equal_to? child_event
+            @child = Event.find_or_initialize_by(google_event_id: child_event.id, user_id: @current_user.id) do |event|
+              event.recurring_event_id = @event.id
+              event.notes = child_event.description
+              event.title = child_event.summary
+              event.starts_at = @s_date
+              event.ends_at = @e_date
+              event.frequency = 'once'
+              event.calendar_id = @event.calendar_id
+              event.google_event_uniq_id = @event.google_event_uniq_id
+            end
+            if @child.new_record?
+              @child.save
+            else
+              update_changed_attributes(child_event)
+            end
           end
         end
       end
