@@ -40,18 +40,22 @@ class GoogleSyncService
       parser = GoogleCalendars.new(user, service, account)
       parser.import_calendars(calendar_id)
       # if parse_google_events
-        google_events_ids = get_google_events_ids(parser.items)
-        local_events_ids = get_local_event_ids(user_id, account)
-        compare_ids(google_events_ids, local_events_ids)
+      google_events_ids = get_google_events_ids(parser.items)
+      local_events_ids = get_local_event_ids(user_id, account)
+      compare_ids(google_events_ids, local_events_ids)
       # end
-    end
-
-    if google_access_token
-        build_channel(google_access_token) unless google_access_token.google_channel
-        google_access_token.calendars.each do |calendar|
-          build_channel(google_access_token, calendar) unless calendar.google_channel
+      build_channel(service[1]) unless service[1].google_channel
+      service[1].calendars.each do |calendar|
+        build_channel(service[1], calendar) unless calendar.google_channel
       end
     end
+
+    # if google_access_token
+    #     build_channel(google_access_token) unless google_access_token.google_channel
+    #     google_access_token.calendars.each do |calendar|
+    #       build_channel(google_access_token, calendar) unless calendar.google_channel
+    #   end
+    # end
   end
 
   private
