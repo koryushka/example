@@ -77,6 +77,9 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
+    capistrano-sidekiq (0.5.4)
+      capistrano
+      sidekiq (>= 3.4)
     capistrano3-nginx (2.1.4)
       capistrano (>= 3.0.0)
     celluloid (0.17.3)
@@ -498,6 +501,7 @@ DEPENDENCIES
   capistrano-bundler
   capistrano-rails
   capistrano-rvm
+  capistrano-sidekiq
   capistrano3-nginx
   date_validator
   devise_token_auth
