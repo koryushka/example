@@ -8,17 +8,13 @@ class GoogleCalendars
   end
 
   def import_calendars(calendar_id=nil, parse_events=nil)
-    Rails.logger.debug "GOOGLE CALENDAR_ID #{calendar_id}"
     items = @service.list_calendar_lists.items
-    calendar_list = calendar_id ? items.select {|item| item.id == calendar_id} : items
-    unless calendar_id
+    calendar_list = items#calendar_id ? items.select {|item| item.id == calendar_id} : items
+    # unless calendar_id
       google_calendars_ids = get_google_calendars_ids(calendar_list)
       local_calendars_ids = get_local_calendars_ids(@current_user.id, @account)
-      # Rails.logger.debug "GOOGLE CALENDAR IDS #{google_calendars_ids}"
-      # Rails.logger.debug "LOCAL CALENDAR IDS #{local_calendars_ids}"
       compare_calendars(google_calendars_ids, local_calendars_ids)
-    end
-    Rails.logger.debug "GOOGLE CALENDAR LIST #{calendar_list.inspect}"
+    # end
     calendar_list.each do |item|
       google_calendar = Calendar.find_or_create_by(
         google_calendar_id: item.id,
@@ -29,15 +25,12 @@ class GoogleCalendars
           calendar.account = @account
           calendar.user_id = @current_user.id
       end
-      Rails.logger.debug "PARSE EVENTS #{parse_events}"
-      Rails.logger.debug "GOOGLE INCOMONG item #{item.inspect}"
       if google_calendar.update_attributes(
           color: item.background_color,
           title: item.summary,
           account: @account,
           user_id: @current_user.id
         )
-        Rails.logger.debug "GOOGLE CALENDAR HAS BEEN UPDATED #{google_calendar.inspect}"
       end
 
       if google_calendar.should_be_synchronised? #&& parse_events

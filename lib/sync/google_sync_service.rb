@@ -10,10 +10,8 @@ class GoogleSyncService
   end
 
   def sync(user_id, google_access_token=nil, calendar_id=nil, after_notification=nil)
-
     user = User.find_by_id(user_id)
     accounts = []
-    #move code to model
     if google_access_token
       authorize google_access_token
       accounts << [@service, google_access_token]
@@ -40,12 +38,12 @@ class GoogleSyncService
       account = account(service[1])
       next unless account
       parser = GoogleCalendars.new(user, service, account)
-      parser.import_calendars(calendar_id, parse_google_events)
-      if parse_google_events
+      parser.import_calendars(calendar_id)
+      # if parse_google_events
         google_events_ids = get_google_events_ids(parser.items)
         local_events_ids = get_local_event_ids(user_id, account)
         compare_ids(google_events_ids, local_events_ids)
-      end
+      # end
     end
 
     if google_access_token && !calendar_id
