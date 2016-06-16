@@ -30,6 +30,18 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_not_nil json_response
   end
 
+  test 'should show partial event data for family member if event is private' do
+    owner = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: owner, public: false)
+    group = FactoryGirl.create(:group, user: owner)
+    group.create_participation(owner, @user)
+
+    get :show, id: event.id
+    assert_response :success
+    assert_equal 'Busy', json_response['title']
+    assert_nil json_response['user_id']
+  end
+
   #### Event creation group
   test 'should create new regular event' do
     post :create, {
@@ -110,6 +122,80 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  test 'should fail to update event for non member user and not participant' do
+    user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: user)
+    new_title = Faker::Lorem.sentence(3)
+    put :update, id: event.id, title: new_title
+    assert_response :forbidden
+  end
+
+  test 'should update event if user is a member of the family' do
+    user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: user)
+    group = FactoryGirl.create(:group, owner: user)
+    group.create_participation(user, @user)
+    new_title = Faker::Lorem.sentence(3)
+    put :update, id: event.id, title: new_title
+    assert_response :success
+    assert_equal new_title, json_response['title']
+    assert_not_equal json_response['title'], event.title
+  end
+
+  test 'should not be able to update private event if user is a family member' do
+    user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: user, public: false)
+    group = FactoryGirl.create(:group, owner: user)
+    group.create_participation(user, @user)
+    new_title = Faker::Lorem.sentence(3)
+    put :update, id: event.id, title: new_title
+    assert_response :forbidden
+  end
+
+  test 'should fail to show event for non member user' do
+    user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: user)
+    get :show, id: event.id
+    assert_response :forbidden
+  end
+
+  test 'should show event if user is a member of the family' do
+    user = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: user)
+    group = FactoryGirl.create(:group, owner: user)
+    group.create_participation(user, @user)
+    get :show, id: event.id
+    assert_response :success
+    assert_not_nil json_response
+  end
+
+  test 'should be able to update event status if I am owner' do
+    event = FactoryGirl.create(:event, user: @user, public: true)
+    put :update, id: event.id, public: false
+    assert_response :success
+  end
+
+  test 'should not be able to update event status if I am family member' do
+    event_owner = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: event_owner, public: true)
+    group = FactoryGirl.create(:group, owner: event_owner)
+    group.create_participation(event_owner, @user)
+    put :update, id: event.id, public: false
+    assert_response :forbidden
+  end
+
+  test 'should not be able to update event status if I am participant' do
+    event_owner = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: event_owner, public: true)
+    FactoryGirl.create(:participation,
+                       participationable: event,
+                       user: @user,
+                       sender: event_owner,
+                       status: Participation::ACCEPTED)
+    put :update, id: event.id, public: false
+    assert_response :forbidden
+  end
+
   #### Event destroying group
   test 'should destroy existing event' do
     event = FactoryGirl.create(:event, user: @user)
@@ -131,7 +217,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
 
   test 'should not destroy event of other user' do
     other_user = FactoryGirl.create(:user)
-    event = FactoryGirl.create(:repeating_event_with_cancellation, user: other_user)
+    event = FactoryGirl.create(:event, user: other_user)
     delete :destroy, id: event.id
     assert_response :forbidden
   end
@@ -223,6 +309,76 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_equal amount, json_response.size
   end
 
+  test 'should attach list to public event if I am family member' do
+    event_owner = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: event_owner, public: true)
+    group = FactoryGirl.create(:group, owner: event_owner)
+    group.create_participation(event_owner, @user)
+    list = FactoryGirl.create(:list, user: @user)
+
+    post :add_list, id: event.id, list_id: list.id
+    assert_response :success
+
+    event.reload
+    assert_equal list.id, event.list_id
+  end
+
+  test 'should not be able to attach list to private event if I am family member' do
+    event_owner = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: event_owner, public: false)
+    group = FactoryGirl.create(:group, owner: event_owner)
+    group.create_participation(event_owner, @user)
+    list = FactoryGirl.create(:list, user: @user)
+
+    post :add_list, id: event.id, list_id: list.id
+    assert_response :forbidden
+  end
+
+  test 'should attach list to event if I am event participant' do
+    event_owner = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: event_owner, public: true)
+    list = FactoryGirl.create(:list, user: @user)
+    FactoryGirl.create(:participation,
+                       participationable: event,
+                       user: @user,
+                       sender: event_owner,
+                       status: Participation::ACCEPTED)
+
+
+    post :add_list, id: event.id, list_id: list.id
+    assert_response :success
+
+    event.reload
+    assert_equal list.id, event.list_id
+
+    private_event = FactoryGirl.create(:event, user: event_owner, public: false)
+    FactoryGirl.create(:participation,
+                       participationable: private_event,
+                       user: @user,
+                       sender: event_owner,
+                       status: Participation::ACCEPTED)
+
+    post :add_list, id: private_event.id, list_id: list.id
+    assert_response :success
+
+    private_event.reload
+    assert_equal list.id, private_event.list_id
+  end
+
+  test 'should not be able to attach private list to an event' do
+    event_owner = FactoryGirl.create(:user)
+    event = FactoryGirl.create(:event, user: event_owner)
+    FactoryGirl.create(:participation,
+                       participationable: event,
+                       user: @user,
+                       sender: event_owner,
+                       status: Participation::ACCEPTED)
+    list = FactoryGirl.create(:list, user: @user, public: false)
+
+    post :add_list, id: event.id, list_id: list.id
+    assert_response :forbidden
+  end
+
   #### mute/unmute group
   test 'should mute event notifications' do
     event = FactoryGirl.create(:event, user: @user)
@@ -242,42 +398,4 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     me.reload
     assert !me.muted?
   end
-
-  test 'should fail to update event for non member user' do
-    user = FactoryGirl.create(:user)
-    event = FactoryGirl.create(:event, user: user)
-    new_title = Faker::Lorem.sentence(3)
-    put :update, id: event.id, title: new_title
-    assert_response :forbidden
-  end
-
-  test 'should update event if user is a member of the family' do
-    user = FactoryGirl.create(:user)
-    event = FactoryGirl.create(:event, user: user)
-    group = FactoryGirl.create(:group, owner: user)
-    group.create_participation(user, @user)
-    new_title = Faker::Lorem.sentence(3)
-    put :update, id: event.id, title: new_title
-    assert_response :success
-    assert_equal json_response['title'], new_title
-    assert_not_equal json_response['title'], event.title
-  end
-
-  test 'should fail to show event for non member user' do
-    user = FactoryGirl.create(:user)
-    event = FactoryGirl.create(:event, user: user)
-    get :show, id: event.id
-    assert_response :forbidden
-  end
-
-  test 'should show event if user is a member of the family' do
-    user = FactoryGirl.create(:user)
-    event = FactoryGirl.create(:event, user: user)
-    group = FactoryGirl.create(:group, owner: user)
-    group.create_participation(user, @user)
-    get :show, id: event.id
-    assert_response :success
-    assert_not_nil json_response
-  end
-
 end

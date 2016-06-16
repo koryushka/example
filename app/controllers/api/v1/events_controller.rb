@@ -6,7 +6,11 @@ class Api::V1::EventsController < ApiController
   before_filter only: [:add_to_calendar, :remove_from_calendar, :index_of_calendar] do
     find_entity_of_current_user type: :calendar, id_param: :calendar_id
   end
-  before_filter only: [:add_list, :remove_list, :index_of_list] do
+  before_filter only: [:add_list, :remove_list] do
+    find_entity_of_current_user type: :list, id_param: :list_id
+    authorize! :attach_private_list, @list
+  end
+  before_filter only: [:index_of_list] do
     find_entity_of_current_user type: :list, id_param: :list_id
   end
   authorize_resource
@@ -198,6 +202,8 @@ Examples:
   end
 
   def update
+    @event.assign_attributes(event_params)
+    authorize! :event_status_update, @event if @event.changes['public'].present?
     if @event.update(event_params)
       @event.update_google_event if @event.etag
     end

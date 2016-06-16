@@ -1,7 +1,7 @@
 require File.expand_path('../../../../test_helper', __FILE__)
 
 class Api::V1::GroupsParticipationsTest < ActionController::TestCase
-  tests ParticipationsController
+  tests Api::V1::ParticipationsController
   include AuthenticatedUser
 
   ## creating participation

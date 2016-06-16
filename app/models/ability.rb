@@ -2,34 +2,13 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+    family = user.family
+
     can :manage, :all, user_id: user.id
     can :manage, Participation, sender_id: user.id
 
-    # can :create, Participation do |part|
-    #   case part.participationable_type
-    #     when Group.name
-    #       user.family.present? && user.family.id == p.participationable_id
-    #     else
-    #       # replaces [can :manage, Participation, sender_id: user.id]
-    #       # user.id == part.sender_id
-    #       true
-    #   end
-    # end
-    # can [:index, :index_recent, :destroy, :accept, :decline], Participation, sender_id: user.id
     can [:create_participation, :destroy_participation], Group do |group|
-      family = user.family
       family.present? && family.id == group.id
-    end
-
-    can [:destroy_participation], Event do |event|
-      event.participations.exists?(user_id: user.id)
-    end
-
-    can [:show], Event do |event|
-      event.participations.exists?(user: user) || user.family.present? && user.family.members.exists?(id: event.user_id)
-    end
-    can [:update], Event do |event|
-      user.family.present? && user.family.members.exists?(id: event.user_id) && event.public?
     end
     can :show, Group do |group|
       group.participations.exists?(user: user)
@@ -37,11 +16,44 @@ class Ability
     can [:leave, :update], Group do |group|
       group.participations.exists?(user: user) && group.user_id != user.id
     end
+
+    can :create_participation, Event do |event|
+      event.user_id == user.id ||
+          family.present? && family.members.exists?(id: user.id) && event.public? ||
+          event.participations.exists?(user: user, status: Participation::ACCEPTED)
+    end
+    can :destroy_participation, Event do |event|
+      event.participations.exists?(user_id: user.id) ||
+          family.present? && family.members.exists?(id: user.id) && event.public?
+    end
+    can :show, Event do |event|
+      event.participations.exists?(user: user) || user.family.present? && user.family.members.exists?(id: event.user_id)
+    end
+    can :update, Event do |event|
+      user.family.present? && user.family.members.exists?(id: event.user_id) && event.public?
+    end
+    can :event_status_update, Event do |event|
+      event.user_id == user.id
+    end
+    can [:add_list, :remove_list], Event do |event|
+      event.user_id == user.id ||
+          family.present? && family.members.exists?(id: event.user_id) && event.public? ||
+          event.participations.exists?(user_id: user.id, status: Participation::ACCEPTED)
+    end
+    can :view_private, Event do |event|
+      event.public? || user.id == event.user_id ||
+          event.participations.exists?(user_id: user.id, status: Participation::ACCEPTED)
+    end
+
     can :destroy, Device do |device|
       user.devices.exists?(device_token: device.device_token)
     end
+
     can [:show, :update], List do |list|
       user.family.present? && user.family.members.exists?(id: list.user_id) && list.public?
+    end
+    cannot :attach_private_list, List do |list|
+      not list.public?
     end
 
     #Define abilities for the passed in user here. For example:

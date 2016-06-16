@@ -101,6 +101,10 @@ class Event < AbstractModel
     me = muted_events.first
     me.present? && me.muted?
   end
+
+  def private?
+    !public?
+  end
   #
   # def destroy
   #   super
