@@ -35,7 +35,8 @@ class Api::V1::AccountsController < ApiController
         @account.remove_calendars
         @account.unsubscribe! if @account.google_channel
       elsif params[:synchronizable] == true
-        GoogleSyncService.new.sync(current_user.id, @account)
+       # GoogleSyncService.new.sync(current_user.id, @account) # perform immediately
+        GoogleWorker.perform_async(current_user.id, @account)
       end
       render :show, status: 204
     else
