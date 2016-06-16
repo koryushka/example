@@ -9,7 +9,10 @@ class GoogleSyncService
     end
   end
 
-  def sync(user_id, google_access_token=nil, calendar_id=nil, after_notification=nil)
+  def sync(user_id, google_access_token=nil, calendar_id=nil, after_notification=nil, account_id=nil)
+    if account_id
+      google_access_token = GoogleAccessToken.find_by_id(account_id)
+    end
     user = User.find_by_id(user_id)
     accounts = []
     if google_access_token
