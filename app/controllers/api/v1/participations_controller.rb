@@ -136,6 +136,8 @@ class Api::V1::ParticipationsController < ApiController
     authorize! :create_participation, participationable
     existing_users = participation_params[:user_ids] || []
     @participations = []
+    # Create AWS SNS instance
+    sns = ApiHelper::Sns.new
 
     participation_params[:emails].each do |email|
       # go to next email if user already accepted participation
@@ -174,14 +176,12 @@ class Api::V1::ParticipationsController < ApiController
                                                 participationable: participationable,
                                                 sender: current_user)
       end
+      # Formation of payload
+      payload = {alert: participationable.title}
+      # SNS publishing
+      sns.send(user_id, payload)
     end
 
-    # AWS SNS instance
-    sns = ApiHelper::Sns.new
-    # Formation of payload
-    payload = {alert: participationable.title}
-    # SNS publishing
-    sns.send(current_user.id, payload)
 
     render 'index'
   end
