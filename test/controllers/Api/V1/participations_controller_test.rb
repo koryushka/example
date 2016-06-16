@@ -198,5 +198,14 @@ class Api::V1::ParticipationsControllerTest < ActionController::TestCase
       assert_response :success
     end
   end
+  # test 'should send notifications' do
+  #   emails = Array.new(5) { Faker::Internet.email }
+  #   existing_user = FactoryGirl.create(:user)
+  #   emails << existing_user.email
+  #   resource = FactoryGirl.create(:event, user: @user)
+  #   post :create, event_id: resource.id, emails: emails
+  #   assert_response :success
+  #
+  # end
 
 end

@@ -33,7 +33,8 @@ module ApiHelper
           }.to_json
       }
 
-      devices = Device.where(user_id: user_id)
+      # devices = Device.where(user_id: user_id)
+      devices = Device.find(user_id: user_id)
       devices.each do |device|
         @sns.publish(
               target_arn: device.aws_endpoint_arn,
