@@ -7,11 +7,15 @@
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 set :sidekiq_role, :worker
-server '52.24.149.235', user: fetch(:user), roles: %w(app db)
-server '52.24.241.165', user: fetch(:user), roles: %w(app)
-server '52.34.185.1',   user: fetch(:user), roles: %w(app worker)
+# server '52.24.149.235', user: fetch(:user), roles: %w(app db)
+# server '52.24.241.165', user: fetch(:user), roles: %w(app)
+# server '52.34.185.1',   user: fetch(:user), roles: %w(app worker)
 set :rails_env, 'staging'
 set :branch, 'ror/staging'
+
+
+server '178.123.24.8', user: fetch(:user), roles: %w(app db worker)
+set :branch, 'ror/mempory_consumption_optimization'
 
 
 # role-based syntax

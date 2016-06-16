@@ -8,7 +8,8 @@ set :linked_files, ['config/database.yml']
 set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system)
 
 set :ssh_options, {forward_agent: true}
-set :user , 'deployer'
+# set :user , 'deployer'
+set :user, 'koryushka_guest'
 set :deploy_to, "/home/#{fetch :user}/apps/#{fetch :application}"
 
 #nginx configuration
@@ -29,6 +30,6 @@ set :pty, true
 
 namespace :deploy do
 
-  after :deploy, 'nginx:restart'
-
+  # after :deploy, 'nginx:restart'
+  after :deploy, 'sidekiq:start'
 end
