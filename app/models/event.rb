@@ -139,9 +139,9 @@ class Event < AbstractModel
     participation
   end
 
-  def update_google_event
+  def update_google_event(user_id)
     calendar = self.calendar
-    google_access_token = GoogleAccessToken.find_by_account_name(calendar.account)
+    google_access_token = GoogleAccessToken.find_by(account_name: calendar.account, user_id: user_id)
     if google_access_token && calendar.should_be_synchronised?
       authorize google_access_token
       params = {

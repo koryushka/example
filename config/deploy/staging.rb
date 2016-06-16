@@ -13,7 +13,6 @@ server '52.34.185.1',   user: fetch(:user), roles: %w(app worker)
 set :rails_env, 'staging'
 set :branch, 'ror/staging'
 
-
 # role-based syntax
 # ==================
 
