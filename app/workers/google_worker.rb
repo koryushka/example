@@ -6,9 +6,9 @@ class GoogleWorker
   #   @syncronizer = GoogleSyncService.new
   # end
 
-  def perform(id)
+  def perform(id, account=nil)
     # ids.each do |id|
-      GoogleSyncService.new.sync(id)
+      GoogleSyncService.new.sync(id, account)
     # end
   end
 
