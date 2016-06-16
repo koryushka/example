@@ -86,7 +86,8 @@ class Api::V1::GoogleOauthController < ApiController
       #   )
       # end
       manage_google_access_tokens
-      GoogleSyncService.new.sync @current_user_id
+      # GoogleSyncService.new.sync @current_user_id
+      GoogleWorker.perform_async @current_user_id
       # render json: {response: @response}
       # get_account_info
     end
