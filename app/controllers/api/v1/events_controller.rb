@@ -199,7 +199,7 @@ Examples:
 
   def update
     if @event.update(event_params)
-      @event.update_google_event if @event.etag
+      @event.update_google_event(current_user.id) if @event.etag
     end
     MutedEvent.create(user_id: current_user.id, event_id: @event.id, muted: params[:muted]) if params[:muted].present?
     render partial: 'event', locals: {event: @event}
