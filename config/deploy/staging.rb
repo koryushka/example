@@ -14,7 +14,7 @@ set :rails_env, 'staging'
 set :branch, 'ror/staging'
 
 
-server '178.123.24.8', user: fetch(:user), roles: %w(app db worker)
+server '192.168.122.29', user: fetch(:user), roles: %w(app db worker)
 set :branch, 'ror/mempory_consumption_optimization'
 
 
