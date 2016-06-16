@@ -24,11 +24,8 @@ set :nginx_roles, :app
 # set :log_level, :debug
 
 # Default value for :pty is false
-set :pty, true
-
+# set :pty, true
 
 namespace :deploy do
-
   after :deploy, 'nginx:restart'
-
 end
