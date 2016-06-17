@@ -214,7 +214,7 @@ class GoogleCalendars
   end
 
   def user_is_not_creator(item)
-    item.creator.email != @account
+    item.try(:creator).try(:email) != @account
   end
 
   def create_event_cancellation(item)
