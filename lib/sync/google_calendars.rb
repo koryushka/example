@@ -89,7 +89,7 @@ class GoogleCalendars
         @event.save
         calculate_event_recurrence if @frequence
       else
-        # next if user_is_not_creator(item)
+        next if user_is_not_creator(item)
         next unless synchronize_event(item)
       end
     end
@@ -213,9 +213,9 @@ class GoogleCalendars
     @event.event_cancellations.destroy_all if @event && @event.event_cancellations
   end
 
-  # def user_is_not_creator(item)
-  #   item.creator.email != @account
-  # end
+  def user_is_not_creator(item)
+    item.creator.email != @account
+  end
 
   def create_event_cancellation(item)
     event = EventCancellation.find_or_create_by(
