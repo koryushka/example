@@ -110,9 +110,10 @@ class Api::V1::AccountsController < ApiController
   end # end swagger_path ':/accounts/{id}'
 
   def destroy
-    if @account.destroy
-      @account.unsubscribe! if @account.google_channel
-    end
+    # if @account.destroy
+    #   @account.unsubscribe! if @account.google_channel
+    # end
+    AccountsDestroyer.perform_async @account.id
     render nothing: true
   end
   private
