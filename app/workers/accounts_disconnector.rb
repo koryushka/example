@@ -5,7 +5,10 @@ class AccountsDisconnector
 
   def perform(account_id)
     account = GoogleAccessToken.find_by_id(account_id)
-    account.calendars.includes(:events).destroy_all if account
+    if account
+      account.calendars.includes(:events).destroy_all
+      account.unsubscribe! if account.google_channel
+    end
   end
 
 end

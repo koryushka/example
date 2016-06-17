@@ -34,7 +34,7 @@ class Api::V1::AccountsController < ApiController
       if params[:synchronizable] == false
         # @account.remove_calendars
         AccountsDisconnector.perform_async @account.id
-        @account.unsubscribe! if @account.google_channel
+        # @account.unsubscribe! if @account.google_channel
       elsif params[:synchronizable] == true
         # GoogleSyncService.new.sync(current_user.id, @account) # perform immediately
         GoogleWorker.perform_async(current_user.id, nil, nil, nil, @account.id)

@@ -35,9 +35,11 @@ class GoogleAccessToken < ActiveRecord::Base
 
   def remove_channel(resource, service)
     google_channel = resource.google_channel
-    channel_id, resource_id = google_channel.uuid, google_channel.google_resource_id
-    service.unsubscribe(channel_id, resource_id)
-    google_channel.destroy
+    if google_channel
+      channel_id, resource_id = google_channel.uuid, google_channel.google_resource_id
+      service.unsubscribe(channel_id, resource_id)
+      google_channel.destroy
+    end
   end
 
   swagger_schema :ArrayOfAccounts do
