@@ -273,7 +273,7 @@ class GoogleCalendars
   def end_date(item)
     unless cancelled?(item)
       end_of_event = item.end.date || item.end.date_time
-      end_of_event += 1.hour if end_date == start_date(item)
+      end_of_event += 1.hour if end_of_event == start_date(item)
       end_of_event
     end
   end
