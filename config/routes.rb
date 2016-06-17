@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   require 'sidekiq/web'
+  # Sidekiq::Web.use(Rack::Auth::Basic) do |user, password|
+  #   [user, password] == ["curagolife", "watch_on_worker"]
+  # end
   mount Sidekiq::Web => '/sidekiq'
   namespace :admin do
     #mount_devise_token_auth_for 'Admin', at: 'auth'
